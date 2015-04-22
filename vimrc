@@ -126,7 +126,7 @@ vmap <silent> ,y y:new<CR>:call setline(1,getregtype())<CR>o<Esc>P:wq! ~/reg.txt
 nmap <silent> ,y :new<CR>:call setline(1,getregtype())<CR>o<Esc>P:wq! ~/reg.txt<CR>
 map <silent> ,p :sview ~/reg.txt<CR>"zdddG:q!<CR>:call setreg('"', @", @z)<CR>p
 map <silent> ,P :sview ~/reg.txt<CR>"zdddG:q!<CR>:call setreg('"', @", @z)<CR>P
-nmap s <Plug>(easymotion-s)
+nmap <leader>s <Plug>(easymotion-s)
 nmap <silent> <leader>ev :e $MYVIMRC<cr>
 nmap <silent> <leader>sv :so $MYVIMRC<cr>
 nmap <silent> <leader>sn :e /home/jean/projects/snippet/vim/UltiSnips/php.snippets<cr>

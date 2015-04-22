@@ -1,38 +1,57 @@
 set nocompatible
-set rtp+=~/.vim/bundle/Vundle.vim
 
-call vundle#begin()
-Plugin 'gmarik/Vundle.vim'
-Plugin 'exvim/main'
-Plugin 'tpope/vim-repeat'
-Plugin 'Lokaltog/vim-easymotion'
-Plugin 'tpope/vim-surround'
-Plugin 'scrooloose/nerdtree'
-Plugin 'ervandew/supertab'
-Plugin 'SirVer/ultisnips'
-Plugin 'honza/vim-snippets'
-Plugin 'kien/ctrlp.vim'
-Plugin 'jiangmiao/auto-pairs'
-Plugin 'nathanaelkane/vim-indent-guides'
-Plugin 'bling/vim-airline'
-Plugin 'tpope/vim-fugitive'
-Plugin 'mileszs/ack.vim'
-Plugin 'joonty/vdebug'
-call vundle#end()
+call plug#begin()
+Plug 'altercation/vim-colors-solarized'
+Plug 'tpope/vim-sensible'
+"Plug 'junegunn/vim-easy-align'
+"Plug 'exvim/main'
+Plug 'tpope/vim-repeat'
+Plug 'Lokaltog/vim-easymotion'
+Plug 'tpope/vim-surround'
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'ervandew/supertab'
+Plug 'SirVer/ultisnips', { 'on': [] }
+Plug 'honza/vim-snippets'
+Plug 'kien/ctrlp.vim'
+Plug 'FelikZ/ctrlp-py-matcher'
+Plug 'jiangmiao/auto-pairs'
+Plug 'nathanaelkane/vim-indent-guides'
+Plug 'bling/vim-airline'
+Plug 'tpope/vim-fugitive'
+"Plug 'joonty/vdebug'
+"Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown'
+Plug 'wakatime/vim-wakatime'
+"Plug 'mattn/emmet-vim'
+Plug 'ajh17/VimCompletesMe'
+"Plug 'scrooloose/syntastic'
+Plug 'pangloss/vim-javascript'
+Plug 'majutsushi/tagbar'
+"Plug 'vim-scripts/textutil.vim'
+
+augroup load_us
+  autocmd!
+  autocmd InsertEnter * call plug#load('ultisnips')
+augroup END
+
+call plug#end()
+
 filetype plugin indent on
-call pathogen#infect()
 
 let mapleader = ","
 filetype on
 syntax enable
-syntax sync minlines=256
 
+set t_Co=16
+set background=dark
+colorscheme solarized
+
+set completeopt=menu
 set backspace=indent,eol,start
 set cot+=menuone
 set noswapfile
 set nobackup
 set number
-set cursorline
 set wrap
 set wrapscan
 set shell=/bin/bash
@@ -43,11 +62,9 @@ set showcmd
 set hidden
 set wildmenu
 set wildmode=list:longest
-set cursorline
 set ttyfast
 set ruler
 set laststatus=2
-set relativenumber
 set undofile
 set incsearch
 set hlsearch
@@ -73,8 +90,16 @@ set undolevels=1000
 set wildignore=*.swp,*.back,*.pyc,*.class
 set title
 set visualbell
+set cursorline
 
-setlocal omnifunc=syntaxcomplete#Complete
+"performance tweaks
+set nocursorcolumn
+set norelativenumber
+set synmaxcol=120
+syntax sync minlines=256
+
+"Cntrlp fast
+let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 
 let NERDTreeMouseMode=3
 let g:EasyMotion_use_upper = 1
@@ -86,15 +111,17 @@ let g:SuperTabDefaultCompletionType = '<C-n>'
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<S-tab>"
-let g:ctrlp_match_window_bottom = 0
-let g:ctrlp_match_window_reversed = 0
 
+
+:nnoremap <Space> @q
 map <Esc><Esc> :w <CR>
 map <F5> :setlocal spell spelllang=en_us
 map <F7> mzgg=G`z<CR>
-map <leader>s :set spell spelllang=pt_br<CR>
+map <leader>spt :set spell spelllang=pt_br<CR>
+map <leader>sen :set spell spelllang=en_us<CR>
 nmap <leader>b :call ToggleBackgroundColour()<CR>
 nmap <leader>k :NERDTreeToggle<CR>
+nmap <leader>t :TagbarToggle<CR>
 vmap <silent> ,y y:new<CR>:call setline(1,getregtype())<CR>o<Esc>P:wq! ~/reg.txt<CR>
 nmap <silent> ,y :new<CR>:call setline(1,getregtype())<CR>o<Esc>P:wq! ~/reg.txt<CR>
 map <silent> ,p :sview ~/reg.txt<CR>"zdddG:q!<CR>:call setreg('"', @", @z)<CR>p
@@ -102,7 +129,10 @@ map <silent> ,P :sview ~/reg.txt<CR>"zdddG:q!<CR>:call setreg('"', @", @z)<CR>P
 nmap s <Plug>(easymotion-s)
 nmap <silent> <leader>ev :e $MYVIMRC<cr>
 nmap <silent> <leader>sv :so $MYVIMRC<cr>
+nmap <silent> <leader>sn :e /home/jean/projects/snippet/vim/UltiSnips/php.snippets<cr>
+nmap <silent> <leader>snc :e /home/jean/projects/snippet/vim/UltiSnips/php_clipp.snippets<cr>
 omap t <Plug>(easymotion-bd-tl)
+
 nnoremap <leader><space> :noh<cr>
 noremap ; :
 inoremap jj <ESC>
@@ -139,10 +169,7 @@ function ToggleBackgroundColour ()
 endfunction
 
 command Preview :!firefox %<CR>
-
-
-command Phpcsfixer : ! php-cs-fixer fix --level=psr2 `pwd`/%
-
+command Phpcsfixer : ! printf "Linter \n" && php -l `pwd`/% &&  printf "Csfixer \n" && php-cs-fixer fix `pwd`/% && printf "Beutifier \n" && phpcbf `pwd`/% --standard=PSR2
 
 command Date :r !date
 

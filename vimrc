@@ -20,7 +20,7 @@ Plug 'bling/vim-airline'
 Plug 'tpope/vim-fugitive'
 "Plug 'joonty/vdebug'
 "Plug 'godlygeek/tabular'
-Plug 'plasticboy/vim-markdown'
+"Plug 'plasticboy/vim-markdown'
 Plug 'wakatime/vim-wakatime'
 "Plug 'mattn/emmet-vim'
 Plug 'ajh17/VimCompletesMe'
@@ -46,6 +46,9 @@ set t_Co=16
 set background=dark
 colorscheme solarized
 
+"no octal
+set nrformats=
+set nofoldenable
 set completeopt=menu
 set backspace=indent,eol,start
 set cot+=menuone
@@ -111,15 +114,19 @@ let g:SuperTabDefaultCompletionType = '<C-n>'
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<S-tab>"
+"let g:solarized_termcolors=256
+"let g:solarized_termtrans=1
+let g:solarized_bold=1
+let g:solarized_underline=1
+let g:solarized_italic=1
 
 
 :nnoremap <Space> @q
 map <Esc><Esc> :w <CR>
-map <F5> :setlocal spell spelllang=en_us
 map <F7> mzgg=G`z<CR>
 map <leader>spt :set spell spelllang=pt_br<CR>
 map <leader>sen :set spell spelllang=en_us<CR>
-nmap <leader>b :call ToggleBackgroundColour()<CR>
+map <leader>b :call ToggleBackgroundColour()<CR>
 nmap <leader>k :NERDTreeToggle<CR>
 nmap <leader>t :TagbarToggle<CR>
 vmap <silent> ,y y:new<CR>:call setline(1,getregtype())<CR>o<Esc>P:wq! ~/reg.txt<CR>

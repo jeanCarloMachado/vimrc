@@ -1,0 +1,19 @@
+Abolish teh the
+Abolish JavaS JavaScript
+Abolish javas JavaScript
+Abolish Javas JavaScript
+Abolish yaw You are welcome
+Abolish paramter parameter
+Abolish reuslt result
+Abolish resutl result
+Abolish entityM entityManager
+Abolish doctr doctrine
+Abolish fixt fixture
+Abolish SUCC SUCCESS_STATUS_CODE
+Abolish lets let's
+Abolish adn and
+Abolish adn and
+Abolish belive believe
+Abolish addCLient addClient
+Abolish dont don't
+Abolish thougth thought

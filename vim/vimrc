@@ -7,7 +7,7 @@ call plug#begin()
 Plug 'altercation/vim-colors-solarized'
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-repeat'
-Plug 'Lokaltog/vim-easymotion'
+"Plug 'Lokaltog/vim-easymotion'
 Plug 'tpope/vim-surround'
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'ervandew/supertab'
@@ -31,24 +31,19 @@ Plug 'ajh17/VimCompletesMe'
 Plug 'pangloss/vim-javascript'
 Plug 'majutsushi/tagbar'
 Plug 'nelstrom/vim-visual-star-search'
-"Plug 'https://JeanCarloMachado@bitbucket.org/ns9tks/vim-autocomplpop'
-Plug 'ssh://hg@bitbucket.org/ns9tks/vim-autocomplpop'
-Plug 'https://bitbucket.org/ns9tks/vim-autocomplpop/'
+Plug 'coot/vim_args'
+Plug 'tpope/vim-abolish'
+Plug 'mileszs/ack.vim'
 "Plug 'vim-scripts/textutil.vim'
 "Plug 'https://github.com/Shougo/unite.vim.git'
 "Plug 'Shougo/neocomplcache'
 "Plug 'Shougo/vimproc'
 "Plug 'Shougo/vimshell'
 "Plug '2072/PHP-Indenting-for-VIm'
+Plug 'christoomey/vim-tmux-navigator'
+Plug 'tpope/vim-rsi'
+Plug 'tpope/vim-endwise'
 
-:ab teh the
-:ab JavaS JavaScript
-:ab javas JavaScript
-:ab Javas JavaScript
-:ab yaw You are welcome
-:ab paramter parameter
-:ab reuslt result
-:ab resutl result
 
 augroup load_us
   autocmd!
@@ -64,7 +59,7 @@ set clipboard=unnamedplus
 
 runtime macros/matchit.vim
 
-let mapleader = ","
+let mapleader = "\<space>"
 noremap \ ,
 filetype on
 syntax enable
@@ -89,6 +84,7 @@ set tags=./tags,./.git/tags,../.git/tags
 "set nowrapscan
 "no octal
 set nrformats=
+set splitbelow
 set spell
 set nofoldenable
 set completeopt=menu
@@ -145,11 +141,13 @@ set norelativenumber
 syntax sync minlines=256
 autocmd FileType markdown set commentstring=<!!--\ %s\ -->
 
+let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
+
 let g:ctrlp_max_files=0
 let NERDTreeMouseMode=3
-let g:EasyMotion_use_upper = 1
-let g:EasyMotion_smartcase = 1
-let g:EasyMotion_use_smartsign_us = 1
+"let g:EasyMotion_use_upper = 1
+"let g:EasyMotion_smartcase = 1
+"let g:EasyMotion_use_smartsign_us = 1
 let g:SuperTabDefaultCompletionType = '<C-n>'
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
@@ -162,6 +160,9 @@ let g:solarized_italic=1
 let g:ctrlp_regexp = 1
 ":nnoremap <Space> @q
 
+nnoremap <Leader>w :w<CR>
+nnoremap <Leader>p :set paste!<CR>
+nnoremap <Leader>o :only<CR>
 map <leader>spt :set spell spelllang=pt_br<CR>
 map <leader>sen :set spell spelllang=en_us<CR>
 map <leader>b :call ToggleBackgroundColour()<CR>
@@ -172,12 +173,12 @@ vmap <silent> ,y y:new<CR>:call setline(1,getregtype())<CR>o<Esc>P:wq! ~/reg.txt
 nmap <silent> ,y :new<CR>:call setline(1,getregtype())<CR>o<Esc>P:wq! ~/reg.txt<CR>
 map <silent> ,p :sview ~/reg.txt<CR>"zdddG:q!<CR>:call setreg('"', @", @z)<CR>p
 map <silent> ,P :sview ~/reg.txt<CR>"zdddG:q!<CR>:call setreg('"', @", @z)<CR>P
-nmap <leader>s <Plug>(easymotion-s)
+"nmap <leader>s <Plug>(easymotion-s)
 nmap <silent> <leader>ev :e $MYVIMRC<cr>
 nmap <silent> <leader>sv :so $MYVIMRC<cr>
 nmap <silent> <leader>sn :e /home/jean/projects/snippet/vim/UltiSnips/php.snippets<cr>
 nmap <silent> <leader>snc :e /home/jean/projects/snippet/vim/UltiSnips/php_clipp.snippets<cr>
-omap t <Plug>(easymotion-bd-tl)
+"omap t <Plug>(easymotion-bd-tl)
 
 nnoremap <leader><space> :noh<cr>
 inoremap jj <ESC> "Important!"
@@ -245,3 +246,32 @@ au FileType html,xhtml setl ofu=htmlcomplete#CompleteTags
 au FileType c setl ofu=ccomplete#CompleteCpp
 au FileType css setl ofu=csscomplete#CompleteCSS
 
+function! RunPHPUnitTest(filter)
+    cd %:p:h
+    if a:filter
+        normal! T yw
+        let result = system("clipp-unit --filter " . @" . " " . bufname("%"))
+    else
+        let result = system("clipp-unit " . bufname("%"))
+    endif
+    split __PHPUnit_Result__
+    normal! ggdG
+    setlocal buftype=nofile
+    call append(0, split(result, '\v\n'))
+    cd -
+endfunction
+
+nnoremap <leader>u :call RunPHPUnitTest(0)<cr>
+nnoremap <leader>f :call RunPHPUnitTest(1)<cr>
+
+let g:ctrlp_use_caching = 0
+if executable('ag')
+    set grepprg=ag\ --nogroup\ --nocolor
+
+    let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+else
+  let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . -co --exclude-standard', 'find %s -type f']
+  let g:ctrlp_prompt_mappings = {
+    \ 'AcceptSelection("e")': ['<space>', '<cr>', '<2-LeftMouse>'],
+    \ }
+endif

@@ -1,95 +1,11 @@
-set nocompatible
+"Settings {{{
 
-set wrap
-
-call plug#begin()
-
-Plug 'altercation/vim-colors-solarized'
-Plug 'tpope/vim-sensible'
-Plug 'tpope/vim-repeat'
-"Plug 'Lokaltog/vim-easymotion'
-Plug 'tpope/vim-surround'
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-Plug 'ervandew/supertab'
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets', { 'for': [ 'php'] }
-Plug 'kien/ctrlp.vim'
-Plug 'jiangmiao/auto-pairs'
-Plug 'bling/vim-airline'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-unimpaired'
-"Plug 'joonty/vdebug'
-"Plug 'godlygeek/tabular'
-"Plug 'plasticboy/vim-markdown'
-"Plug 'wakatime/vim-wakatime'
-"Plug 'mattn/emmet-vim'
-Plug 'ajh17/VimCompletesMe'
-"Plug 'scrooloose/syntastic'
-Plug 'pangloss/vim-javascript', { 'for': [ 'javascript'] }
-Plug 'majutsushi/tagbar'
-Plug 'nelstrom/vim-visual-star-search'
-Plug 'coot/vim_args'
-Plug 'tpope/vim-abolish'
-Plug 'mileszs/ack.vim'
-"Plug 'vim-scripts/textutil.vim'
-"Plug 'https://github.com/Shougo/unite.vim.git'
-"Plug 'Shougo/neocomplcache'
-"Plug 'Shougo/vimshell'
-"Plug '2072/PHP-Indenting-for-VIm'
-Plug 'christoomey/vim-tmux-navigator'
-Plug 'tpope/vim-rsi'
-Plug 'tpope/vim-endwise'
-Plug 'gcmt/taboo.vim'
-"Plug 'tpope/vim-obsession'
-Plug 'luochen1990/rainbow'
-"Plug 'Shougo/vimproc', { 'for': [ 'php'] }
-"Plug 'm2mdas/phpcomplete-extended', { 'for': [ 'php'] }
-"Plug 'maksimr/vim-translator', { 'for': [ 'md', 'txt'] }
-"Plug 'rayburgemeestre/phpfolding.vim'
-Plug 'adoy/vim-php-refactoring-toolbox'
-
-
-augroup load_us
-  autocmd!
-  autocmd InsertEnter * call plug#load('ultisnips')
-augroup END
-
-call plug#end()
-filetype plugin indent on
-
-"autocmd filetype php set tw=72
 autocmd filetype php set formatoptions+=t
-
 runtime macros/matchit.vim
-
-let mapleader = "\<space>"
-noremap \ ,
 filetype on
+filetype plugin on
 syntax enable
-
-set t_Co=16
-let g:solarized_termcolors=16
-
-let theme=$THEME
-set background=dark
-
-if theme == 'light'
-    set background=light
-else
-    set background=dark
-endif
-
-":autocmd ColorScheme * highlight WrongPatterns ctermbg=red guibg=red
-
-colorscheme solarized
-
 set tags=./tags,./.git/tags,../.git/tags
-
-"disable search continuation on edges
-"set nowrapscan
-"no octal
-"set nofoldenable
 set nrformats=
 set splitbelow
 set spell
@@ -98,6 +14,7 @@ set backspace=indent,eol,start
 set cot+=menuone
 set noswapfile
 set nobackup
+set nowritebackup
 set number
 set shell=/bin/bash
 set encoding=utf-8
@@ -136,51 +53,183 @@ set title
 set visualbell
 set cursorline
 set wildignore=*.swp,*.back,*.pyc,*.class,*.coverage.*
-
-let g:rainbow_active = 1 "0 if you want to enable it later via :RainbowToggle
-let &runtimepath.=',/home/jean/.vim/plugin/ns9tks-vim-l9-3bb534a720fa'
-let &runtimepath.=',/home/jean/.vim/plugin/ns9tks-vim-autocomplpop-13fe3d806464'
-
+setlocal formatoptions=1
+setlocal noexpandtab
+set complete+=s
+set formatprg=par
+setlocal linebreak
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
+set clipboard=unnamedplus
+syntax sync minlines=256
+autocmd FileType markdown set commentstring=<!!--\ %s\ -->
+"CTRLP with regex by default
+let g:ctrlp_regexp = 0
+":nnoremap <Space> @q
+"mark duplicated words and excedent whitespaces
+"end mark text errors
+"disable search continuation on edges
+"set nowrapscan
+"no octal
 "performance tweaks
 set nocursorcolumn
 set norelativenumber
+au FileType markdown setl tw=66
+au Filetype markdown setl formatoptions+=t
+au FileType TEX setl tw=66
+au Filetype TEX setl formatoptions+=t
 
-"set synmaxcol=120
+set list listchars=tab:\ \ ,trail:•
+set shortmess+=I
 
-syntax sync minlines=256
-autocmd FileType markdown set commentstring=<!!--\ %s\ -->
+autocmd BufWinEnter * highlight ColorColumn ctermbg=darkred
+set colorcolumn=120
 
-let g:ctrlp_max_files=0
-let NERDTreeMouseMode=3
-"let g:EasyMotion_use_upper = 1
-"let g:EasyMotion_smartcase = 1
-"let g:EasyMotion_use_smartsign_us = 1
-autocmd FileType php setlocal omnifunc=phpcomplete_extended#CompletePHP
+set guifont=Droid\ Sans\ Mono\ Dotted\ for\ Powerline\ 10
+set guioptions-=m  "remove menu bar
+set guioptions-=T  "remove toolbar
+set guioptions-=r  "remove right-hand scroll bar
+set guioptions-=L  "remove left-hand scroll bar
+set nocompatible
+
+let theme=$THEME
+set background=dark
+if theme == 'light'
+    set background=light
+else
+    set background=dark
+endif
+
+set foldmethod=marker
+autocmd BufRead * setlocal foldmethod=marker
+autocmd BufRead * normal zM
+
+"}}}
+
+"Plugins {{{
+
+
+call plug#begin()
+
+"PluginsList"{{{
+Plug 'vim-scripts/Mark--Karkat'
+Plug 'altercation/vim-colors-solarized'
+Plug 'tpope/vim-sensible'
+Plug 'tpope/vim-repeat'
+Plug 'mtth/scratch.vim'
+Plug 'tpope/vim-surround'
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'ervandew/supertab'
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets', { 'for': [ 'php'] }
+Plug 'kien/ctrlp.vim'
+"Plug 'jiangmiao/auto-pairs'
+Plug 'bling/vim-airline'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-unimpaired'
+"Plug 'joonty/vdebug'
+"Plug 'godlygeek/tabular'
+"Plug 'plasticboy/vim-markdown'
+Plug 'wakatime/vim-wakatime'
+"Plug 'mattn/emmet-vim'
+Plug 'ajh17/VimCompletesMe'
+"Plug 'scrooloose/syntastic'
+Plug 'pangloss/vim-javascript', { 'for': [ 'javascript'] }
+Plug 'majutsushi/tagbar'
+Plug 'nelstrom/vim-visual-star-search'
+Plug 'coot/vim_args'
+Plug 'tpope/vim-abolish'
+Plug 'mileszs/ack.vim'
+"Plug 'vim-scripts/textutil.vim'
+"Plug 'https://github.com/Shougo/unite.vim.git'
+"Plug 'Shougo/neocomplcache'
+"Plug 'Shougo/vimshell'
+"Plug '2072/PHP-Indenting-for-VIm'
+Plug 'christoomey/vim-tmux-navigator'
+Plug 'tpope/vim-rsi'
+Plug 'tpope/vim-endwise'
+Plug 'gcmt/taboo.vim'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+"Plug 'tpope/vim-obsession'
+Plug 'luochen1990/rainbow'
+"Plug 'Shougo/vimproc', { 'for': [ 'php'] }
+"Plug 'm2mdas/phpcomplete-extended', { 'for': [ 'php'] }
+"Plug 'maksimr/vim-translator', { 'for': [ 'md', 'txt'] }
+Plug 'rayburgemeestre/phpfolding.vim'
+Plug 'adoy/vim-php-refactoring-toolbox'
+Plug 'bkad/CamelCaseMotion'
+Plug 'michaeljsmith/vim-indent-object'
+Plug 'vim-scripts/argtextobj.vim'
+"}}}
+
+call plug#end()
+
+filetype plugin indent on
+
+"Marks {{{
+" Highlight words to avoid in tech writing
+" http://css-tricks.com/words-avoid-educational-writing/
+runtime plugin/mark.vim
+silent MarkClear
+
+"bad words
+Mark /\cobviously\|basically\|simply\|of\ scourse\|clearly\|just\|everyone\sknows\|however\|so,\|easy/
+Mark /\obviamente\|basicamente\|simplesmente\|com\ certeza\|claramente\|apenas\|todos\sabem\|entretanto\|então,\|fácil/
+
+"worng patterns
+Mark /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
+"}}}
+
+"snippets{{{
+augroup load_us
+  autocmd!
+  autocmd InsertEnter * call plug#load('ultisnips')
+augroup END
+
 let g:SuperTabDefaultCompletionType = '<C-n>'
 let g:SuperTabDefaultCompletionType.= "<c-x><c-o>"
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<S-tab>"
+"}}}
 
-"CTRLP with regex by default
-let g:ctrlp_regexp = 1
-":nnoremap <Space> @q
+let g:rainbow_active = 1 "0 if you want to enable it later via :RainbowToggle
+let &runtimepath.=',/home/jean/.vim/plugin/ns9tks-vim-l9-3bb534a720fa'
+let &runtimepath.=',/home/jean/.vim/plugin/ns9tks-vim-autocomplpop-13fe3d806464'
+let g:ctrlp_max_files=0
+let NERDTreeMouseMode=3
 
+autocmd FileType php setlocal omnifunc=phpcomplete_extended#CompletePHP
+
+colorscheme solarized
+"set t_Co=16
+"let g:solarized_termcolors=16
+
+"}}}
+
+"Mappings {{{
+noremap \ ,
+let mapleader = "\<space>"
 nnoremap <Leader>q :q<CR>
 nnoremap <Leader>p :set paste!<CR>
 nnoremap <Leader>o :only<CR>
+nnoremap <Leader>nnb :Scratch<CR>
 map <leader>spt :set spell spelllang=pt_br<CR>
 map <leader>sen :set spell spelllang=en_us<CR>
-map <leader>b :call ToggleBackgroundColour()<CR>
+map <leader>bt :call ToggleBackgroundColour()<CR>
+map <leader>me :!chmod +x %<CR>
+map <leader>ck :!git checkout %<CR>
+nmap <leader>of :!gnome-open %<CR>
 nmap <leader>k :NERDTreeToggle<CR>
 nmap <leader>c <C-w>v<C-w>l<CR> :VimShell<CR>
 nmap <leader>t :TagbarToggle<CR>
+nmap <leader>bs :BlogSaveContent<CR>
+nmap <leader>gk :!gitk %<CR>
 nmap <silent> <leader>ev :e $MYVIMRC<cr>
 nmap <silent> <leader>sv :so $MYVIMRC<cr>
 nmap <silent> <leader>sn :e /home/jean/projects/snippet/vim/UltiSnips/php.snippets<cr>
 nmap <silent> <leader>snc :e /home/jean/projects/snippet/vim/UltiSnips/php_clipp.snippets<cr>
-"omap t <Plug>(easymotion-bd-tl)
-
 nnoremap <leader>c :noh<cr>
 nnoremap <leader>cc :CtrlPClearAllCaches<cr>
 nnoremap <leader><space> :w<cr>
@@ -189,25 +238,41 @@ cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 
-"mark duplicated words and excedent whitespaces
-highlight WrongPatterns ctermbg=red guibg=red
-autocmd InsertEnter * match WrongPatterns /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
-autocmd InsertLeave * match WrongPatterns /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/""
-autocmd BufWinEnter * match WrongPatterns /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
-match WrongPatterns /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
-autocmd BufWinLeave * call clearmatches()
-"end mark text errors
+au FileType php setl ofu=phpcomplete#CompletePHP
+au FileType html,xhtml setl ofu=htmlcomplete#CompleteTags
+au FileType c setl ofu=ccomplete#CompleteCpp
+au FileType css setl ofu=csscomplete#CompleteCSS
+"}}}
 
+"Commands {{{
+
+"php{{{
 command Phpcsfixer : ! printf "Linter \n" && php -l `pwd`/%
     \ && printf "Csfixer \n" && php-cs-fixer fix `pwd`/%
     \ && printf "Beutifier \n" && phpcbf `pwd`/% --standard=PSR2
 
-"command Phpmystandard : ! printf "PHP my standard \n" && make-php `pwd`/%
-autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
-"autocmd filetype php nnoremap <leader>m :Phpmystandard<cr>
-command BlogSaveContent : ! printf "Saving post online" blog-post-update-content %:t:r %
+function! RunPHPUnitTest(filter)
+    cd %:p:h
+    if a:filter
+        normal! T yw
+        let result = system("clipp-unit -nop --stable --filter " . @" . " " . bufname("%"))
+    else
+        let result = system("clipp-unit --stable " . bufname("%"))
+    endif
+    split __PHPUnit_Result__
+    normal! ggdG
+    setlocal buftype=nofile
+    call append(0, split(result, '\v\n'))
+    cd -
+endfunction
 
-":setlocal makeprg=make-php `pwd`/%
+"command Phpmystandard : ! printf "PHP my standard \n" && make-php `pwd`/%
+autocmd filetype php nnoremap <leader>e :Phpcsfixer<cr>
+"autocmd filetype php nnoremap <leader>m :Phpmystandard<cr>
+nnoremap <leader>u :call RunPHPUnitTest(0)<cr>
+nnoremap <leader>f :call RunPHPUnitTest(1)<cr>
+
+"}}}
 
 function ToggleBackgroundColour ()
     if (&background == 'light')
@@ -217,6 +282,7 @@ function ToggleBackgroundColour ()
     endif
 endfunction
 
+"Scratch{{{
 function! s:Scratch (command, ...)
    redir => lines
    let saveMore = &more
@@ -238,55 +304,13 @@ function! s:Scratch (command, ...)
    execute 'normal! z'.height."\<cr>"
    0
 endfunction
-
 command! -nargs=? Scriptnames call <sid>Scratch('scriptnames', <f-args>)
 command! -nargs=+ Scratch call <sid>Scratch(<f-args>)
+"}}}
 
-filetype plugin on
-au FileType php setl ofu=phpcomplete#CompletePHP
-au FileType html,xhtml setl ofu=htmlcomplete#CompleteTags
-au FileType c setl ofu=ccomplete#CompleteCpp
-au FileType css setl ofu=csscomplete#CompleteCSS
-
-function! RunPHPUnitTest(filter)
-    cd %:p:h
-    if a:filter
-        normal! T yw
-        let result = system("clipp-unit -nop --stable --filter " . @" . " " . bufname("%"))
-    else
-        let result = system("clipp-unit --stable " . bufname("%"))
-    endif
-    split __PHPUnit_Result__
-    normal! ggdG
-    setlocal buftype=nofile
-    call append(0, split(result, '\v\n'))
-    cd -
-endfunction
-
-nnoremap <leader>u :call RunPHPUnitTest(0)<cr>
-nnoremap <leader>f :call RunPHPUnitTest(1)<cr>
-
-let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
-"set clipboard=unnamed
-set clipboard=unnamedplus
-
-
-"set statusline+=%#warningmsg#
-"set statusline+=%{SyntasticStatuslineFlag()}
-"set statusline+=%*
-"let g:syntastic_always_populate_loc_list = 1
-"let g:syntastic_auto_loc_list = 1
-"let g:syntastic_check_on_open = 1
-"let g:syntastic_check_on_wq = 0
-"let g:syntastic_php_checkers = ['php']
-
-setlocal wrap
-setlocal formatoptions=1
-setlocal noexpandtab
-set complete+=s
-set formatprg=par
-setlocal linebreak
-set guifont=ProggyCleanTT\ 12
+command BlogSaveContent : ! printf "Saving post online \n %:t:r % " && blog-update %:t:r %
 com! FormatJSON %!python -m json.tool
-"set foldmethod=syntax
+au BufNewFile *.html 0r /home/jean/projects/snippet/template/html.html
+au BufNewFile *.php 0r /home/jean/projects/snippet/template/php.php
+"}}}
 

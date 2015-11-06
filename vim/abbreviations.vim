@@ -37,8 +37,6 @@ Abolish ive I've
 Abolish its it's
 Abolish isnt isn't
 Abolish lets let's
-Abolish html HTML
-Abolish javascript JavaScript
 Abolish css CSS
 Abolish apis API's
 Abolish jquery jQuery
@@ -94,3 +92,6 @@ Abolish contemporaneos contemporâneos
 
 Abolish ehco echo
 Abolish TYpe Type
+Abolish THe The
+Abolish didnt didn't
+Abolish textti textit

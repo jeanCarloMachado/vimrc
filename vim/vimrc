@@ -1,5 +1,6 @@
 "Settings {{{
 
+set grepprg=ack
 autocmd filetype php set formatoptions+=t
 runtime macros/matchit.vim
 filetype on
@@ -28,6 +29,7 @@ set ttyfast
 set ruler
 set laststatus=2
 set undofile
+set undolevels=66666
 set incsearch
 set hlsearch
 set ignorecase
@@ -48,7 +50,6 @@ set showmatch
 set autoread
 set smarttab
 set history=1000
-set undolevels=66666
 set title
 set visualbell
 set cursorline
@@ -85,7 +86,7 @@ set shortmess+=I
 autocmd BufWinEnter * highlight ColorColumn ctermbg=darkred
 set colorcolumn=120
 
-set guifont=Droid\ Sans\ Mono\ Dotted\ for\ Powerline\ 10
+set guifont=Droid\ Sans\ Mono\ 10
 set guioptions-=m  "remove menu bar
 set guioptions-=T  "remove toolbar
 set guioptions-=r  "remove right-hand scroll bar
@@ -107,65 +108,70 @@ autocmd BufRead * normal zM
 "}}}
 
 "Plugins {{{
-
-
 call plug#begin()
 
 "PluginsList"{{{
-Plug 'vim-scripts/Mark--Karkat'
-Plug 'altercation/vim-colors-solarized'
-Plug 'tpope/vim-sensible'
-Plug 'tpope/vim-repeat'
-Plug 'mtth/scratch.vim'
-Plug 'tpope/vim-surround'
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-Plug 'ervandew/supertab'
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets', { 'for': [ 'php'] }
-Plug 'kien/ctrlp.vim'
-"Plug 'jiangmiao/auto-pairs'
-Plug 'bling/vim-airline'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-unimpaired'
-"Plug 'joonty/vdebug'
-"Plug 'godlygeek/tabular'
-"Plug 'plasticboy/vim-markdown'
-Plug 'wakatime/vim-wakatime'
-"Plug 'mattn/emmet-vim'
-Plug 'ajh17/VimCompletesMe'
-"Plug 'scrooloose/syntastic'
-Plug 'pangloss/vim-javascript', { 'for': [ 'javascript'] }
-Plug 'majutsushi/tagbar'
-Plug 'nelstrom/vim-visual-star-search'
-Plug 'coot/vim_args'
-Plug 'tpope/vim-abolish'
-Plug 'mileszs/ack.vim'
-"Plug 'vim-scripts/textutil.vim'
-"Plug 'https://github.com/Shougo/unite.vim.git'
-"Plug 'Shougo/neocomplcache'
-"Plug 'Shougo/vimshell'
+" Plug 'mtth/scratch.vim'
 "Plug '2072/PHP-Indenting-for-VIm'
-Plug 'christoomey/vim-tmux-navigator'
-Plug 'tpope/vim-rsi'
-Plug 'tpope/vim-endwise'
-Plug 'gcmt/taboo.vim'
-Plug 'Xuyuanp/nerdtree-git-plugin'
-"Plug 'tpope/vim-obsession'
-Plug 'luochen1990/rainbow'
+"Plug 'Shougo/neocomplcache'
 "Plug 'Shougo/vimproc', { 'for': [ 'php'] }
+"Plug 'Shougo/vimshell'
+"Plug 'godlygeek/tabular'
+"Plug 'https://github.com/Shougo/unite.vim.git'
+"Plug 'joonty/vdebug'
 "Plug 'm2mdas/phpcomplete-extended', { 'for': [ 'php'] }
 "Plug 'maksimr/vim-translator', { 'for': [ 'md', 'txt'] }
-Plug 'rayburgemeestre/phpfolding.vim'
-Plug 'adoy/vim-php-refactoring-toolbox'
+"Plug 'mattn/emmet-vim'
+"Plug 'plasticboy/vim-markdown'
+"Plug 'scrooloose/syntastic'
+"Plug 'tpope/vim-obsession'
+"Plug 'vim-scripts/textutil.vim'
+"Plug 'wakatime/vim-wakatime'
+Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets', { 'for': [ 'php'] }
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'adoy/vim-php-refactoring-toolbox', { 'for': [ 'php'] }
+Plug 'ajh17/VimCompletesMe'
+Plug 'altercation/vim-colors-solarized'
 Plug 'bkad/CamelCaseMotion'
+Plug 'bling/vim-airline'
+Plug 'christoomey/vim-tmux-navigator'
+Plug 'coot/vim_args'
+Plug 'ervandew/supertab'
+Plug 'gcmt/taboo.vim'
+Plug 'jiangmiao/auto-pairs'
+Plug 'kien/ctrlp.vim'
+Plug 'lervag/vimtex', { 'for': ['latex'] }
+Plug 'luochen1990/rainbow', { 'for': [ 'php'] }
+
+Plug 'majutsushi/tagbar'
 Plug 'michaeljsmith/vim-indent-object'
+Plug 'mileszs/ack.vim'
+Plug 'nelstrom/vim-visual-star-search'
+Plug 'pangloss/vim-javascript', { 'for': [ 'javascript'] }
+Plug 'rayburgemeestre/phpfolding.vim'
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'tpope/vim-abolish'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-endwise'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-rsi'
+Plug 'tpope/vim-sensible'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-unimpaired'
+Plug 'vim-scripts/Mark--Karkat'
 Plug 'vim-scripts/argtextobj.vim'
+Plug 'vim-scripts/closetag.vim', { 'for': [ 'html'] }
+
 "}}}
 
 call plug#end()
 
 filetype plugin indent on
+let g:rainbow_conf = {
+\   'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
+\   'ctermfgs': ['Blue', 'Magenta', 'DarkGreen', 'DarkYellow'],
+\}
 
 "Marks {{{
 " Highlight words to avoid in tech writing
@@ -213,18 +219,20 @@ noremap \ ,
 let mapleader = "\<space>"
 nnoremap <Leader>q :q<CR>
 nnoremap <Leader>p :set paste!<CR>
+nnoremap <Leader>e :edit!<CR>
 nnoremap <Leader>o :only<CR>
-nnoremap <Leader>nnb :Scratch<CR>
 map <leader>spt :set spell spelllang=pt_br<CR>
 map <leader>sen :set spell spelllang=en_us<CR>
 map <leader>bt :call ToggleBackgroundColour()<CR>
 map <leader>me :!chmod +x %<CR>
+map <leader>gp :!chmod 777 %<CR>
 map <leader>ck :!git checkout %<CR>
 nmap <leader>of :!gnome-open %<CR>
 nmap <leader>k :NERDTreeToggle<CR>
 nmap <leader>c <C-w>v<C-w>l<CR> :VimShell<CR>
 nmap <leader>t :TagbarToggle<CR>
-nmap <leader>bs :BlogSaveContent<CR>
+nmap <leader>bsc :BlogSaveContent<CR>
+nmap <leader>bsm :BlogSaveMeta<CR>
 nmap <leader>gk :!gitk %<CR>
 nmap <silent> <leader>ev :e $MYVIMRC<cr>
 nmap <silent> <leader>sv :so $MYVIMRC<cr>
@@ -267,7 +275,7 @@ function! RunPHPUnitTest(filter)
 endfunction
 
 "command Phpmystandard : ! printf "PHP my standard \n" && make-php `pwd`/%
-autocmd filetype php nnoremap <leader>e :Phpcsfixer<cr>
+autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
 "autocmd filetype php nnoremap <leader>m :Phpmystandard<cr>
 nnoremap <leader>u :call RunPHPUnitTest(0)<cr>
 nnoremap <leader>f :call RunPHPUnitTest(1)<cr>
@@ -282,35 +290,33 @@ function ToggleBackgroundColour ()
     endif
 endfunction
 
-"Scratch{{{
-function! s:Scratch (command, ...)
-   redir => lines
-   let saveMore = &more
-   set nomore
-   execute a:command
-   redir END
-   let &more = saveMore
-   call feedkeys("\<cr>")
-   new | setlocal buftype=nofile bufhidden=hide noswapfile
-   put=lines
-   if a:0 > 0
-      execute 'vglobal/'.a:1.'/delete'
-   endif
-   if a:command == 'scriptnames'
-      %substitute#^[[:space:]]*[[:digit:]]\+:[[:space:]]*##e
-   endif
-   silent %substitute/\%^\_s*\n\|\_s*\%$
-   let height = line('$') + 3
-   execute 'normal! z'.height."\<cr>"
-   0
-endfunction
-command! -nargs=? Scriptnames call <sid>Scratch('scriptnames', <f-args>)
-command! -nargs=+ Scratch call <sid>Scratch(<f-args>)
-"}}}
-
 command BlogSaveContent : ! printf "Saving post online \n %:t:r % " && blog-update %:t:r %
+command BlogSaveMeta : ! printf "Saving post meta online \n %:t:r % " && blog-meta-update %:t:r %
 com! FormatJSON %!python -m json.tool
 au BufNewFile *.html 0r /home/jean/projects/snippet/template/html.html
 au BufNewFile *.php 0r /home/jean/projects/snippet/template/php.php
+
+function! OnlineDoc()
+  if &ft =~ "cpp"
+    let s:urlTemplate = "http://doc.trolltech.com/4.1/%.html"
+  elseif &ft =~ "ruby"
+    let s:urlTemplate = "http://www.ruby-doc.org/core/classes/%.html"
+  elseif &ft =~ "php"
+    let s:urlTemplate = "http://php.net/manual-lookup.php?pattern=%&scope=quickref"
+  elseif &ft =~ "perl"
+    let s:urlTemplate = "http://perldoc.perl.org/functions/%.html"
+  else
+    return
+  endif
+  let s:browser = "firefox"
+  let s:wordUnderCursor = expand("<cword>")
+  let s:url = substitute(s:urlTemplate, "%", s:wordUnderCursor, "g")
+  let s:cmd = "silent !" . s:browser . " " . s:url . "&"
+  execute s:cmd
+endfunction
+" Online doc search.
+map <Leader>b :call OnlineDoc()<CR>
+
+
 "}}}
 

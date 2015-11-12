@@ -252,8 +252,7 @@ au FileType c setl ofu=ccomplete#CompleteCpp
 au FileType css setl ofu=csscomplete#CompleteCSS
 "}}}
 
-"Commands {{{
-
+"Commands {{{ 
 "php{{{
 command Phpcsfixer : ! printf "Linter \n" && php -l `pwd`/%
     \ && printf "Csfixer \n" && php-cs-fixer fix `pwd`/%
@@ -313,10 +312,11 @@ function! OnlineDoc()
   let s:url = substitute(s:urlTemplate, "%", s:wordUnderCursor, "g")
   let s:cmd = "silent !" . s:browser . " " . s:url . "&"
   execute s:cmd
+  redraw!
 endfunction
 " Online doc search.
-map <Leader>b :call OnlineDoc()<CR>
-
+map <Leader>d :call OnlineDoc()<CR>
+map <silent> <M-d> :call OnlineDoc()<CR>
 
 "}}}
 

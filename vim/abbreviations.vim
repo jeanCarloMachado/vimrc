@@ -95,3 +95,4 @@ Abolish TYpe Type
 Abolish THe The
 Abolish didnt didn't
 Abolish textti textit
+Abolish Api API

@@ -43,7 +43,6 @@ Abolish jquery jQuery
 Abolish 3d 3D
 Abolish w3c W3C
 Abolish html5 HTML5
-Abolish compufacil Compufácil
 Abolish knowl knowledge
 Abolish youre you're
 Abolish werent weren't
@@ -62,9 +61,7 @@ Abolish 3d 3D
 Abolish TYpe Type
 Abolish COnfiguration Configuration
 Abolish whant want
-Abolish itens items
 Abolish dr Dr.
-Abolish i I
 Abolish taht that
 Abolish weve we've
 Abolish aand and
@@ -96,3 +93,6 @@ Abolish THe The
 Abolish didnt didn't
 Abolish textti textit
 Abolish Api API
+Abolish Javascript JavaScript
+Abolish fucntion function
+Abolish Cleint Client

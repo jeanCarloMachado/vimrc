@@ -28,8 +28,10 @@ set wildmode=longest,list
 set ttyfast
 set ruler
 set laststatus=2
+set undodir=/home/jean/.vim/undo//
 set undofile
-set undolevels=66666
+set undolevels=1000
+set undoreload=10000
 set incsearch
 set hlsearch
 set ignorecase
@@ -127,8 +129,9 @@ call plug#begin()
 "Plug 'tpope/vim-obsession'
 "Plug 'vim-scripts/textutil.vim'
 "Plug 'wakatime/vim-wakatime'
-Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets', { 'for': [ 'php'] }
+Plug 'mhinz/vim-startify'
 Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets', { 'for': [ 'php'] }
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': [ 'php'] }
 Plug 'ajh17/VimCompletesMe'
 Plug 'altercation/vim-colors-solarized'
@@ -142,7 +145,6 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'kien/ctrlp.vim'
 Plug 'lervag/vimtex', { 'for': ['latex'] }
 Plug 'luochen1990/rainbow', { 'for': [ 'php'] }
-
 Plug 'majutsushi/tagbar'
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'mileszs/ack.vim'
@@ -162,7 +164,7 @@ Plug 'tpope/vim-unimpaired'
 Plug 'vim-scripts/Mark--Karkat'
 Plug 'vim-scripts/argtextobj.vim'
 Plug 'vim-scripts/closetag.vim', { 'for': [ 'html'] }
-
+"Plug 'gisraptor/vim-lilypond-integrator'
 "}}}
 
 call plug#end()
@@ -181,7 +183,7 @@ silent MarkClear
 
 "bad words
 Mark /\cobviously\|basically\|simply\|of\ scourse\|clearly\|just\|everyone\sknows\|however\|so,\|easy/
-Mark /\obviamente\|basicamente\|simplesmente\|com\ certeza\|claramente\|apenas\|todos\sabem\|entretanto\|então,\|fácil/
+Mark /\obviamente\|basicamente\|simplesmente\|com\ certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então,\|fácil\|bem/
 
 "worng patterns
 Mark /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
@@ -226,9 +228,14 @@ map <leader>sen :set spell spelllang=en_us<CR>
 map <leader>bt :call ToggleBackgroundColour()<CR>
 map <leader>me :!chmod +x %<CR>
 map <leader>gp :!chmod 777 %<CR>
+map <leader>mk :!make<CR>
 map <leader>ck :!git checkout %<CR>
-nmap <leader>of :!gnome-open %<CR>
+nmap <leader>of :!xdg-open % &<CR>
+nmap <leader>rmrf :!rm -rf %:p <CR>
 nmap <leader>k :NERDTreeToggle<CR>
+nmap <leader>pn :!echo %<CR>
+nmap <leader>pfn :!echo %:p<CR>
+nmap <leader>cfn :!copy %:p<CR>
 nmap <leader>c <C-w>v<C-w>l<CR> :VimShell<CR>
 nmap <leader>t :TagbarToggle<CR>
 nmap <leader>bsc :BlogSaveContent<CR>
@@ -262,9 +269,9 @@ function! RunPHPUnitTest(filter)
     cd %:p:h
     if a:filter
         normal! T yw
-        let result = system("clipp-unit -nop --stable --filter " . @" . " " . bufname("%"))
+        let result = system("cpf-unit -nop --stable --filter " . @" . " " . bufname("%"))
     else
-        let result = system("clipp-unit --stable " . bufname("%"))
+        let result = system("cpf-unit --stable " . bufname("%"))
     endif
     split __PHPUnit_Result__
     normal! ggdG

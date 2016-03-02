@@ -38,11 +38,10 @@ Abolish its it's
 Abolish isnt isn't
 Abolish lets let's
 Abolish css CSS
-Abolish apis API's
+Abolish apis api's
 Abolish jquery jQuery
 Abolish 3d 3D
 Abolish w3c W3C
-Abolish html5 HTML5
 Abolish knowl knowledge
 Abolish youre you're
 Abolish werent weren't
@@ -92,7 +91,38 @@ Abolish TYpe Type
 Abolish THe The
 Abolish didnt didn't
 Abolish textti textit
-Abolish Api API
 Abolish Javascript JavaScript
 Abolish fucntion function
 Abolish Cleint Client
+Abolish webgl WebGL
+Abolish opengl OpenGL
+Abolish cpu CPU
+Abolish gpu GPU
+Abolish webgl WebGL
+Abolish indexdb IndexedDB
+Abolish javascript JavaScript
+Abolish websql Web SQL
+Abolish ow OWP
+Abolish web Web
+Abolish webkit WebKit
+Abolish asmjs asm.js
+Abolish sql SQL
+Abolish mozilla Mozilla
+Abolish webstorage Web Storage
+Abolish sourcemaps Source Maps
+Abolish texit textit
+Abolish webvr WebVR
+Abolish substancia substância
+Abolish http2 HTTP/2
+Abolish webassembly Web Assembly
+Abolish WebAssembly Web Assembly
+Abolish evideo \textit{video}
+Abolish android Android
+Abolish owp OWP
+Abolish parametros parâmetros
+Abolish acessor accessor
+Abolish facotory factory
+Abolish entty entity
+Abolish hte the
+Abolish ahve have
+Abolish fo of

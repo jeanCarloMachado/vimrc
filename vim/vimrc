@@ -7,6 +7,9 @@ filetype on
 filetype plugin on
 syntax enable
 set tags=./tags,./.git/tags,../.git/tags
+set relativenumber
+"vim will treat all numerals as decimals, useful on num<C-a> with numbers like
+"007
 set nrformats=
 set splitbelow
 set spell
@@ -46,7 +49,7 @@ set softtabstop=4
 set expandtab
 set guiheadroom=0
 set antialias
-set runtimepath+=/home/jean/.vim/snippets
+"set runtimepath+=/home/jean/.vim/snippets
 set mouse=a
 set showmatch
 set autoread
@@ -57,7 +60,6 @@ set visualbell
 set cursorline
 set wildignore=*.swp,*.back,*.pyc,*.class,*.coverage.*
 setlocal formatoptions=1
-setlocal noexpandtab
 set complete+=s
 set formatprg=par
 setlocal linebreak
@@ -69,14 +71,11 @@ autocmd FileType markdown set commentstring=<!!--\ %s\ -->
 "CTRLP with regex by default
 let g:ctrlp_regexp = 0
 ":nnoremap <Space> @q
-"mark duplicated words and excedent whitespaces
-"end mark text errors
 "disable search continuation on edges
 "set nowrapscan
 "no octal
 "performance tweaks
 set nocursorcolumn
-set norelativenumber
 au FileType markdown setl tw=66
 au Filetype markdown setl formatoptions+=t
 au FileType TEX setl tw=66
@@ -88,7 +87,7 @@ set shortmess+=I
 autocmd BufWinEnter * highlight ColorColumn ctermbg=darkred
 set colorcolumn=120
 
-set guifont=Droid\ Sans\ Mono\ 10
+set guifont=Consolas\ 12
 set guioptions-=m  "remove menu bar
 set guioptions-=T  "remove toolbar
 set guioptions-=r  "remove right-hand scroll bar
@@ -128,9 +127,8 @@ call plug#begin()
 "Plug 'scrooloose/syntastic'
 "Plug 'tpope/vim-obsession'
 "Plug 'vim-scripts/textutil.vim'
+"Plug 'mhinz/vim-startify'
 "Plug 'wakatime/vim-wakatime'
-Plug 'mhinz/vim-startify'
-Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets', { 'for': [ 'php'] }
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': [ 'php'] }
 Plug 'ajh17/VimCompletesMe'
@@ -151,7 +149,7 @@ Plug 'mileszs/ack.vim'
 Plug 'nelstrom/vim-visual-star-search'
 Plug 'pangloss/vim-javascript', { 'for': [ 'javascript'] }
 Plug 'rayburgemeestre/phpfolding.vim'
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+"Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-endwise'
@@ -164,6 +162,9 @@ Plug 'tpope/vim-unimpaired'
 Plug 'vim-scripts/Mark--Karkat'
 Plug 'vim-scripts/argtextobj.vim'
 Plug 'vim-scripts/closetag.vim', { 'for': [ 'html'] }
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'andreimaxim/vim-io', { 'for': [ 'io'] }
+Plug 'chrisbra/BufTimer'
 "Plug 'gisraptor/vim-lilypond-integrator'
 "}}}
 
@@ -185,8 +186,17 @@ silent MarkClear
 Mark /\cobviously\|basically\|simply\|of\ scourse\|clearly\|just\|everyone\sknows\|however\|so,\|easy/
 Mark /\obviamente\|basicamente\|simplesmente\|com\ certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então,\|fácil\|bem/
 
-"worng patterns
-Mark /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
+
+"mark duplicated words and excedent whitespaces
+highlight WrongPatterns ctermbg=red guibg=red
+autocmd InsertEnter * match WrongPatterns /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
+autocmd InsertLeave * match WrongPatterns /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
+autocmd BufWinEnter * match WrongPatterns /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
+match WrongPatterns /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
+autocmd BufWinLeave * call clearmatches()
+"end mark text errors"
+
+
 "}}}
 
 "snippets{{{
@@ -206,7 +216,11 @@ let g:rainbow_active = 1 "0 if you want to enable it later via :RainbowToggle
 let &runtimepath.=',/home/jean/.vim/plugin/ns9tks-vim-l9-3bb534a720fa'
 let &runtimepath.=',/home/jean/.vim/plugin/ns9tks-vim-autocomplpop-13fe3d806464'
 let g:ctrlp_max_files=0
-let NERDTreeMouseMode=3
+"let NERDTreeMouseMode=3
+let NERDTreeDirArrows=0
+"let NERDTreeMinimalUI=1
+let NERDTreeShowLineNumbers=1
+
 
 autocmd FileType php setlocal omnifunc=phpcomplete_extended#CompletePHP
 
@@ -223,6 +237,9 @@ nnoremap <Leader>q :q<CR>
 nnoremap <Leader>p :set paste!<CR>
 nnoremap <Leader>e :edit!<CR>
 nnoremap <Leader>o :only<CR>
+inoremap <C-z> <Esc>[s1z=gi
+map - ddp
+map _ dd2kp
 map <leader>spt :set spell spelllang=pt_br<CR>
 map <leader>sen :set spell spelllang=en_us<CR>
 map <leader>bt :call ToggleBackgroundColour()<CR>
@@ -231,6 +248,7 @@ map <leader>gp :!chmod 777 %<CR>
 map <leader>mk :!make<CR>
 map <leader>ck :!git checkout %<CR>
 nmap <leader>of :!xdg-open % &<CR>
+nmap <leader>od :!thunar %:h<CR>
 nmap <leader>rmrf :!rm -rf %:p <CR>
 nmap <leader>k :NERDTreeToggle<CR>
 nmap <leader>pn :!echo %<CR>
@@ -241,6 +259,7 @@ nmap <leader>t :TagbarToggle<CR>
 nmap <leader>bsc :BlogSaveContent<CR>
 nmap <leader>bsm :BlogSaveMeta<CR>
 nmap <leader>gk :!gitk %<CR>
+nmap <leader>dw \(\<\w\+\>\)\_s*\<\1\><CR>
 nmap <silent> <leader>ev :e $MYVIMRC<cr>
 nmap <silent> <leader>sv :so $MYVIMRC<cr>
 nmap <silent> <leader>sn :e /home/jean/projects/snippet/vim/UltiSnips/php.snippets<cr>
@@ -259,7 +278,7 @@ au FileType c setl ofu=ccomplete#CompleteCpp
 au FileType css setl ofu=csscomplete#CompleteCSS
 "}}}
 
-"Commands {{{ 
+"Commands {{{
 "php{{{
 command Phpcsfixer : ! printf "Linter \n" && php -l `pwd`/%
     \ && printf "Csfixer \n" && php-cs-fixer fix `pwd`/%
@@ -269,9 +288,9 @@ function! RunPHPUnitTest(filter)
     cd %:p:h
     if a:filter
         normal! T yw
-        let result = system("cpf-unit -nop --stable --filter " . @" . " " . bufname("%"))
+        let result = system("cgexec -g memory:development phpunit -c ". $PWD ."/phpunit.xml.dist --filter " . @" . " " . bufname("%"))
     else
-        let result = system("cpf-unit --stable " . bufname("%"))
+        let result = system("cgexec -g memory:development phpunit -c ". $PWD . "/phpunit.xml.dist " . bufname("%"))
     endif
     split __PHPUnit_Result__
     normal! ggdG
@@ -306,7 +325,7 @@ function! OnlineDoc()
   if &ft =~ "cpp"
     let s:urlTemplate = "http://doc.trolltech.com/4.1/%.html"
   elseif &ft =~ "ruby"
-    let s:urlTemplate = "http://www.ruby-doc.org/core/classes/%.html"
+    let s:urlTemplate = "https://www.google.com.br/?q=ruby+%"
   elseif &ft =~ "php"
     let s:urlTemplate = "http://php.net/manual-lookup.php?pattern=%&scope=quickref"
   elseif &ft =~ "perl"
@@ -314,7 +333,7 @@ function! OnlineDoc()
   else
     return
   endif
-  let s:browser = "firefox"
+  let s:browser = "browser"
   let s:wordUnderCursor = expand("<cword>")
   let s:url = substitute(s:urlTemplate, "%", s:wordUnderCursor, "g")
   let s:cmd = "silent !" . s:browser . " " . s:url . "&"

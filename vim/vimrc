@@ -12,7 +12,7 @@ set relativenumber
 "007
 set nrformats=
 set splitbelow
-set spell
+setlocal nospell
 set completeopt=menu
 set backspace=indent,eol,start
 set cot+=menuone
@@ -20,18 +20,22 @@ set noswapfile
 set nobackup
 set nowritebackup
 set number
-set shell=/bin/bash
+set shell=/bin/zsh
 set encoding=utf-8
 set scrolloff=3
 set showmode
 set showcmd
 set hidden
 set wildmenu
+"to autocomplete the suggestions like bash
 set wildmode=longest,list
+"to autocomplete like zsh
+"set wildmenu
+"set wildmode=full
 set ttyfast
 set ruler
 set laststatus=2
-set undodir=/home/jean/.vim/undo//
+set undodir=/home/jean/.vim/undo/
 set undofile
 set undolevels=1000
 set undoreload=10000
@@ -54,6 +58,7 @@ set mouse=a
 set showmatch
 set autoread
 set smarttab
+"the quantity of normal commands recorded
 set history=1000
 set title
 set visualbell
@@ -128,7 +133,7 @@ call plug#begin()
 "Plug 'tpope/vim-obsession'
 "Plug 'vim-scripts/textutil.vim'
 "Plug 'mhinz/vim-startify'
-"Plug 'wakatime/vim-wakatime'
+Plug 'wakatime/vim-wakatime'
 Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets', { 'for': [ 'php'] }
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': [ 'php'] }
 Plug 'ajh17/VimCompletesMe'
@@ -138,23 +143,32 @@ Plug 'bling/vim-airline'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'coot/vim_args'
 Plug 'ervandew/supertab'
-Plug 'gcmt/taboo.vim'
-Plug 'jiangmiao/auto-pairs'
+"rename tabs
+" Plug 'gcmt/taboo.vim'
+" Plug 'jiangmiao/auto-pairs'
+"Plug 'Townk/vim-autoclose'
 Plug 'kien/ctrlp.vim'
 Plug 'lervag/vimtex', { 'for': ['latex'] }
 Plug 'luochen1990/rainbow', { 'for': [ 'php'] }
-Plug 'majutsushi/tagbar'
+" display tags on it's own view
+" Plug 'majutsushi/tagbar'
+"  <count>ai         (A)n (I)ndentation level and line above.
+"  <count>ii         (I)nner (I)ndentation level (no line above).
+"  <count>aI         (A)n (I)ndentation level and lines
+"  above/below.
+"  <count>iI         (I)nner (I)ndentation level (no lines above/below). 
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'mileszs/ack.vim'
 Plug 'nelstrom/vim-visual-star-search'
 Plug 'pangloss/vim-javascript', { 'for': [ 'javascript'] }
-Plug 'rayburgemeestre/phpfolding.vim'
+Plug 'rayburgemeestre/phpfolding.vim', { 'for': [ 'php' ] }
 "Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-repeat'
+"readline behaviour
 Plug 'tpope/vim-rsi'
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-surround'
@@ -162,9 +176,9 @@ Plug 'tpope/vim-unimpaired'
 Plug 'vim-scripts/Mark--Karkat'
 Plug 'vim-scripts/argtextobj.vim'
 Plug 'vim-scripts/closetag.vim', { 'for': [ 'html'] }
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-Plug 'andreimaxim/vim-io', { 'for': [ 'io'] }
-Plug 'chrisbra/BufTimer'
+" Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+"Plug 'andreimaxim/vim-io', { 'for': [ 'io'] }
+"Plug 'chrisbra/BufTimer'
 "Plug 'gisraptor/vim-lilypond-integrator'
 "}}}
 
@@ -188,12 +202,12 @@ Mark /\obviamente\|basicamente\|simplesmente\|com\ certeza\|claramente\|apenas\|
 
 
 "mark duplicated words and excedent whitespaces
-highlight WrongPatterns ctermbg=red guibg=red
-autocmd InsertEnter * match WrongPatterns /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
-autocmd InsertLeave * match WrongPatterns /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
-autocmd BufWinEnter * match WrongPatterns /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
-match WrongPatterns /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
-autocmd BufWinLeave * call clearmatches()
+" highlight WrongPatterns ctermbg=red guibg=red
+" autocmd InsertEnter * match WrongPatterns /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
+" autocmd InsertLeave * match WrongPatterns /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
+" autocmd BufWinEnter * match WrongPatterns /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
+" match WrongPatterns /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
+" autocmd BufWinLeave * call clearmatches()
 "end mark text errors"
 
 
@@ -210,23 +224,34 @@ let g:SuperTabDefaultCompletionType.= "<c-x><c-o>"
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<S-tab>"
-"}}}
 
+"}}}
+"put line numbers on netrw
+let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
+let g:netrw_liststyle=3
+let g:netrw_list_hide= '^\.'
 let g:rainbow_active = 1 "0 if you want to enable it later via :RainbowToggle
 let &runtimepath.=',/home/jean/.vim/plugin/ns9tks-vim-l9-3bb534a720fa'
 let &runtimepath.=',/home/jean/.vim/plugin/ns9tks-vim-autocomplpop-13fe3d806464'
 let g:ctrlp_max_files=0
 "let NERDTreeMouseMode=3
-let NERDTreeDirArrows=0
+" let NERDTreeDirArrows=0
 "let NERDTreeMinimalUI=1
-let NERDTreeShowLineNumbers=1
+" let NERDTreeShowLineNumbers=1
 
 
-autocmd FileType php setlocal omnifunc=phpcomplete_extended#CompletePHP
+"autocmd FileType php setlocal omnifunc=phpcomplete_extended#CompletePHP
 
+"colorscheme {{{
 colorscheme solarized
 "set t_Co=16
 "let g:solarized_termcolors=16
+
+"makes a underline on the current cursor line
+:hi CursorLine cterm=underline ctermbg=NONE
+:hi clear SpellBad
+:hi SpellBad cterm=bold ctermbg=red
+"}}}
 
 "}}}
 
@@ -237,7 +262,7 @@ nnoremap <Leader>q :q<CR>
 nnoremap <Leader>p :set paste!<CR>
 nnoremap <Leader>e :edit!<CR>
 nnoremap <Leader>o :only<CR>
-inoremap <C-z> <Esc>[s1z=gi
+" inoremap <C-z> <Esc>[s1z=gi
 map - ddp
 map _ dd2kp
 map <leader>spt :set spell spelllang=pt_br<CR>
@@ -250,7 +275,8 @@ map <leader>ck :!git checkout %<CR>
 nmap <leader>of :!xdg-open % &<CR>
 nmap <leader>od :!thunar %:h<CR>
 nmap <leader>rmrf :!rm -rf %:p <CR>
-nmap <leader>k :NERDTreeToggle<CR>
+" nmap <leader>k :NERDTreeToggle<CR>
+nmap <leader>k :Explore<CR>
 nmap <leader>pn :!echo %<CR>
 nmap <leader>pfn :!echo %:p<CR>
 nmap <leader>cfn :!copy %:p<CR>
@@ -268,11 +294,12 @@ nnoremap <leader>c :noh<cr>
 nnoremap <leader>cc :CtrlPClearAllCaches<cr>
 nnoremap <leader><space> :w<cr>
 cmap w!! w !sudo tee % >/dev/null
+"use C-p and C-n to browser normal mode commands history
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 
-au FileType php setl ofu=phpcomplete#CompletePHP
+"au FileType php setl ofu=phpcomplete#CompletePHP
 au FileType html,xhtml setl ofu=htmlcomplete#CompleteTags
 au FileType c setl ofu=ccomplete#CompleteCpp
 au FileType css setl ofu=csscomplete#CompleteCSS
@@ -319,7 +346,7 @@ command BlogSaveContent : ! printf "Saving post online \n %:t:r % " && blog-upda
 command BlogSaveMeta : ! printf "Saving post meta online \n %:t:r % " && blog-meta-update %:t:r %
 com! FormatJSON %!python -m json.tool
 au BufNewFile *.html 0r /home/jean/projects/snippet/template/html.html
-au BufNewFile *.php 0r /home/jean/projects/snippet/template/php.php
+"au BufNewFile *.php 0r /home/jean/projects/snippet/template/php.php
 
 function! OnlineDoc()
   if &ft =~ "cpp"

@@ -159,3 +159,9 @@ i5
 multiplatform
 
 DBAL
+MUL
+RIC
+MySQL
+SQLite
+PostgreSQL
+sqlite

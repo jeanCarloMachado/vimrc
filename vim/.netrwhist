@@ -1,5 +1,11 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =3
-let g:netrw_dirhist_1='/home/jean/projects/compufacil/Backend/module/Person/src/Person/Service/Person'
-let g:netrw_dirhist_2='/home/jean/projects/vimrc'
-let g:netrw_dirhist_3='/home/jean/projects/vimrc/vim'
+let g:netrw_dirhist_cnt =9
+let g:netrw_dirhist_1='/home/jean/projects/vimrc/vim/UltiSnips'
+let g:netrw_dirhist_2='/home/jean/projects/vimrc/vim'
+let g:netrw_dirhist_3='/home/jean/projects/vimrc/vim/after'
+let g:netrw_dirhist_4='/home/jean/projects/vimrc/vim'
+let g:netrw_dirhist_5='/home/jean/projects/vimrc/vim/UltiSnips'
+let g:netrw_dirhist_6='/home/jean/projects/vimrc/vim/autoload'
+let g:netrw_dirhist_7='/home/jean/projects/vimrc/vim'
+let g:netrw_dirhist_8='/home/jean/projects/compufacil/Backend/module/Application/src/Application/Service/Client'
+let g:netrw_dirhist_9='/home/jean/projects/compufacil/Backend'

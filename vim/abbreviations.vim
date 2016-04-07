@@ -24,7 +24,6 @@ Abolish havent haven't
 Abolish cant can't
 Abolish whats what's
 Abolish im I'm
-Abolish jcm 'Jean Carlo Machado'
 Abolish youve you've
 Abolish youd you'd
 Abolish THe The

@@ -1,15 +1,17 @@
-"Settings {{{
+"Settings
 
-set grepprg=ack
-autocmd filetype php set formatoptions+=t
-runtime macros/matchit.vim
+"Mappings  noremap \ ,
 filetype on
 filetype plugin on
 syntax enable
+let mapleader = "\<space>"
+set grepprg=ack
+autocmd filetype php set formatoptions+=t
+runtime macros/matchit.vim
 set tags=./tags,./.git/tags,../.git/tags
-set relativenumber
-"vim will treat all numerals as decimals, useful on num<C-a> with numbers like
-"007
+" this harder to deploy normal commands with this setting
+" set relativenumber
+"vim will treat all numerals as decimals, useful on num<C-a> with numbers like 007
 set nrformats=
 set splitbelow
 setlocal nospell
@@ -25,6 +27,7 @@ set encoding=utf-8
 set scrolloff=3
 set showmode
 set showcmd
+"use the bnext and cnext without a trailing bang
 set hidden
 set wildmenu
 "to autocomplete the suggestions like bash
@@ -39,18 +42,21 @@ set undodir=/home/jean/.vim/undo/
 set undofile
 set undolevels=1000
 set undoreload=10000
+"when there is a previous search, highlight all it's matches
+" set hlsearch
+" match while typing the search
 set incsearch
-set hlsearch
 set ignorecase
 set smartcase
 set copyindent
 set autoindent
 set gdefault
+"indenting
 set tabstop=4
 set shiftwidth=4
-set shiftround
 set softtabstop=4
 set expandtab
+set shiftround
 set guiheadroom=0
 set antialias
 "set runtimepath+=/home/jean/.vim/snippets
@@ -61,8 +67,11 @@ set smarttab
 "the quantity of normal commands recorded
 set history=1000
 set title
-set visualbell
+" set visualbell
 set cursorline
+" if exists("g:ctrl_user_command")
+"       unlet g:ctrlp_user_command
+" endif
 set wildignore=*.swp,*.back,*.pyc,*.class,*.coverage.*
 setlocal formatoptions=1
 set complete+=s
@@ -74,7 +83,7 @@ set clipboard=unnamedplus
 syntax sync minlines=256
 autocmd FileType markdown set commentstring=<!!--\ %s\ -->
 "CTRLP with regex by default
-let g:ctrlp_regexp = 0
+" let g:ctrlp_regexp = 0
 ":nnoremap <Space> @q
 "disable search continuation on edges
 "set nowrapscan
@@ -85,12 +94,13 @@ au FileType markdown setl tw=66
 au Filetype markdown setl formatoptions+=t
 au FileType TEX setl tw=66
 au Filetype TEX setl formatoptions+=t
-
 set list listchars=tab:\ \ ,trail:•
 set shortmess+=I
-
-autocmd BufWinEnter * highlight ColorColumn ctermbg=darkred
-set colorcolumn=120
+" autocmd BufWinEnter * highlight ColorColumn ctermbg=darkred
+" highlight OverLength ctermbg=red ctermfg=white guibg=#666666
+" match OverLength /\%81v.\+/
+"turn the 120 chars column to red
+" set colorcolumn=120
 
 set guifont=Consolas\ 12
 set guioptions-=m  "remove menu bar
@@ -111,20 +121,19 @@ set foldmethod=marker
 autocmd BufRead * setlocal foldmethod=marker
 autocmd BufRead * normal zM
 
-"}}}
-
-"Plugins {{{
+"Plugins
 call plug#begin()
 
-"PluginsList"{{{
+"PluginsList
 " Plug 'mtth/scratch.vim'
 "Plug '2072/PHP-Indenting-for-VIm'
 "Plug 'Shougo/neocomplcache'
-"Plug 'Shougo/vimproc', { 'for': [ 'php'] }
 "Plug 'Shougo/vimshell'
 "Plug 'godlygeek/tabular'
-"Plug 'https://github.com/Shougo/unite.vim.git'
-"Plug 'joonty/vdebug'
+" Interactive command execution in Vim. 
+Plug 'Shougo/vimproc'
+" Unite and create user interfaces
+Plug 'https://github.com/Shougo/unite.vim.git'
 "Plug 'm2mdas/phpcomplete-extended', { 'for': [ 'php'] }
 "Plug 'maksimr/vim-translator', { 'for': [ 'md', 'txt'] }
 "Plug 'mattn/emmet-vim'
@@ -134,39 +143,43 @@ call plug#begin()
 "Plug 'vim-scripts/textutil.vim'
 "Plug 'mhinz/vim-startify'
 Plug 'wakatime/vim-wakatime'
-Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets', { 'for': [ 'php'] }
-Plug 'adoy/vim-php-refactoring-toolbox', { 'for': [ 'php'] }
+" Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets', { 'for': [ 'php'] }
+" Plug 'adoy/vim-php-refactoring-toolbox', { 'for': [ 'php'] }
 Plug 'ajh17/VimCompletesMe'
 Plug 'altercation/vim-colors-solarized'
-Plug 'bkad/CamelCaseMotion'
-Plug 'bling/vim-airline'
+" Plug 'bkad/CamelCaseMotion'
+" Plug 'bling/vim-airline'
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'coot/vim_args'
-Plug 'ervandew/supertab'
+"Vim plugin for pretty printing the arg list.
+" Plug 'coot/vim_args'
+" Plug 'ervandew/supertab'
 "rename tabs
 " Plug 'gcmt/taboo.vim'
 " Plug 'jiangmiao/auto-pairs'
 "Plug 'Townk/vim-autoclose'
-Plug 'kien/ctrlp.vim'
+" Plug 'kien/ctrlp.vim'
+" Plug 'airblade/vim-gitgutter'
 Plug 'lervag/vimtex', { 'for': ['latex'] }
-Plug 'luochen1990/rainbow', { 'for': [ 'php'] }
-" display tags on it's own view
+" Plug 'luochen1990/rainbow', { 'for': [ 'php'] }
+" display tags on it's own v'iew
 " Plug 'majutsushi/tagbar'
 "  <count>ai         (A)n (I)ndentation level and line above.
 "  <count>ii         (I)nner (I)ndentation level (no line above).
 "  <count>aI         (A)n (I)ndentation level and lines
 "  above/below.
 "  <count>iI         (I)nner (I)ndentation level (no lines above/below). 
-Plug 'michaeljsmith/vim-indent-object'
+" Plug 'michaeljsmith/vim-indent-object'
 Plug 'mileszs/ack.vim'
 Plug 'nelstrom/vim-visual-star-search'
 Plug 'pangloss/vim-javascript', { 'for': [ 'javascript'] }
-Plug 'rayburgemeestre/phpfolding.vim', { 'for': [ 'php' ] }
+" Plug 'rayburgemeestre/phpfolding.vim', { 'for': [ 'php' ] }
 "Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-endwise'
-Plug 'tpope/vim-fugitive'
+"add end in ruby
+" Plug 'tpope/vim-endwise'
+"git tools
+" Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-repeat'
 "readline behaviour
 Plug 'tpope/vim-rsi'
@@ -175,22 +188,26 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'vim-scripts/Mark--Karkat'
 Plug 'vim-scripts/argtextobj.vim'
-Plug 'vim-scripts/closetag.vim', { 'for': [ 'html'] }
+" Plug 'mattn/vim-metarw-gdrive'
+" Plug 'vim-scripts/closetag.vim', { 'for': [ 'html'] }
+Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim'
+" Plug 'joonty/vdebug'
+" Plug 'wincent/Command-T'
 " Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 "Plug 'andreimaxim/vim-io', { 'for': [ 'io'] }
 "Plug 'chrisbra/BufTimer'
 "Plug 'gisraptor/vim-lilypond-integrator'
-"}}}
+
 
 call plug#end()
 
 filetype plugin indent on
-let g:rainbow_conf = {
-\   'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
-\   'ctermfgs': ['Blue', 'Magenta', 'DarkGreen', 'DarkYellow'],
-\}
+" let g:rainbow_conf = {
+" \   'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
+" \   'ctermfgs': ['Blue', 'Magenta', 'DarkGreen', 'DarkYellow'],
+" \}
 
-"Marks {{{
+"Marks 
 " Highlight words to avoid in tech writing
 " http://css-tricks.com/words-avoid-educational-writing/
 runtime plugin/mark.vim
@@ -210,30 +227,36 @@ Mark /\obviamente\|basicamente\|simplesmente\|com\ certeza\|claramente\|apenas\|
 " autocmd BufWinLeave * call clearmatches()
 "end mark text errors"
 
+nnoremap <C-p> :Unite file_rec/async<cr>
+nnoremap <leader>/ :Unite grep:.<cr>
+nnoremap <leader>b :Unite -quick-match buffer<cr>
 
-"}}}
-
-"snippets{{{
+"snippets
 augroup load_us
   autocmd!
   autocmd InsertEnter * call plug#load('ultisnips')
 augroup END
 
-let g:SuperTabDefaultCompletionType = '<C-n>'
-let g:SuperTabDefaultCompletionType.= "<c-x><c-o>"
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<S-tab>"
+" let g:SuperTabDefaultCompletionType = '<C-n>'
+" let g:SuperTabDefaultCompletionType.= "<c-x><c-o>"
+" let g:UltiSnipsExpandTrigger="<tab>"
+" let g:UltiSnipsJumpForwardTrigger="<tab>"
+" let g:UltiSnipsJumpBackwardTrigger="<S-tab>"
 
-"}}}
+
+let g:netrw_localrmdir='rm -r'
 "put line numbers on netrw
 let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
 let g:netrw_liststyle=3
 let g:netrw_list_hide= '^\.'
-let g:rainbow_active = 1 "0 if you want to enable it later via :RainbowToggle
+" let g:rainbow_active = 1 "0 if you want to enable it later via :RainbowToggle
 let &runtimepath.=',/home/jean/.vim/plugin/ns9tks-vim-l9-3bb534a720fa'
 let &runtimepath.=',/home/jean/.vim/plugin/ns9tks-vim-autocomplpop-13fe3d806464'
-let g:ctrlp_max_files=0
+" let g:ctrlp_max_files=0
+" let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
+" if executable('ag')
+"       let g:ctrlp_user_command = 'ag %s -U -l --nocolor -g ""'
+" endif
 "let NERDTreeMouseMode=3
 " let NERDTreeDirArrows=0
 "let NERDTreeMinimalUI=1
@@ -242,7 +265,7 @@ let g:ctrlp_max_files=0
 
 "autocmd FileType php setlocal omnifunc=phpcomplete_extended#CompletePHP
 
-"colorscheme {{{
+"colorscheme 
 colorscheme solarized
 "set t_Co=16
 "let g:solarized_termcolors=16
@@ -251,23 +274,18 @@ colorscheme solarized
 :hi CursorLine cterm=underline ctermbg=NONE
 :hi clear SpellBad
 :hi SpellBad cterm=bold ctermbg=red
-"}}}
 
-"}}}
-
-"Mappings {{{
-noremap \ ,
-let mapleader = "\<space>"
 nnoremap <Leader>q :q<CR>
 nnoremap <Leader>p :set paste!<CR>
 nnoremap <Leader>e :edit!<CR>
 nnoremap <Leader>o :only<CR>
+nnoremap cwi ciw
 " inoremap <C-z> <Esc>[s1z=gi
 map - ddp
 map _ dd2kp
 map <leader>spt :set spell spelllang=pt_br<CR>
 map <leader>sen :set spell spelllang=en_us<CR>
-map <leader>bt :call ToggleBackgroundColour()<CR>
+" map <leader>bt :call ToggleBackgroundColour()<CR>
 map <leader>me :!chmod +x %<CR>
 map <leader>gp :!chmod 777 %<CR>
 map <leader>mk :!make<CR>
@@ -291,22 +309,23 @@ nmap <silent> <leader>sv :so $MYVIMRC<cr>
 nmap <silent> <leader>sn :e /home/jean/projects/snippet/vim/UltiSnips/php.snippets<cr>
 nmap <silent> <leader>snc :e /home/jean/projects/snippet/vim/UltiSnips/php_clipp.snippets<cr>
 nnoremap <leader>c :noh<cr>
-nnoremap <leader>cc :CtrlPClearAllCaches<cr>
+" nnoremap <leader>cc :CtrlPClearAllCaches<cr>
 nnoremap <leader><space> :w<cr>
 cmap w!! w !sudo tee % >/dev/null
 "use C-p and C-n to browser normal mode commands history
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
+" use %% to expand to the current buffer directory
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 
 "au FileType php setl ofu=phpcomplete#CompletePHP
-au FileType html,xhtml setl ofu=htmlcomplete#CompleteTags
-au FileType c setl ofu=ccomplete#CompleteCpp
-au FileType css setl ofu=csscomplete#CompleteCSS
-"}}}
+" au FileType html,xhtml setl ofu=htmlcomplete#CompleteTags
+" au FileType c setl ofu=ccomplete#CompleteCpp
+" au FileType css setl ofu=csscomplete#CompleteCSS
 
-"Commands {{{
-"php{{{
+
+"Commands 
+"php
 command Phpcsfixer : ! printf "Linter \n" && php -l `pwd`/%
     \ && printf "Csfixer \n" && php-cs-fixer fix `pwd`/%
     \ && printf "Beutifier \n" && phpcbf `pwd`/% --standard=PSR2
@@ -315,13 +334,16 @@ function! RunPHPUnitTest(filter)
     cd %:p:h
     if a:filter
         normal! T yw
-        let result = system("cgexec -g memory:development phpunit -c ". $PWD ."/phpunit.xml.dist --filter " . @" . " " . bufname("%"))
+        let myCommand="cgexec -g memory:development phpunit -c ". $PWD ."/phpunit.xml.dist --filter " . @" . " " . expand("%:p")
+        let result = system(myCommand)
     else
-        let result = system("cgexec -g memory:development phpunit -c ". $PWD . "/phpunit.xml.dist " . bufname("%"))
+        let myCommand = "cgexec -g memory:development phpunit -c ". $PWD . "/phpunit.xml.dist " . expand("%:p")
+        let result = system(myCommand)
     endif
     split __PHPUnit_Result__
     normal! ggdG
     setlocal buftype=nofile
+    call append(0, myCommand)
     call append(0, split(result, '\v\n'))
     cd -
 endfunction
@@ -332,15 +354,14 @@ autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
 nnoremap <leader>u :call RunPHPUnitTest(0)<cr>
 nnoremap <leader>f :call RunPHPUnitTest(1)<cr>
 
-"}}}
 
-function ToggleBackgroundColour ()
-    if (&background == 'light')
-        set background=dark
-    else
-        set background=light
-    endif
-endfunction
+" function ToggleBackgroundColour ()
+"     if (&background == 'light')
+"         set background=dark
+"     else
+"         set background=light
+"     endif
+" endfunction
 
 command BlogSaveContent : ! printf "Saving post online \n %:t:r % " && blog-update %:t:r %
 command BlogSaveMeta : ! printf "Saving post meta online \n %:t:r % " && blog-meta-update %:t:r %
@@ -368,8 +389,8 @@ function! OnlineDoc()
   redraw!
 endfunction
 " Online doc search.
-map <Leader>d :call OnlineDoc()<CR>
+map <Leader>doc :call OnlineDoc()<CR>
 map <silent> <M-d> :call OnlineDoc()<CR>
 
-"}}}
+
 

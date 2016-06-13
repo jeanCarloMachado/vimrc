@@ -1,8 +1,8 @@
 "Settings
 
 "Mappings  noremap \ ,
-filetype on
-filetype plugin on
+filetype on 
+filetype plugin on 
 syntax enable
 let mapleader = "\<space>"
 set grepprg=ack
@@ -42,8 +42,7 @@ set undodir=/home/jean/.vim/undo/
 set undofile
 set undolevels=1000
 set undoreload=10000
-"when there is a previous search, highlight all it's matches
-" set hlsearch
+set hlsearch
 " match while typing the search
 set incsearch
 set ignorecase
@@ -52,18 +51,21 @@ set copyindent
 set autoindent
 set gdefault
 "indenting
+filetype plugin indent on
 set tabstop=4
+au FileType ruby setl tabstop=2
 set shiftwidth=4
-set softtabstop=4
+au FileType ruby setl shiftwidth=2
+" set softtabstop=4
 set expandtab
-set shiftround
+" set shiftround
 set guiheadroom=0
 set antialias
 "set runtimepath+=/home/jean/.vim/snippets
 set mouse=a
 set showmatch
 set autoread
-set smarttab
+" set smarttab
 "the quantity of normal commands recorded
 set history=1000
 set title
@@ -72,7 +74,8 @@ set cursorline
 " if exists("g:ctrl_user_command")
 "       unlet g:ctrlp_user_command
 " endif
-set wildignore=*.swp,*.back,*.pyc,*.class,*.coverage.*
+set wildignore=*.swp,*.back,*.pyc,*.class,*.coverage.*,*\\vendor\\**
+
 setlocal formatoptions=1
 set complete+=s
 set formatprg=par
@@ -80,7 +83,14 @@ setlocal linebreak
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
 set clipboard=unnamedplus
+"improve sytax highlight performance {{{
 syntax sync minlines=256
+set nocursorcolumn
+set nocursorline
+set norelativenumber
+autocmd BufEnter * :syn sync maxlines=500
+set synmaxcol=200  
+"}}}
 autocmd FileType markdown set commentstring=<!!--\ %s\ -->
 "CTRLP with regex by default
 " let g:ctrlp_regexp = 0
@@ -89,12 +99,11 @@ autocmd FileType markdown set commentstring=<!!--\ %s\ -->
 "set nowrapscan
 "no octal
 "performance tweaks
-set nocursorcolumn
 au FileType markdown setl tw=66
 au Filetype markdown setl formatoptions+=t
 au FileType TEX setl tw=66
 au Filetype TEX setl formatoptions+=t
-set list listchars=tab:\ \ ,trail:•
+" set list listchars=tab:\ \ ,trail:•
 set shortmess+=I
 " autocmd BufWinEnter * highlight ColorColumn ctermbg=darkred
 " highlight OverLength ctermbg=red ctermfg=white guibg=#666666
@@ -103,10 +112,10 @@ set shortmess+=I
 " set colorcolumn=120
 
 set guifont=Consolas\ 12
-set guioptions-=m  "remove menu bar
-set guioptions-=T  "remove toolbar
-set guioptions-=r  "remove right-hand scroll bar
-set guioptions-=L  "remove left-hand scroll bar
+"set guioptions-=m  "remove menu bar
+"set guioptions-=T  "remove toolbar
+"set guioptions-=r  "remove right-hand scroll bar
+"set guioptions-=L  "remove left-hand scroll bar
 set nocompatible
 
 let theme=$THEME
@@ -131,7 +140,11 @@ call plug#begin()
 "Plug 'Shougo/vimshell'
 "Plug 'godlygeek/tabular'
 " Interactive command execution in Vim. 
+Plug 'rust-lang/rust.vim', { 'for': [ 'rust'] }
+Plug 'derekwyatt/vim-scala', { 'for': [ 'scala'] }
 Plug 'Shougo/vimproc'
+Plug 'vimwiki/vimwiki'
+Plug 'vim-scripts/Align' | Plug 'vim-scripts/SQLUtilities'
 " Unite and create user interfaces
 Plug 'https://github.com/Shougo/unite.vim.git'
 "Plug 'm2mdas/phpcomplete-extended', { 'for': [ 'php'] }
@@ -143,8 +156,9 @@ Plug 'https://github.com/Shougo/unite.vim.git'
 "Plug 'vim-scripts/textutil.vim'
 "Plug 'mhinz/vim-startify'
 Plug 'wakatime/vim-wakatime'
+" Plug 'ervandew/supertab'
 " Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets', { 'for': [ 'php'] }
-" Plug 'adoy/vim-php-refactoring-toolbox', { 'for': [ 'php'] }
+Plug 'adoy/vim-php-refactoring-toolbox', { 'for': [ 'php'] }
 Plug 'ajh17/VimCompletesMe'
 Plug 'altercation/vim-colors-solarized'
 " Plug 'bkad/CamelCaseMotion'
@@ -152,7 +166,6 @@ Plug 'altercation/vim-colors-solarized'
 Plug 'christoomey/vim-tmux-navigator'
 "Vim plugin for pretty printing the arg list.
 " Plug 'coot/vim_args'
-" Plug 'ervandew/supertab'
 "rename tabs
 " Plug 'gcmt/taboo.vim'
 " Plug 'jiangmiao/auto-pairs'
@@ -201,7 +214,6 @@ Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim'
 
 call plug#end()
 
-filetype plugin indent on
 " let g:rainbow_conf = {
 " \   'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
 " \   'ctermfgs': ['Blue', 'Magenta', 'DarkGreen', 'DarkYellow'],
@@ -213,9 +225,14 @@ filetype plugin indent on
 runtime plugin/mark.vim
 silent MarkClear
 
+
+" let g:rustfmt_autosave = 1 
+
 "bad words
 Mark /\cobviously\|basically\|simply\|of\ scourse\|clearly\|just\|everyone\sknows\|however\|so,\|easy/
 Mark /\obviamente\|basicamente\|simplesmente\|com\ certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então,\|fácil\|bem/
+
+
 
 
 "mark duplicated words and excedent whitespaces
@@ -230,6 +247,8 @@ Mark /\obviamente\|basicamente\|simplesmente\|com\ certeza\|claramente\|apenas\|
 nnoremap <C-p> :Unite file_rec/async<cr>
 nnoremap <leader>/ :Unite grep:.<cr>
 nnoremap <leader>b :Unite -quick-match buffer<cr>
+call unite#custom#profile('context.ignorecase', 'context.ignorecase', 1)
+call unite#custom#source('file_rec/async', 'ignore_pattern', 'vendor/')
 
 "snippets
 augroup load_us
@@ -240,9 +259,8 @@ augroup END
 " let g:SuperTabDefaultCompletionType = '<C-n>'
 " let g:SuperTabDefaultCompletionType.= "<c-x><c-o>"
 " let g:UltiSnipsExpandTrigger="<tab>"
-" let g:UltiSnipsJumpForwardTrigger="<tab>"
-" let g:UltiSnipsJumpBackwardTrigger="<S-tab>"
-
+" let g:UltiSnipsJumpForwardTrigger="<c-b>"
+" let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 
 let g:netrw_localrmdir='rm -r'
 "put line numbers on netrw
@@ -291,6 +309,7 @@ map <leader>gp :!chmod 777 %<CR>
 map <leader>mk :!make<CR>
 map <leader>ck :!git checkout %<CR>
 nmap <leader>of :!xdg-open % &<CR>
+"open director (file manager)
 nmap <leader>od :!thunar %:h<CR>
 nmap <leader>rmrf :!rm -rf %:p <CR>
 " nmap <leader>k :NERDTreeToggle<CR>
@@ -306,8 +325,8 @@ nmap <leader>gk :!gitk %<CR>
 nmap <leader>dw \(\<\w\+\>\)\_s*\<\1\><CR>
 nmap <silent> <leader>ev :e $MYVIMRC<cr>
 nmap <silent> <leader>sv :so $MYVIMRC<cr>
-nmap <silent> <leader>sn :e /home/jean/projects/snippet/vim/UltiSnips/php.snippets<cr>
-nmap <silent> <leader>snc :e /home/jean/projects/snippet/vim/UltiSnips/php_clipp.snippets<cr>
+" nmap <silent> <leader>sn :e /home/jean/projects/snippet/vim/UltiSnips/php.snippets<cr>
+" nmap <silent> <leader>snc :e /home/jean/projects/snippet/vim/UltiSnips/php_clipp.snippets<cr>
 nnoremap <leader>c :noh<cr>
 " nnoremap <leader>cc :CtrlPClearAllCaches<cr>
 nnoremap <leader><space> :w<cr>
@@ -324,11 +343,14 @@ cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 " au FileType css setl ofu=csscomplete#CompleteCSS
 
 
+let g:vimwiki_list = [{'path': '~/projects/writing/',
+                       \ 'syntax': 'markdown', 'ext': '.md'}]
+
+
 "Commands 
 "php
-command Phpcsfixer : ! printf "Linter \n" && php -l `pwd`/%
-    \ && printf "Csfixer \n" && php-cs-fixer fix `pwd`/%
-    \ && printf "Beutifier \n" && phpcbf `pwd`/% --standard=PSR2
+command Phpcsfixer : ! php-code-check `pwd`/%
+    \ || print "Error on code check" && sleep 10
 
 function! RunPHPUnitTest(filter)
     cd %:p:h
@@ -354,20 +376,11 @@ autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
 nnoremap <leader>u :call RunPHPUnitTest(0)<cr>
 nnoremap <leader>f :call RunPHPUnitTest(1)<cr>
 
-
-" function ToggleBackgroundColour ()
-"     if (&background == 'light')
-"         set background=dark
-"     else
-"         set background=light
-"     endif
-" endfunction
-
 command BlogSaveContent : ! printf "Saving post online \n %:t:r % " && blog-update %:t:r %
 command BlogSaveMeta : ! printf "Saving post meta online \n %:t:r % " && blog-meta-update %:t:r %
 com! FormatJSON %!python -m json.tool
 au BufNewFile *.html 0r /home/jean/projects/snippet/template/html.html
-"au BufNewFile *.php 0r /home/jean/projects/snippet/template/php.php
+au BufNewFile *.php 0r /home/jean/projects/snippet/template/php.php
 
 function! OnlineDoc()
   if &ft =~ "cpp"
@@ -392,5 +405,32 @@ endfunction
 map <Leader>doc :call OnlineDoc()<CR>
 map <silent> <M-d> :call OnlineDoc()<CR>
 
-
+function! DoPrettyXML()
+  " save the filetype so we can restore it later
+  let l:origft = &ft
+  set ft=
+  " delete the xml header if it exists. This will
+  " permit us to surround the document with fake tags
+  " without creating invalid xml.
+  1s/<?xml .*?>//e
+  " insert fake tags around the entire document.
+  " This will permit us to pretty-format excerpts of
+  " XML that may contain multiple top-level elements.
+  0put ='<PrettyXML>'
+  $put ='</PrettyXML>'
+  silent %!xmllint --format -
+  " xmllint will insert an <?xml?> header. it's easy enough to delete
+  " if you don't want it.
+  " delete the fake tags
+  2d
+  $d
+  " restore the 'normal' indentation, which is one extra level
+  " too deep due to the extra tags we wrapped around the document.
+  silent %<
+  " back to home
+  1
+  " restore the filetype
+  exe "set ft=" . l:origft
+endfunction
+command! PrettyXML call DoPrettyXML()
 

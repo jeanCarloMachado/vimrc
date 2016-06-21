@@ -5,7 +5,7 @@ filetype on
 filetype plugin on 
 syntax enable
 let mapleader = "\<space>"
-set grepprg=ack
+set grepprg=ag
 autocmd filetype php set formatoptions+=t
 runtime macros/matchit.vim
 set tags=./tags,./.git/tags,../.git/tags
@@ -75,6 +75,12 @@ set cursorline
 "       unlet g:ctrlp_user_command
 " endif
 set wildignore=*.swp,*.back,*.pyc,*.class,*.coverage.*,*\\vendor\\**
+set backupdir=~/.tmp
+set directory=~/.tmp "don't clutter dirs with swp and tmpfiles
+set lazyredraw "don't redraw screend when running macros
+highlight StatusLine ctermfg=blue ctermbg=yellow
+" Display extra whitespace
+set list listchars=tab:»·,trail:·
 
 setlocal formatoptions=1
 set complete+=s
@@ -99,6 +105,10 @@ autocmd FileType markdown set commentstring=<!!--\ %s\ -->
 "set nowrapscan
 "no octal
 "performance tweaks
+"au FileType php setl ofu=phpcomplete#CompletePHP
+" au FileType html,xhtml setl ofu=htmlcomplete#CompleteTags
+" au FileType c setl ofu=ccomplete#CompleteCpp
+" au FileType css setl ofu=csscomplete#CompleteCSS
 au FileType markdown setl tw=66
 au Filetype markdown setl formatoptions+=t
 au FileType TEX setl tw=66
@@ -117,6 +127,10 @@ set guifont=Consolas\ 12
 "set guioptions-=r  "remove right-hand scroll bar
 "set guioptions-=L  "remove left-hand scroll bar
 set nocompatible
+hi MatchParen cterm=none ctermbg=black ctermfg=yellow
+" Make it more obviouser when lines are too long
+highlight ColorColumn ctermbg=235
+
 
 let theme=$THEME
 set background=dark
@@ -168,7 +182,7 @@ Plug 'christoomey/vim-tmux-navigator'
 " Plug 'coot/vim_args'
 "rename tabs
 " Plug 'gcmt/taboo.vim'
-" Plug 'jiangmiao/auto-pairs'
+Plug 'jiangmiao/auto-pairs'
 "Plug 'Townk/vim-autoclose'
 " Plug 'kien/ctrlp.vim'
 " Plug 'airblade/vim-gitgutter'
@@ -210,6 +224,7 @@ Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim'
 "Plug 'andreimaxim/vim-io', { 'for': [ 'io'] }
 "Plug 'chrisbra/BufTimer'
 "Plug 'gisraptor/vim-lilypond-integrator'
+"Plug 'vim-scripts/marvim'
 
 
 call plug#end()
@@ -232,9 +247,6 @@ silent MarkClear
 Mark /\cobviously\|basically\|simply\|of\ scourse\|clearly\|just\|everyone\sknows\|however\|so,\|easy/
 Mark /\obviamente\|basicamente\|simplesmente\|com\ certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então,\|fácil\|bem/
 
-
-
-
 "mark duplicated words and excedent whitespaces
 " highlight WrongPatterns ctermbg=red guibg=red
 " autocmd InsertEnter * match WrongPatterns /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
@@ -243,6 +255,12 @@ Mark /\obviamente\|basicamente\|simplesmente\|com\ certeza\|claramente\|apenas\|
 " match WrongPatterns /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
 " autocmd BufWinLeave * call clearmatches()
 "end mark text errors"
+
+" let marvim_store = '/home/jean/projects/vimrc/vim/marvim' 
+" let marvim_find_key = '<leader>mf' " change find key from <F2> to 'space' 
+" let marvim_store_key = '<leader>ms'     " change store key from <F3> to 'ms' 
+"let marvim_register = 'c'       " change used register from 'q' to 'c' 
+"let marvim_prefix = 0           " disable default syntax based prefix 
 
 nnoremap <C-p> :Unite file_rec/async<cr>
 nnoremap <leader>/ :Unite grep:.<cr>
@@ -293,36 +311,39 @@ colorscheme solarized
 :hi clear SpellBad
 :hi SpellBad cterm=bold ctermbg=red
 
-nnoremap <Leader>q :q<CR>
-nnoremap <Leader>p :set paste!<CR>
-nnoremap <Leader>e :edit!<CR>
-nnoremap <Leader>o :only<CR>
+nnoremap <BS> :Rex<cr>
+nnoremap <Leader>q :q<cr>
+nnoremap <Leader>p :set paste!<cr>
+nnoremap <Leader>e :edit!<cr>
+nnoremap <Leader>o :only<cr>
 nnoremap cwi ciw
 " inoremap <C-z> <Esc>[s1z=gi
 map - ddp
 map _ dd2kp
-map <leader>spt :set spell spelllang=pt_br<CR>
-map <leader>sen :set spell spelllang=en_us<CR>
-" map <leader>bt :call ToggleBackgroundColour()<CR>
-map <leader>me :!chmod +x %<CR>
-map <leader>gp :!chmod 777 %<CR>
-map <leader>mk :!make<CR>
-map <leader>ck :!git checkout %<CR>
-nmap <leader>of :!xdg-open % &<CR>
+map <leader>spt :set spell spelllang=pt_br<cr>
+map <leader>sen :set spell spelllang=en_us<cr>
+map <leader>i mmgg=G`m
+map <leader>x :w<','> !bash<cr>
+" map <leader>bt :call ToggleBackgroundColour()<cr>
+map <leader>me :!chmod +x %<cr>
+map <leader>gp :!chmod 777 %<cr>
+map <leader>mk :!make<cr>
+map <leader>ck :!git checkout %<cr>
+nmap <leader>of :!xdg-open % &<cr>
 "open director (file manager)
-nmap <leader>od :!thunar %:h<CR>
-nmap <leader>rmrf :!rm -rf %:p <CR>
-" nmap <leader>k :NERDTreeToggle<CR>
-nmap <leader>k :Explore<CR>
-nmap <leader>pn :!echo %<CR>
-nmap <leader>pfn :!echo %:p<CR>
-nmap <leader>cfn :!copy %:p<CR>
-nmap <leader>c <C-w>v<C-w>l<CR> :VimShell<CR>
-nmap <leader>t :TagbarToggle<CR>
-nmap <leader>bsc :BlogSaveContent<CR>
-nmap <leader>bsm :BlogSaveMeta<CR>
-nmap <leader>gk :!gitk %<CR>
-nmap <leader>dw \(\<\w\+\>\)\_s*\<\1\><CR>
+nmap <leader>od :!thunar %:h<cr>
+nmap <leader>rmrf :!rm -rf %:p <cr>
+" nmap <leader>k :NERDTreeToggle<cr>
+nmap <leader>k :Explore<cr>
+nmap <leader>pn :!echo %<cr>
+nmap <leader>pfn :!echo %:p<cr>
+nmap <leader>cfn :!copy %:p<cr>
+nmap <leader>c <C-w>v<C-w>l<cr> :VimShell<cr>
+nmap <leader>t :TagbarToggle<cr>
+nmap <leader>bsc :BlogSaveContent<cr>
+nmap <leader>bsm :BlogSaveMeta<cr>
+nmap <leader>gk :!gitk %<cr>
+nmap <leader>dw \(\<\w\+\>\)\_s*\<\1\><cr>
 nmap <silent> <leader>ev :e $MYVIMRC<cr>
 nmap <silent> <leader>sv :so $MYVIMRC<cr>
 " nmap <silent> <leader>sn :e /home/jean/projects/snippet/vim/UltiSnips/php.snippets<cr>
@@ -337,15 +358,8 @@ cnoremap <C-n> <Down>
 " use %% to expand to the current buffer directory
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 
-"au FileType php setl ofu=phpcomplete#CompletePHP
-" au FileType html,xhtml setl ofu=htmlcomplete#CompleteTags
-" au FileType c setl ofu=ccomplete#CompleteCpp
-" au FileType css setl ofu=csscomplete#CompleteCSS
-
-
-let g:vimwiki_list = [{'path': '~/projects/writing/',
-                       \ 'syntax': 'markdown', 'ext': '.md'}]
-
+let g:vimwiki_list = [{'path': '~/projects/writing/', 'syntax': 'markdown', 'ext': '.md'},
+            \ {'path': '~/projects/compufacil/Docs/', 'syntax': 'markdown', 'ext': '.md'}]
 
 "Commands 
 "php
@@ -402,8 +416,38 @@ function! OnlineDoc()
   redraw!
 endfunction
 " Online doc search.
-map <Leader>doc :call OnlineDoc()<CR>
-map <silent> <M-d> :call OnlineDoc()<CR>
+map <Leader>doc :call OnlineDoc()<cr>
+map <silent> <M-d> :call OnlineDoc()<cr>
+
+" Merge a tab into a split in the previous window
+function! MergeTabs()
+  if tabpagenr() == 1
+    return
+  endif
+  let bufferName = bufname("%")
+  if tabpagenr("$") == tabpagenr()
+    close!
+  else
+    close!
+    tabprev
+  endif
+  split
+  execute "buffer " . bufferName
+endfunction
+nmap <C-W>u :call MergeTabs()<CR>
+
+
+function! RenameFile()
+  let old_name = expand('%')
+  let new_name = input('New file name: ', expand('%'), 'file')
+  if new_name != '' && new_name != old_name
+    exec ':saveas ' . new_name
+    exec ':silent !rm ' . old_name
+    redraw!
+  endif
+endfunction
+map <Leader>r :call RenameFile()<cr>
+
 
 function! DoPrettyXML()
   " save the filetype so we can restore it later

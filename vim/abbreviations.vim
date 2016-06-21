@@ -128,3 +128,4 @@ Abolish fo of
 Abolish teh the
 Abolish lenght length
 Abolish dei die
+Abolish reuslt result

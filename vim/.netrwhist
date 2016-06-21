@@ -1,7 +1,4 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =5
-let g:netrw_dirhist_1='/home/jean/projects/compufacil/Backend'
-let g:netrw_dirhist_2='/home/jean/projects/compufacil/Backend/module'
-let g:netrw_dirhist_3='/home/jean/projects/writing'
-let g:netrw_dirhist_4='/etc/netctl'
-let g:netrw_dirhist_5='/home/jean/projects/experiments/erlang'
+let g:netrw_dirhist_cnt =2
+let g:netrw_dirhist_1='/home/jean/projects/compufacil/Backend/module/Application'
+let g:netrw_dirhist_2='/home/jean/projects/compufacil/Backend/module/Application/tests/src'

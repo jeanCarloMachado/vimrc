@@ -129,3 +129,8 @@ Abolish teh the
 Abolish lenght length
 Abolish dei die
 Abolish reuslt result
+Abolish api API
+Abolish qeu que
+Abolish nwe new
+Abolish length length
+Abolish Datetime DateTime

@@ -1,8 +1,6 @@
-"Settings
-
 "Mappings  noremap \ ,
-filetype on 
-filetype plugin on 
+filetype on
+filetype plugin on
 syntax enable
 let mapleader = "\<space>"
 set grepprg=ag
@@ -29,8 +27,7 @@ set showmode
 set showcmd
 "use the bnext and cnext without a trailing bang
 set hidden
-set wildmenu
-"to autocomplete the suggestions like bash
+set wildmenu "to autocomplete the suggestions like bash
 set wildmode=longest,list
 "to autocomplete like zsh
 "set wildmenu
@@ -50,6 +47,11 @@ set smartcase
 set copyindent
 set autoindent
 set gdefault
+set guioptions-=m  "remove menu bar
+set guioptions-=T  "remove toolbar
+set guioptions-=r  "remove right-hand scroll bar
+set guioptions-=L  "remove left-hand scroll bar
+
 "indenting
 filetype plugin indent on
 set tabstop=4
@@ -60,7 +62,7 @@ au FileType ruby setl shiftwidth=2
 set expandtab
 " set shiftround
 set guiheadroom=0
-set antialias
+"set antialias
 "set runtimepath+=/home/jean/.vim/snippets
 set mouse=a
 set showmatch
@@ -74,7 +76,7 @@ set cursorline
 " if exists("g:ctrl_user_command")
 "       unlet g:ctrlp_user_command
 " endif
-set wildignore=*.swp,*.back,*.pyc,*.class,*.coverage.*,*\\vendor\\**
+set wildignore=*.swp,*.back,*.pyc,*.class,*.coverage.*,*\\vendor\\*
 set backupdir=~/.tmp
 set directory=~/.tmp "don't clutter dirs with swp and tmpfiles
 set lazyredraw "don't redraw screend when running macros
@@ -121,7 +123,7 @@ set shortmess+=I
 "turn the 120 chars column to red
 " set colorcolumn=120
 
-set guifont=Consolas\ 12
+set guifont=Letter\ Gothic\ Bold\ 11
 "set guioptions-=m  "remove menu bar
 "set guioptions-=T  "remove toolbar
 "set guioptions-=r  "remove right-hand scroll bar
@@ -147,84 +149,69 @@ autocmd BufRead * normal zM
 "Plugins
 call plug#begin()
 
-"PluginsList
-" Plug 'mtth/scratch.vim'
 "Plug '2072/PHP-Indenting-for-VIm'
 "Plug 'Shougo/neocomplcache'
+"Plug 'Shougo/vimproc'
 "Plug 'Shougo/vimshell'
+"Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets', { 'for': [ 'php'] }
+"Plug 'Townk/vim-autoclose'
+"Plug 'Xuyuanp/nerdtree-git-plugin'
+"Plug 'airblade/vim-gitgutter'
+"Plug 'andreimaxim/vim-io', { 'for': [ 'io'] }
+"Plug 'bkad/CamelCaseMotion'
+"Plug 'bling/vim-airline'
+"Plug 'chrisbra/BufTimer'
+"Plug 'coot/vim_args'
+"Plug 'derekwyatt/vim-scala', { 'for': [ 'scala'] }
+"Plug 'ervandew/supertab'
+"Plug 'gcmt/taboo.vim'
+"Plug 'gisraptor/vim-lilypond-integrator'
 "Plug 'godlygeek/tabular'
-" Interactive command execution in Vim. 
-Plug 'rust-lang/rust.vim', { 'for': [ 'rust'] }
-Plug 'derekwyatt/vim-scala', { 'for': [ 'scala'] }
-Plug 'Shougo/vimproc'
-Plug 'vimwiki/vimwiki'
-Plug 'vim-scripts/Align' | Plug 'vim-scripts/SQLUtilities'
-" Unite and create user interfaces
-Plug 'https://github.com/Shougo/unite.vim.git'
+"Plug 'https://github.com/Shougo/unite.vim.git' " Unite and create user interfaces
+"Plug 'joonty/vdebug'
+"Plug 'kien/ctrlp.vim'
+"Plug 'lervag/vimtex', { 'for': ['latex'] }
+"Plug 'luochen1990/rainbow', { 'for': [ 'php'] }
 "Plug 'm2mdas/phpcomplete-extended', { 'for': [ 'php'] }
 "Plug 'maksimr/vim-translator', { 'for': [ 'md', 'txt'] }
 "Plug 'mattn/emmet-vim'
-"Plug 'plasticboy/vim-markdown'
-"Plug 'scrooloose/syntastic'
-"Plug 'tpope/vim-obsession'
-"Plug 'vim-scripts/textutil.vim'
+"Plug 'mattn/vim-metarw-gdrive'
 "Plug 'mhinz/vim-startify'
-Plug 'wakatime/vim-wakatime'
-" Plug 'ervandew/supertab'
-" Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets', { 'for': [ 'php'] }
+"Plug 'michaeljsmith/vim-indent-object'
+"Plug 'mileszs/ack.vim'
+"Plug 'mtth/scratch.vim'
+"Plug 'pangloss/vim-javascript', { 'for': [ 'javascript'] }
+"Plug 'plasticboy/vim-markdown'
+"Plug 'rayburgemeestre/phpfolding.vim', { 'for': [ 'php' ] }
+"Plug 'rust-lang/rust.vim', { 'for': [ 'rust'] }
+"Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+"Plug 'scrooloose/syntastic'
+"Plug 'tpope/vim-endwise' add end in ruby
+"Plug 'tpope/vim-fugitive' git tools
+"Plug 'tpope/vim-obsession'
+"Plug 'vim-scripts/closetag.vim', { 'for': [ 'html'] }
+"Plug 'vim-scripts/marvim'
+"Plug 'vim-scripts/textutil.vim'
+"Plug 'wincent/Command-T'
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': [ 'php'] }
 Plug 'ajh17/VimCompletesMe'
 Plug 'altercation/vim-colors-solarized'
-" Plug 'bkad/CamelCaseMotion'
-" Plug 'bling/vim-airline'
 Plug 'christoomey/vim-tmux-navigator'
-"Vim plugin for pretty printing the arg list.
-" Plug 'coot/vim_args'
-"rename tabs
-" Plug 'gcmt/taboo.vim'
 Plug 'jiangmiao/auto-pairs'
-"Plug 'Townk/vim-autoclose'
-" Plug 'kien/ctrlp.vim'
-" Plug 'airblade/vim-gitgutter'
-Plug 'lervag/vimtex', { 'for': ['latex'] }
-" Plug 'luochen1990/rainbow', { 'for': [ 'php'] }
-" display tags on it's own v'iew
-" Plug 'majutsushi/tagbar'
-"  <count>ai         (A)n (I)ndentation level and line above.
-"  <count>ii         (I)nner (I)ndentation level (no line above).
-"  <count>aI         (A)n (I)ndentation level and lines
-"  above/below.
-"  <count>iI         (I)nner (I)ndentation level (no lines above/below). 
-" Plug 'michaeljsmith/vim-indent-object'
-Plug 'mileszs/ack.vim'
+Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim'
 Plug 'nelstrom/vim-visual-star-search'
-Plug 'pangloss/vim-javascript', { 'for': [ 'javascript'] }
-" Plug 'rayburgemeestre/phpfolding.vim', { 'for': [ 'php' ] }
-"Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-commentary'
-"add end in ruby
-" Plug 'tpope/vim-endwise'
-"git tools
-" Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-repeat'
-"readline behaviour
 Plug 'tpope/vim-rsi'
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
+Plug 'vim-scripts/Align' | Plug 'vim-scripts/SQLUtilities'
 Plug 'vim-scripts/Mark--Karkat'
 Plug 'vim-scripts/argtextobj.vim'
-" Plug 'mattn/vim-metarw-gdrive'
-" Plug 'vim-scripts/closetag.vim', { 'for': [ 'html'] }
-Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim'
-" Plug 'joonty/vdebug'
-" Plug 'wincent/Command-T'
-" Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-"Plug 'andreimaxim/vim-io', { 'for': [ 'io'] }
-"Plug 'chrisbra/BufTimer'
-"Plug 'gisraptor/vim-lilypond-integrator'
-"Plug 'vim-scripts/marvim'
+Plug 'vimwiki/vimwiki'
+Plug 'wakatime/vim-wakatime'
 
 
 call plug#end()
@@ -262,11 +249,18 @@ Mark /\obviamente\|basicamente\|simplesmente\|com\ certeza\|claramente\|apenas\|
 "let marvim_register = 'c'       " change used register from 'q' to 'c' 
 "let marvim_prefix = 0           " disable default syntax based prefix 
 
-nnoremap <C-p> :Unite file_rec/async<cr>
-nnoremap <leader>/ :Unite grep:.<cr>
-nnoremap <leader>b :Unite -quick-match buffer<cr>
-call unite#custom#profile('context.ignorecase', 'context.ignorecase', 1)
-call unite#custom#source('file_rec/async', 'ignore_pattern', 'vendor/')
+"let g:ackprg = 'ag --vimgrep --smart-case'
+"cnoreabbrev ag Ack
+"cnoreabbrev aG Ack
+"cnoreabbrev Ag Ack
+"cnoreabbrev AG Ack
+
+"let g:unite_redraw_hold_candidates=50000
+"nnoremap <C-p> :Unite file_rec/async<cr>
+"nnoremap <leader>/ :Unite grep:.<cr>
+"nnoremap <leader>b :Unite -quick-match buffer<cr>
+"call unite#custom#profile('context.ignorecase', 'context.ignorecase', 1)
+"call unite#custom#source('file_rec/async', 'ignore_pattern', 'vendor/')
 
 "snippets
 augroup load_us
@@ -284,7 +278,9 @@ let g:netrw_localrmdir='rm -r'
 "put line numbers on netrw
 let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
 let g:netrw_liststyle=3
-let g:netrw_list_hide= '^\.'
+"let g:netrw_list_hide= '^\.'
+let g:netrw_hide = 0
+
 " let g:rainbow_active = 1 "0 if you want to enable it later via :RainbowToggle
 let &runtimepath.=',/home/jean/.vim/plugin/ns9tks-vim-l9-3bb534a720fa'
 let &runtimepath.=',/home/jean/.vim/plugin/ns9tks-vim-autocomplpop-13fe3d806464'
@@ -301,7 +297,7 @@ let &runtimepath.=',/home/jean/.vim/plugin/ns9tks-vim-autocomplpop-13fe3d806464'
 
 "autocmd FileType php setlocal omnifunc=phpcomplete_extended#CompletePHP
 
-"colorscheme 
+"colorscheme
 colorscheme solarized
 "set t_Co=16
 "let g:solarized_termcolors=16
@@ -358,7 +354,7 @@ cnoremap <C-n> <Down>
 " use %% to expand to the current buffer directory
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 
-let g:vimwiki_list = [{'path': '~/projects/writing/', 'syntax': 'markdown', 'ext': '.md'},
+let g:vimwiki_list = [{'path': '~/projects/writing/', 'syntax': 'markdown', 'ext': '.md', 'custom_wiki2html': '/home/jean/projects/vimrc/vim/plugin/markdown_to_html.py', 'path_html': '/home/jean/projects/writing/_wikibuild' },
             \ {'path': '~/projects/compufacil/Docs/', 'syntax': 'markdown', 'ext': '.md'}]
 
 "Commands 
@@ -370,10 +366,11 @@ function! RunPHPUnitTest(filter)
     cd %:p:h
     if a:filter
         normal! T yw
-        let myCommand="cgexec -g memory:development phpunit -c ". $PWD ."/phpunit.xml.dist --filter " . @" . " " . expand("%:p")
+        "
+        let myCommand="phpunit -c ". $PWD ."/Backend/phpunit.xml.dist --filter " . @" . " " . expand("%:p")
         let result = system(myCommand)
     else
-        let myCommand = "cgexec -g memory:development phpunit -c ". $PWD . "/phpunit.xml.dist " . expand("%:p")
+        let myCommand = "phpunit -c ". $PWD . "/Backend/phpunit.xml.dist " . expand("%:p")
         let result = system(myCommand)
     endif
     split __PHPUnit_Result__
@@ -395,6 +392,8 @@ command BlogSaveMeta : ! printf "Saving post meta online \n %:t:r % " && blog-me
 com! FormatJSON %!python -m json.tool
 au BufNewFile *.html 0r /home/jean/projects/snippet/template/html.html
 au BufNewFile *.php 0r /home/jean/projects/snippet/template/php.php
+au BufNewFile *.c 0r /home/jean/projects/snippet/template/c.c
+au BufNewFile *.md 0r /home/jean/projects/snippet/template/science-review.md
 
 function! OnlineDoc()
   if &ft =~ "cpp"
@@ -477,4 +476,21 @@ function! DoPrettyXML()
   exe "set ft=" . l:origft
 endfunction
 command! PrettyXML call DoPrettyXML()
+let @r=';.'
 
+" Strip the newline from the end of a string
+function! Chomp(str)
+  return substitute(a:str, '\n$', '', '')
+endfunction
+
+" Find a file and pass it to cmd
+function! DmenuOpen(cmd)
+  let fname = Chomp(system("find . -type f -not -path '*node_modules*' -not -path '*.git*' 2>/dev/null |  dmenu -i -l 20 -p " . a:cmd))
+  if empty(fname)
+    return
+  endif
+  execute a:cmd . " " . fname
+endfunction
+
+map <c-s-p> :call DmenuOpen("tabe")<cr>
+map <c-p> :call DmenuOpen("e")<cr>

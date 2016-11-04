@@ -18,7 +18,6 @@ Abolish dont don't
 Abolish thougth thought
 Abolish cant can't
 Abolish getService get
-Abolish were we're
 Abolish dont don't
 Abolish havent haven't
 Abolish cant can't
@@ -134,3 +133,9 @@ Abolish qeu que
 Abolish nwe new
 Abolish length length
 Abolish Datetime DateTime
+Abolish algorítmos algoritmos
+Abolish shouldnt shouldn't
+Abolish calss class
+Abolish adqSql addSql
+Abolish referencias referências
+Abolish ehlp help

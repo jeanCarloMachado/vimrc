@@ -154,7 +154,8 @@ autocmd BufRead * normal zM
 "Plugins
 call plug#begin()
 
-Plug 'Raimondi/delimitMate'
+" Plug 'bkad/CamelCaseMotion'
+" Plug 'vim-scripts/Align' | Plug 'vim-scripts/SQLUtilities'
 "Plug '2072/PHP-Indenting-for-VIm'
 "Plug 'Shougo/neocomplcache'
 "Plug 'Shougo/vimproc'
@@ -163,6 +164,7 @@ Plug 'Raimondi/delimitMate'
 "Plug 'Townk/vim-autoclose'
 "Plug 'Xuyuanp/nerdtree-git-plugin'
 "Plug 'airblade/vim-gitgutter'
+"Plug 'ajh17/VimCompletesMe'
 "Plug 'andreimaxim/vim-io', { 'for': [ 'io'] }
 "Plug 'chrisbra/BufTimer'
 "Plug 'coot/vim_args'
@@ -172,6 +174,7 @@ Plug 'Raimondi/delimitMate'
 "Plug 'gisraptor/vim-lilypond-integrator'
 "Plug 'godlygeek/tabular'
 "Plug 'https://github.com/Shougo/unite.vim.git' " Unite and create user interfaces
+"Plug 'jiangmiao/auto-pairs'
 "Plug 'joonty/vdebug'
 "Plug 'kien/ctrlp.vim'
 "Plug 'lervag/vimtex', { 'for': ['latex'] }
@@ -192,39 +195,36 @@ Plug 'Raimondi/delimitMate'
 "Plug 'tpope/vim-endwise' add end in ruby
 "Plug 'tpope/vim-fugitive' git tools
 "Plug 'tpope/vim-obsession'
+"Plug 'tpope/vim-repeat'
+"Plug 'tpope/vim-rsi'
 "Plug 'vim-scripts/closetag.vim', { 'for': [ 'html'] }
 "Plug 'vim-scripts/marvim'
 "Plug 'vim-scripts/textutil.vim'
 "Plug 'wincent/Command-T'
-Plug 'itchyny/calendar.vim'
-Plug 'kana/vim-textobj-user'
-Plug 'kana/vim-textobj-function'
-Plug 'bling/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+"redline style integration
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': [ 'php'] }
-Plug 'vim-ruby/vim-ruby', { 'for': [ 'ruby'] }
-"Plug 'ajh17/VimCompletesMe'
 Plug 'altercation/vim-colors-solarized'
+Plug 'bling/vim-airline'
 Plug 'christoomey/vim-tmux-navigator'
-"Plug 'jiangmiao/auto-pairs'
+Plug 'itchyny/calendar.vim'
+Plug 'jez/vim-superman'
+Plug 'kana/vim-textobj-function'
+Plug 'kana/vim-textobj-user'
 Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim'
+Plug 'michaeljsmith/vim-indent-object'
 Plug 'nelstrom/vim-visual-star-search'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-commentary'
-"Plug 'tpope/vim-repeat'
-"redline style integration
-"Plug 'tpope/vim-rsi'
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
-" Plug 'vim-scripts/Align' | Plug 'vim-scripts/SQLUtilities'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'vim-ruby/vim-ruby', { 'for': [ 'ruby'] }
 Plug 'vim-scripts/Mark--Karkat'
 Plug 'vim-scripts/argtextobj.vim'
 Plug 'vimwiki/vimwiki'
 Plug 'wakatime/vim-wakatime'
-" Plug 'bkad/CamelCaseMotion'
-Plug 'michaeljsmith/vim-indent-object'
-Plug 'jez/vim-superman'
+Plug 'Raimondi/delimitMate'
 
 
 call plug#end()
@@ -425,6 +425,7 @@ au BufNewFile *.php 0r /home/jean/projects/snippet/template/php.php
 au BufNewFile *.c 0r /home/jean/projects/snippet/template/c.c
 au BufNewFile *review.md 0r /home/jean/projects/snippet/template/science-review.md
 au BufNewFile */diary/*.md 0r /home/jean/projects/snippet/template/diary.md
+au BufNewFile */posts/*.md 0r /home/jean/projects/snippet/template/post.md
 
 function! OnlineDoc()
   if &ft =~ "cpp"
@@ -562,11 +563,11 @@ function UnderlineHeading(level)
     elseif a:level == 2
         normal! yypVr-
     elseif a:level == 3
-        normal! I###  
+        normal! I### 
     elseif a:level == 4
-        normal! I####  
+        normal! I#### 
     elseif a:level == 5
-        normal! I#####  
+        normal! I##### 
     endif
 endfunction
 
@@ -742,3 +743,9 @@ function! s:preRun(str)
     return "$(".a:str.")"
 endfunction
 call MapAction('preRun', '<leader>p')
+
+function! s:Trim(str)
+  let out = system('trim ', a:str)
+  return out
+endfunction
+call MapAction('Trim', '<leader>t')

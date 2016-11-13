@@ -1,3 +1,6 @@
 *.un~
 *undo/*
-.vim/undo/*
+vim/undo/*
+.netrwhist
+vim/plugged
+vim/plugin

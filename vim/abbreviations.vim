@@ -10,7 +10,8 @@ Abolish THe The
 Abolish TYpe Type
 Abolish TYpe Type
 Abolish Thats That's
-Abolish URLS URL's Abolish urls url's
+Abolish URLS URL's
+Abolish urls url's
 Abolish aand and
 Abolish acessor accessor
 Abolish addCLient addClient
@@ -34,6 +35,7 @@ Abolish childrens children's
 Abolish coderockr Coderockr
 Abolish contemporaneos contemporâneos
 Abolish cpu CPU
+Abolish cpus CPU's
 Abolish css CSS
 Abolish dei die
 Abolish didnt didn't
@@ -42,6 +44,7 @@ Abolish doesnt doesn't
 Abolish dont don't
 Abolish dont don't
 Abolish dr Dr.
+Abolish mr Mr.
 Abolish ehco echo
 Abolish ehlp help
 Abolish ehlp help
@@ -56,12 +59,13 @@ Abolish fucntion function
 Abolish gamming gaming
 Abolish getService get
 Abolish gpu GPU
+Abolish gpus GPUs
 Abolish grantes grandes
 Abolish grantes grandes
 Abolish guis GUI's
 Abolish havent haven't
 Abolish hte the
-Abolish http2 HTTP/2
+Abolish HTTP2 HTTP/2
 Abolish ill I'll
 Abolish im I'm
 Abolish importancia importância
@@ -71,7 +75,7 @@ Abolish its it's
 Abolish ive I've
 Abolish javascript JavaScript
 Abolish joinville Joinville
-Abolish jquery jQuery
+Abolish JQuery jQuery
 Abolish knowl knowledge
 Abolish lenght length
 Abolish length length
@@ -97,7 +101,6 @@ Abolish resutl result
 Abolish reuslt result
 Abolish reuslt result
 Abolish shouldnt shouldn't
-Abolish skype Skype
 Abolish substancia substância
 Abolish taht that
 Abolish teh the
@@ -129,3 +132,4 @@ Abolish youre you're
 Abolish youre you're
 Abolish youre you're
 Abolish youve you've
+Abolish Php PHP

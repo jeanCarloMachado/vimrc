@@ -422,14 +422,14 @@ nnoremap <leader>u :call RunPHPUnitTest(0)<cr>
 nnoremap <leader>f :call RunPHPUnitTest(1)<cr>
 
 com! FormatJSON %!python -m json.tool
-au BufNewFile *.html 0r /home/jean/projects/snippet/template/html.html
-au BufNewFile *.php 0r /home/jean/projects/snippet/template/php.php
-au BufNewFile *.c 0r /home/jean/projects/snippet/template/c.c
+au BufNewFile *.html 0r /home/jean/projects/dotfiles/snippet/template/html.html
+au BufNewFile *.php 0r /home/jean/projects/dotfiles/snippet/template/php.php
+au BufNewFile *.c 0r /home/jean/projects/dotfiles/snippet/template/c.c
 "template for articles and science papers review
-au BufNewFile *review.md 0r /home/jean/projects/snippet/template/science-review.md
-au BufNewFile */natural-computing/*.md 0r /home/jean/projects/snippet/template/science-review.md
-au BufNewFile */diary/*.md 0r /home/jean/projects/snippet/template/diary.md
-au BufNewFile */posts/*.md 0r /home/jean/projects/snippet/template/post.md
+au BufNewFile *review.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
+au BufNewFile */natural-computing/*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
+au BufNewFile */diary/*.md 0r /home/jean/projects/dotfiles/snippet/template/diary.md
+au BufNewFile */posts/*.md 0r /home/jean/projects/dotfiles/snippet/template/post.md
 
 function! OnlineDoc()
   if &ft =~ "cpp"

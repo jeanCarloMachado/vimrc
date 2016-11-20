@@ -45,10 +45,12 @@ set smartcase
 set copyindent
 set autoindent
 set gdefault
-set guioptions-=m  "remove menu bar
-set guioptions-=T  "remove toolbar
-set guioptions-=r  "remove right-hand scroll bar
-set guioptions-=L  "remove left-hand scroll bar
+set guifont=Fira\ Code:h12
+
+"set guioptions-=m  "remove menu bar
+"set guioptions-=T  "remove toolbar
+"set guioptions-=r  "remove right-hand scroll bar
+"set guioptions-=L  "remove left-hand scroll bar
 set lazyredraw
 
 "indenting
@@ -423,7 +425,9 @@ com! FormatJSON %!python -m json.tool
 au BufNewFile *.html 0r /home/jean/projects/snippet/template/html.html
 au BufNewFile *.php 0r /home/jean/projects/snippet/template/php.php
 au BufNewFile *.c 0r /home/jean/projects/snippet/template/c.c
+"template for articles and science papers review
 au BufNewFile *review.md 0r /home/jean/projects/snippet/template/science-review.md
+au BufNewFile */natural-computing/*.md 0r /home/jean/projects/snippet/template/science-review.md
 au BufNewFile */diary/*.md 0r /home/jean/projects/snippet/template/diary.md
 au BufNewFile */posts/*.md 0r /home/jean/projects/snippet/template/post.md
 
@@ -591,10 +595,6 @@ call textobj#user#plugin('datetime', {
 \     'pattern': '\<\d\d\d\d-\d\d-\d\d\>',
 \     'select': ['ad', 'id'],
 \   },
-\   'time': {
-\     'pattern': '\<\d\d:\d\d:\d\d\>',
-\     'select': ['at', 'it'],
-\   },
 \ })
 
 call textobj#user#plugin('line', {
@@ -701,11 +701,11 @@ function! MapAction(algorithm, key)
   exe 'nmap '.a:key.a:key[strlen(a:key)-1].' <Plug>actionsLine'.a:algorithm
 endfunction
 
-function! s:OpenUrl(str)
-  silent execute "!firefox ".shellescape(a:str, 1)
-  redraw!
-endfunction
-call MapAction('OpenUrl','<leader>u')
+" function! s:OpenUrl(str)
+"   silent execute "!firefox ".shellescape(a:str, 1)
+"   redraw!
+" endfunction
+" call MapAction('OpenUrl','<leader>u')
 
 function! s:ComputeMD5(str)
   let out = system('md5sum |cut -b 1-32', a:str)
@@ -737,7 +737,7 @@ function! s:Filefy(str)
   let out = system('filefy ', a:str)
   return out
 endfunction
-call MapAction('filefy', '<leader>y')
+call MapAction('Filefy', '<leader>y')
 
 function! s:preRun(str)
     return "$(".a:str.")"
@@ -749,3 +749,11 @@ function! s:Trim(str)
   return out
 endfunction
 call MapAction('Trim', '<leader>t')
+
+
+function! s:Decode(str)
+  let out = system('url-decode ', a:str)
+  return out
+endfunction
+call MapAction('Decode', '<leader>d')
+

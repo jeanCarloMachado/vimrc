@@ -80,7 +80,6 @@ Abolish knowl knowledge
 Abolish lenght length
 Abolish length length
 Abolish lets let's
-Abolish linux Linux
 Abolish maek make
 Abolish mozilla Mozilla
 Abolish music mpsyt

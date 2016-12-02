@@ -227,6 +227,8 @@ Plug 'vim-scripts/argtextobj.vim'
 Plug 'vimwiki/vimwiki'
 Plug 'wakatime/vim-wakatime'
 Plug 'Raimondi/delimitMate'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+
 
 
 call plug#end()
@@ -529,17 +531,7 @@ function! Chomp(str)
   return substitute(a:str, '\n$', '', '')
 endfunction
 
-" Find a file and pass it to cmd
-function! DmenuOpen(cmd)
-  let fname = Chomp(system("find . -type f -not -path '*node_modules*' -not -path '*.git*' 2>/dev/null |  dmenu -i -l 20 -p " . a:cmd))
-  if empty(fname)
-    return
-  endif
-  execute a:cmd . " " . fname
-endfunction
-
-map <c-s-p> :call DmenuOpen("tabe")<cr>
-map <c-p> :call DmenuOpen("e")<cr>
+map <c-p> :FZF<cr>
 
 " fix the last spelling error
 " nnoremap <leader>sp :normal! mm[s1z=`m<cr>

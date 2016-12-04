@@ -324,6 +324,8 @@ colorscheme solarized
 :hi clear SpellBad
 :hi SpellBad cterm=bold ctermbg=red
 
+
+inoremap <Tab> <C-X><C-F>
 nnoremap <BS> :Rex<cr>
 nnoremap <Leader>fs :w ! sudo tee %<cr>
 nnoremap <Leader>q :q<cr>
@@ -345,7 +347,7 @@ nnoremap <leader>tn :tabnew<cr>
 map <leader>gp :!chmod 777 %<cr>
 map <leader>mk :!cd %% ; make<cr>
 map <leader>ck :!git checkout %<cr>
-nmap <leader>of :!xdg-open % &<cr>
+nmap <leader>xo :!xdg-open % &<cr>
 "open director (file manager)
 nmap <leader>od :!thunar %:h<cr>
 nmap <leader>rmrf :!rm -rf %:p <cr>
@@ -428,7 +430,7 @@ au BufNewFile *.html 0r /home/jean/projects/dotfiles/snippet/template/html.html
 au BufNewFile *.php 0r /home/jean/projects/dotfiles/snippet/template/php.php
 au BufNewFile *.c 0r /home/jean/projects/dotfiles/snippet/template/c.c
 "template for articles and science papers review
-au BufNewFile *review.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
+au BufNewFile **/papers/*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
 au BufNewFile */natural-computing/*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
 au BufNewFile */diary/*.md 0r /home/jean/projects/dotfiles/snippet/template/diary.md
 au BufNewFile */posts/*.md 0r /home/jean/projects/dotfiles/snippet/template/post.md
@@ -581,7 +583,6 @@ endfunction
 
 nnoremap <leader>ttb :call MoveUseOfTraitsToBody()<cr>
 
-
 call textobj#user#plugin('datetime', {
 \   'date': {
 \     'pattern': '\<\d\d\d\d-\d\d-\d\d\>',
@@ -714,6 +715,16 @@ function! s:ReverseString(str)
   return out
 endfunction
 call MapAction('ReverseString', '<leader>i')
+
+function! s:Italic(str)
+    return '**'.a:str.'**'
+endfunction
+call MapAction('Italic', '<leader>i')
+
+function! s:Quote(str)
+    return '"'.a:str.'"'
+endfunction
+call MapAction('Quote', '<leader>q')
 
 function! s:Bold(str)
     return '*'.a:str.'*'

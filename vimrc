@@ -1,6 +1,6 @@
 "Mappings  noremap \ ,
 filetype on
-filetype plugin on
+filetype plugin on 
 syntax enable
 let mapleader = "\<space>"
 set grepprg=ag
@@ -94,8 +94,8 @@ set formatprg=par
 setlocal linebreak
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
-"set clipboard=unnamedplus
-set clipboard=unnamed
+set clipboard=unnamedplus
+"set clipboard=unnamed
 "improve sytax highlight performance {{{
 syntax sync minlines=256
 set nocursorcolumn
@@ -325,10 +325,12 @@ colorscheme solarized
 :hi SpellBad cterm=bold ctermbg=red
 
 
-inoremap <Tab> <C-X><C-F>
+"inoremap <Tab> <C-X><C-F>
+inoremap <leader>; <C-o>A;<Esc>
+noremap <leader>; A;<Esc>
+inoremap <leader>$ <C-o>A
 nnoremap <BS> :Rex<cr>
 nnoremap <Leader>fs :w ! sudo tee %<cr>
-nnoremap <Leader>q :q<cr>
 " nnoremap <Leader>p :set paste!<cr>
 nnoremap <Leader>dt :r ! date<cr>
 nnoremap <Leader>e :edit!<cr>
@@ -379,6 +381,7 @@ let g:vimwiki_list = [
             \ {'path': '~/projects/writing/', 'syntax': 'markdown', 'ext': '.md' },
             \ {'path': '~/projects/compufacil/Docs/', 'syntax': 'markdown', 'ext': '.md'}]
 
+let g:vimwiki_autowriteall=0
 let g:airline_theme='solarized'
 
 

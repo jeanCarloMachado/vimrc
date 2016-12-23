@@ -1,10 +1,7 @@
 Abolish 3d 3D
 Abolish 3d 3D
-Abolish 4this $this
-Abolish COnfiguration Configuration
-Abolish Cleint Client
+Abolish 4this $this Abolish COnfiguration Configuration Abolish Cleint Client
 Abolish Datetime DateTime
-Abolish Javascript JavaScript
 Abolish THe The
 Abolish THe The
 Abolish TYpe Type

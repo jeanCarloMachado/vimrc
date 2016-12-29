@@ -152,6 +152,12 @@ set foldmethod=marker
 autocmd BufRead * setlocal foldmethod=marker
 autocmd BufRead * normal zM
 
+if &term =~ '256color'
+    " disable Background Color Erase (BCE) so that color schemes
+    " render properly when inside 256-color tmux and GNU screen.
+    " see also http://sunaku.github.io/vim-256color-bce.html
+    set t_ut=
+endif
 
 "Plugins
 call plug#begin()
@@ -203,7 +209,6 @@ call plug#begin()
 "Plug 'vim-scripts/marvim'
 "Plug 'vim-scripts/textutil.vim'
 "Plug 'wincent/Command-T'
-"redline style integration
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': [ 'php'] }
 Plug 'altercation/vim-colors-solarized'
 Plug 'bling/vim-airline'
@@ -326,9 +331,7 @@ colorscheme solarized
 
 
 "inoremap <Tab> <C-X><C-F>
-inoremap <leader>; <C-o>A;<Esc>
-noremap <leader>; A;<Esc>
-inoremap <leader>$ <C-o>A
+"inoremap <leader>; <C-o>A;<Esc>
 nnoremap <BS> :Rex<cr>
 nnoremap <Leader>fs :w ! sudo tee %<cr>
 " nnoremap <Leader>p :set paste!<cr>
@@ -352,13 +355,13 @@ map <leader>ck :!git checkout %<cr>
 nmap <leader>xo :!xdg-open % &<cr>
 "open director (file manager)
 nmap <leader>od :!thunar %:h<cr>
+nmap <leader>ot :!cd %:h && bash<cr>
 nmap <leader>rmrf :!rm -rf %:p <cr>
 " nmap <leader>k :NERDTreeToggle<cr>
 nmap <leader>k :Explore<cr>
 nmap <leader>pn :!echo %<cr>
 nmap <leader>pfn :!echo %:p<cr>
 nmap <leader>cfn :!copy %:p<cr>
-nmap <leader>c <C-w>v<C-w>l<cr> :VimShell<cr>
 nmap <leader>t :TagbarToggle<cr>
 nmap <leader>gk :!gitk %<cr>
 nmap <leader>dw \(\<\w\+\>\)\_s*\<\1\><cr>
@@ -428,7 +431,6 @@ autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
 nnoremap <leader>u :call RunPHPUnitTest(0)<cr>
 nnoremap <leader>f :call RunPHPUnitTest(1)<cr>
 
-com! FormatJSON %!python -m json.tool
 au BufNewFile *.html 0r /home/jean/projects/dotfiles/snippet/template/html.html
 au BufNewFile *.php 0r /home/jean/projects/dotfiles/snippet/template/php.php
 au BufNewFile *.c 0r /home/jean/projects/dotfiles/snippet/template/c.c
@@ -445,8 +447,7 @@ function! OnlineDoc()
     let s:urlTemplate = "https://www.google.com.br/?q=ruby+%"
   elseif &ft =~ "php"
     let s:urlTemplate = "http://php.net/manual-lookup.php?pattern=%&scope=quickref"
-  elseif &ft =~ "perl"
-    let s:urlTemplate = "http://perldoc.perl.org/functions/%.html"
+  elseif &ft =~ "perl" let s:urlTemplate = "http://perldoc.perl.org/functions/%.html"
   else
     return
   endif
@@ -697,11 +698,7 @@ function! MapAction(algorithm, key)
   exe 'nmap '.a:key.a:key[strlen(a:key)-1].' <Plug>actionsLine'.a:algorithm
 endfunction
 
-" function! s:OpenUrl(str)
-"   silent execute "!firefox ".shellescape(a:str, 1)
-"   redraw!
-" endfunction
-" call MapAction('OpenUrl','<leader>u')
+" OPERATIONS
 
 function! s:ComputeMD5(str)
   let out = system('md5sum |cut -b 1-32', a:str)
@@ -725,7 +722,7 @@ endfunction
 call MapAction('Italic', '<leader>i')
 
 function! s:Quote(str)
-    return '"'.a:str.'"'
+    return "'".a:str."'"
 endfunction
 call MapAction('Quote', '<leader>q')
 
@@ -756,6 +753,10 @@ function! s:Trim(str)
 endfunction
 call MapAction('Trim', '<leader>t')
 
+function! s:BCat(str)
+    let out = system('browser-cat ', a:str)
+endfunction
+call MapAction('BCat', '<leader>v')
 
 function! s:Decode(str)
   let out = system('url-decode ', a:str)
@@ -763,11 +764,123 @@ function! s:Decode(str)
 endfunction
 call MapAction('Decode', '<leader>d')
 
+function! s:JsonBeautifier(str)
+  let out = system('json-beautifier ', a:str)
+  return out
+endfunction
+call MapAction('JsonBeautifier', '<leader>j')
 
-if &term =~ '256color'
-    " disable Background Color Erase (BCE) so that color schemes
-    " render properly when inside 256-color tmux and GNU screen.
-    " see also http://sunaku.github.io/vim-256color-bce.html
-    set t_ut=
-endif
+function! s:XmlBeautifier(str)
+  let out = system('xml-beautifier ', a:str)
+  return out
+endfunction
+call MapAction('XmlBeautifier', '<leader>x')
+
+" TEXT OBJECTS
+
+call textobj#user#plugin('line', {
+\   '-': {
+\     'select-a-function': 'CurrentLineA',
+\     'select-a': 'al',
+\     'select-i-function': 'CurrentLineI',
+\     'select-i': 'il',
+\   },
+\ })
+
+function! CurrentLineA()
+  normal! 0
+  let head_pos = getpos('.')
+  normal! $
+  let tail_pos = getpos('.')
+  return ['v', head_pos, tail_pos]
+endfunction
+
+function! CurrentLineI()
+  normal! ^
+  let head_pos = getpos('.')
+  normal! g_
+  let tail_pos = getpos('.')
+  let non_blank_char_exists_p = getline('.')[head_pos[2] - 1] !~# '\s'
+  return
+  \ non_blank_char_exists_p
+  \ ? ['v', head_pos, tail_pos]
+  \ : 0
+endfunction
+
+
+call textobj#user#plugin('bar', {
+\   '-': {
+\     'select-a-function': 'CurrentBarA',
+\     'select-a': "a\/",
+\     'select-i-function': 'CurrentBarI',
+\     'select-i': "i\/",
+\   },
+\ })
+
+function! CurrentBarA()
+  normal! F/
+  let head_pos = getpos('.')
+  normal! f/
+  let tail_pos = getpos('.')
+  return ['v', head_pos, tail_pos]
+endfunction
+
+function! CurrentBarI()
+  normal! T/
+  let head_pos = getpos('.')
+  normal! f/
+  let tail_pos = getpos('.')
+  return ['v', head_pos, tail_pos]
+endfunction
+
+
+call textobj#user#plugin('pipe', {
+\   '-': {
+\     'select-a-function': 'CurrentPipeA',
+\     'select-a': "a\\|",
+\     'select-i-function': 'CurrentPipeI',
+\     'select-i': "i\\|",
+\   },
+\ })
+
+function! CurrentPipeA()
+  normal! F|
+  let head_pos = getpos('.')
+  normal! f|
+  let tail_pos = getpos('.')
+  return ['v', head_pos, tail_pos]
+endfunction
+
+function! CurrentPipeI()
+  normal! T|
+  let head_pos = getpos('.')
+  normal! f|
+  let tail_pos = getpos('.')
+  return ['v', head_pos, tail_pos]
+endfunction
+
+call textobj#user#plugin('document', {
+\   '-': {
+\     'select-a-function': 'CurrentDocumentA',
+\     'select-a': "a\*",
+\     'select-i-function': 'CurrentDocumentI',
+\     'select-i': "i\*",
+\   },
+\ })
+
+function! CurrentDocumentA()
+  normal! gg
+  let head_pos = getpos('.')
+  normal! G$
+  let tail_pos = getpos('.')
+  return ['v', head_pos, tail_pos]
+endfunction
+
+function! CurrentDocumentI()
+  normal! ggj
+  let head_pos = getpos('.')
+  normal! G$k
+  let tail_pos = getpos('.')
+  return ['v', head_pos, tail_pos]
+endfunction
 

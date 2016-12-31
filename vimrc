@@ -764,6 +764,12 @@ function! s:Decode(str)
 endfunction
 call MapAction('Decode', '<leader>d')
 
+function! s:Interpret(str)
+    let out = system('ruby-interpreter ', a:str)
+    return out
+endfunction
+call MapAction('Interpret', '<leader>r')
+
 function! s:JsonBeautifier(str)
   let out = system('json-beautifier ', a:str)
   return out

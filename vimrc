@@ -139,14 +139,12 @@ hi MatchParen cterm=none ctermbg=black ctermfg=yellow
 highlight ColorColumn ctermbg=235
 
 
-" let theme=$THEME
-set background=dark
-" if theme == 'light'
-"     set background=light
-" else
-"     set background=dark
-" endif
-" set background=dark
+let theme=$THEME
+if theme == 'light'
+    set background=light
+else
+    set background=dark
+endif
 
 set foldmethod=marker
 autocmd BufRead * setlocal foldmethod=marker

@@ -24,7 +24,6 @@ set shell=/bin/bash
 set encoding=utf-8
 set showmode
 set showcmd
-"use the bnext and cnext without a trailing bang
 set hidden
 set wildmenu "to autocomplete the suggestions like bash
 set wildmode=longest,list
@@ -52,6 +51,7 @@ set guifont=Fira\ Code:h12
 "set guioptions-=r  "remove right-hand scroll bar
 "set guioptions-=L  "remove left-hand scroll bar
 set lazyredraw
+let g:openbrowser_github_always_used_branch="master"
 
 "indenting
 filetype plugin indent on
@@ -231,8 +231,8 @@ Plug 'vimwiki/vimwiki'
 Plug 'wakatime/vim-wakatime'
 Plug 'Raimondi/delimitMate'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-
-
+Plug 'tyru/open-browser.vim' 
+Plug 'tyru/open-browser-github.vim'
 
 call plug#end()
 

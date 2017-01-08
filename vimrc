@@ -94,8 +94,8 @@ set formatprg=par
 setlocal linebreak
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
-set clipboard=unnamedplus
-"set clipboard=unnamed
+"set clipboard=unnamedplus
+set clipboard=unnamed
 "improve sytax highlight performance {{{
 syntax sync minlines=256
 set nocursorcolumn

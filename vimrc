@@ -44,7 +44,6 @@ set smartcase
 set copyindent
 set autoindent
 set gdefault
-set guifont=Fira\ Code:h12
 
 "set guioptions-=m  "remove menu bar
 "set guioptions-=T  "remove toolbar
@@ -92,10 +91,11 @@ setlocal formatoptions=1
 set complete+=s
 set formatprg=par
 setlocal linebreak
-autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+autocmd BufNewFile,BufReadPost *.md$ set filetype=markdown
+autocmd BufNewFile,BufReadPost *.md$ set spell spelllang=en_us
+
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
-"set clipboard=unnamedplus
-set clipboard=unnamed
+set clipboard=unnamedplus
 "improve sytax highlight performance {{{
 syntax sync minlines=256
 set nocursorcolumn
@@ -207,6 +207,7 @@ call plug#begin()
 "Plug 'vim-scripts/marvim'
 "Plug 'vim-scripts/textutil.vim'
 "Plug 'wincent/Command-T'
+Plug 'fatih/vim-go'
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': [ 'php'] }
 Plug 'altercation/vim-colors-solarized'
 Plug 'bling/vim-airline'
@@ -631,6 +632,7 @@ endfunction
 nnoremap <leader>uc  :call UseClassKeywordInsteadOfString()<cr>
 
 let g:calendar_google_calendar = 1
+let g:calendar_frame = 'default'
 let g:calendar_google_task = 1
 
 
@@ -724,10 +726,20 @@ function! s:Quote(str)
 endfunction
 call MapAction('Quote', '<leader>q')
 
+function! s:DoubleQuote(str)
+    return '"'.a:str.'"'
+endfunction
+call MapAction('DoubleQuote', '<leader>\"')
+
+function! s:Parenthesis(str)
+    return '('.a:str.')'
+endfunction
+call MapAction('Parenthesis', '<leader>(')
+
 function! s:Bold(str)
     return '*'.a:str.'*'
 endfunction
-call MapAction('Bold', '<leader>b')
+call MapAction('Bold', '<leader>bo')
 
 function! s:CodeBlock(str)
     return "```\n".a:str."\n```"
@@ -773,6 +785,24 @@ function! s:JsonBeautifier(str)
   return out
 endfunction
 call MapAction('JsonBeautifier', '<leader>j')
+
+function! s:JsonToPhp(str)
+  let out = system('json-to-php ', a:str)
+  return out
+endfunction
+call MapAction('JsonToPhp', '<leader>jp')
+
+function! s:UrlToJson(str)
+  let out = system('url-to-json ', a:str)
+  return out
+endfunction
+call MapAction('UrlToJson', '<leader>uj')
+
+function! s:Alnum(str)
+  let out = system('alnum ', a:str)
+  return out
+endfunction
+call MapAction('Alnum', '<leader>a')
 
 function! s:XmlBeautifier(str)
   let out = system('xml-beautifier ', a:str)
@@ -887,4 +917,9 @@ function! CurrentDocumentI()
   let tail_pos = getpos('.')
   return ['v', head_pos, tail_pos]
 endfunction
+inoremap ;<cr> <end>;<cr>
+
+if !has('gui_running')
+  set t_Co=256
+endif
 

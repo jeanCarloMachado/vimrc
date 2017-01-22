@@ -1,7 +1,9 @@
-"Mappings  noremap \ ,
+"Mappings  noremap \ 
 filetype on
 filetype plugin on 
 syntax enable
+"necessary to mark plugin
+
 let mapleader = "\<space>"
 set grepprg=ag
 autocmd filetype php set formatoptions+=t
@@ -83,9 +85,6 @@ set wildignore=*.swp,*.back,*.pyc,*.class,*.coverage.*,*\\vendor\\*
 set backupdir=~/.tmp
 set directory=~/.tmp "don't clutter dirs with swp and tmpfiles
 set lazyredraw "don't redraw screend when running macros
-highlight StatusLine ctermfg=blue ctermbg=yellow
-" Display extra whitespace
-set list listchars=tab:»·,trail:·
 
 setlocal formatoptions=1
 set complete+=s
@@ -120,13 +119,7 @@ autocmd FileType markdown set syntax=markdown
 au FileType markdown setl tw=66
 au Filetype markdown setl formatoptions+=t
 au FileType TEX setl tw=66
-" set list listchars=tab:\ \ ,trail:•
-set shortmess+=I
 " autocmd BufWinEnter * highlight ColorColumn ctermbg=darkred
-" highlight OverLength ctermbg=red ctermfg=white guibg=#666666
-" match OverLength /\%81v.\+/
-"turn the 120 chars column to red
-" set colorcolumn=120
 
 "gvim options
 "set guioptions-=m  "remove menu bar
@@ -136,7 +129,6 @@ set shortmess+=I
 set nocompatible
 hi MatchParen cterm=none ctermbg=black ctermfg=yellow
 " Make it more obviouser when lines are too long
-highlight ColorColumn ctermbg=235
 
 
 let theme=$THEME
@@ -149,13 +141,6 @@ endif
 set foldmethod=marker
 autocmd BufRead * setlocal foldmethod=marker
 autocmd BufRead * normal zM
-
-if &term =~ '256color'
-    " disable Background Color Erase (BCE) so that color schemes
-    " render properly when inside 256-color tmux and GNU screen.
-    " see also http://sunaku.github.io/vim-256color-bce.html
-    set t_ut=
-endif
 
 "Plugins
 call plug#begin()
@@ -207,7 +192,7 @@ call plug#begin()
 "Plug 'vim-scripts/marvim'
 "Plug 'vim-scripts/textutil.vim'
 "Plug 'wincent/Command-T'
-Plug 'fatih/vim-go'
+Plug 'fatih/vim-go', { 'for': [ 'go'] }
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': [ 'php'] }
 Plug 'altercation/vim-colors-solarized'
 Plug 'bling/vim-airline'
@@ -226,34 +211,39 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'vim-ruby/vim-ruby', { 'for': [ 'ruby'] }
-Plug 'vim-scripts/Mark--Karkat'
 Plug 'vim-scripts/argtextobj.vim'
 Plug 'vimwiki/vimwiki'
 Plug 'wakatime/vim-wakatime'
 Plug 'Raimondi/delimitMate'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'tyru/open-browser.vim' 
+Plug 'tyru/open-browser.vim'
 Plug 'tyru/open-browser-github.vim'
+Plug 'kshenoy/vim-signature'
 
 call plug#end()
 
-" let g:rainbow_conf = {
-" \   'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
-" \   'ctermfgs': ['Blue', 'Magenta', 'DarkGreen', 'DarkYellow'],
-" \}
+augroup VimrcColors
+au!
+  autocmd ColorScheme * highlight Todo ctermbg=DarkMagenta guibg=DarkMagenta
+  autocmd ColorScheme * highlight BadWords ctermbg=DarkRed guibg=DarkRed
+  autocmd ColorScheme * highlight Whitespace ctermbg=DarkGrey guibg=DarkGrey
+  autocmd ColorScheme * highlight OverLength ctermbg=DarkYellow guibg=DarkYellow
+augroup END
 
-"Marks 
-" Highlight words to avoid in tech writing
-" http://css-tricks.com/words-avoid-educational-writing/
-runtime plugin/mark.vim
-silent MarkClear
+autocmd Syntax * call matchadd('Todo',  '\(TODO\|FIXME\|CHANGED\|XXX\|BUG\|HACK\)')
+autocmd Syntax * call matchadd('BadWords', '\(obviously\|basically\|simply\|of\scourse\|clearly\|just\|everyone\knows\|however\|easy\|obviamente\|basicamente\|simplesmente\|com\certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então\|fácil\|bem\)') 
 
+autocmd Syntax * call matchadd('Whitespace', '\s\+$')
+autocmd Syntax * call matchadd('OverLength', '\%>120v.\+')
+" endfunction
 
-" let g:rustfmt_autosave = 1 
+"Marks
+" Highlight words to avoid in writing
 
 "bad words
-Mark /\cobviously\|basically\|simply\|of\ scourse\|clearly\|just\|everyone\sknows\|however\|so,\|easy/
-Mark /\obviamente\|basicamente\|simplesmente\|com\ certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então,\|fácil\|bem/
+"signals for sentence breaking
+"Mark sentenceBreaking /which/
+
 
 "mark duplicated words and excedent whitespaces
 " highlight WrongPatterns ctermbg=red guibg=red
@@ -302,7 +292,6 @@ let g:netrw_liststyle=3
 "let g:netrw_list_hide= '^\.'
 let g:netrw_hide = 0
 
-" let g:rainbow_active = 1 "0 if you want to enable it later via :RainbowToggle
 let &runtimepath.=',/home/jean/.vim/plugin/ns9tks-vim-l9-3bb534a720fa'
 let &runtimepath.=',/home/jean/.vim/plugin/ns9tks-vim-autocomplpop-13fe3d806464'
 " let g:ctrlp_max_files=0
@@ -354,7 +343,8 @@ map <leader>ck :!git checkout %<cr>
 nmap <leader>xo :!xdg-open % &<cr>
 "open director (file manager)
 nmap <leader>od :!thunar %:h<cr>
-nmap <leader>ot :!cd %:h && bash<cr>
+nmap <leader>sh :!cd %:h && bash<cr>
+nmap <leader>lc :r!  echo %:h<cr>
 nmap <leader>rmrf :!rm -rf %:p <cr>
 " nmap <leader>k :NERDTreeToggle<cr>
 nmap <leader>k :Explore<cr>
@@ -379,6 +369,8 @@ cmap w!! w !sudo tee > /dev/null %
 " use %% to expand to the current buffer directory
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 
+let wiki = {}
+let wiki.nested_syntaxes = {'python': 'python', 'c++': 'cpp', 'php': 'php'}
 let g:vimwiki_list = [
             \ {'path': '~/projects/writing/', 'syntax': 'markdown', 'ext': '.md' },
             \ {'path': '~/projects/compufacil/Docs/', 'syntax': 'markdown', 'ext': '.md'}]
@@ -629,7 +621,7 @@ function UseClassKeywordInsteadOfString()
     normal! $F's::classF's\
 endfunction
 
-nnoremap <leader>uc  :call UseClassKeywordInsteadOfString()<cr>
+"nnoremap <leader>uc  :call UseClassKeywordInsteadOfString()<cr>
 
 let g:calendar_google_calendar = 1
 let g:calendar_frame = 'default'
@@ -729,7 +721,7 @@ call MapAction('Quote', '<leader>q')
 function! s:DoubleQuote(str)
     return '"'.a:str.'"'
 endfunction
-call MapAction('DoubleQuote', '<leader>\"')
+call MapAction('DoubleQuote', '<leader>"')
 
 function! s:Parenthesis(str)
     return '('.a:str.')'
@@ -786,6 +778,14 @@ function! s:JsonBeautifier(str)
 endfunction
 call MapAction('JsonBeautifier', '<leader>j')
 
+
+function! s:JsonEncode(str)
+  let out = system('json-encode ', a:str)
+  return out
+endfunction
+call MapAction('JsonToPhp', '<leader>jp')
+
+
 function! s:JsonToPhp(str)
   let out = system('json-to-php ', a:str)
   return out
@@ -796,13 +796,19 @@ function! s:UrlToJson(str)
   let out = system('url-to-json ', a:str)
   return out
 endfunction
-call MapAction('UrlToJson', '<leader>uj')
+call MapAction('UrlToJson', '<leader>ju')
 
 function! s:Alnum(str)
   let out = system('alnum ', a:str)
   return out
 endfunction
 call MapAction('Alnum', '<leader>a')
+
+function! s:Unescape(str)
+  let out = system('sed "s/\\\//g" ', a:str)
+  return out
+endfunction
+call MapAction('Unescape', '<leader>us')
 
 function! s:XmlBeautifier(str)
   let out = system('xml-beautifier ', a:str)

@@ -31,8 +31,6 @@ Abolish celar clear
 Abolish childrens children's
 Abolish coderockr Coderockr
 Abolish contemporaneos contemporâneos
-Abolish cpu CPU
-Abolish cpus CPU's
 Abolish css CSS
 Abolish dei die
 Abolish didnt didn't
@@ -55,8 +53,6 @@ Abolish fro for
 Abolish fucntion function
 Abolish gamming gaming
 Abolish getService get
-Abolish gpu GPU
-Abolish gpus GPUs
 Abolish grantes grandes
 Abolish grantes grandes
 Abolish guis GUI's

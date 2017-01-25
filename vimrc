@@ -1,9 +1,7 @@
-"Mappings  noremap \ 
+let calendar_mode=$CALENDAR_MODE
 filetype on
-filetype plugin on 
+filetype plugin on
 syntax enable
-"necessary to mark plugin
-
 let mapleader = "\<space>"
 set grepprg=ag
 autocmd filetype php set formatoptions+=t
@@ -119,7 +117,6 @@ autocmd FileType markdown set syntax=markdown
 au FileType markdown setl tw=66
 au Filetype markdown setl formatoptions+=t
 au FileType TEX setl tw=66
-" autocmd BufWinEnter * highlight ColorColumn ctermbg=darkred
 
 "gvim options
 "set guioptions-=m  "remove menu bar
@@ -142,56 +139,8 @@ set foldmethod=marker
 autocmd BufRead * setlocal foldmethod=marker
 autocmd BufRead * normal zM
 
-"Plugins
 call plug#begin()
 
-" Plug 'bkad/CamelCaseMotion'
-" Plug 'vim-scripts/Align' | Plug 'vim-scripts/SQLUtilities'
-"Plug '2072/PHP-Indenting-for-VIm'
-"Plug 'Shougo/neocomplcache'
-"Plug 'Shougo/vimproc'
-"Plug 'Shougo/vimshell'
-"Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets', { 'for': [ 'php'] }
-"Plug 'Townk/vim-autoclose'
-"Plug 'Xuyuanp/nerdtree-git-plugin'
-"Plug 'airblade/vim-gitgutter'
-"Plug 'ajh17/VimCompletesMe'
-"Plug 'andreimaxim/vim-io', { 'for': [ 'io'] }
-"Plug 'chrisbra/BufTimer'
-"Plug 'coot/vim_args'
-"Plug 'derekwyatt/vim-scala', { 'for': [ 'scala'] }
-"Plug 'ervandew/supertab'
-"Plug 'gcmt/taboo.vim'
-"Plug 'gisraptor/vim-lilypond-integrator'
-"Plug 'godlygeek/tabular'
-"Plug 'https://github.com/Shougo/unite.vim.git' " Unite and create user interfaces
-"Plug 'jiangmiao/auto-pairs'
-"Plug 'joonty/vdebug'
-"Plug 'kien/ctrlp.vim'
-"Plug 'lervag/vimtex', { 'for': ['latex'] }
-"Plug 'luochen1990/rainbow', { 'for': [ 'php'] }
-"Plug 'm2mdas/phpcomplete-extended', { 'for': [ 'php'] }
-"Plug 'maksimr/vim-translator', { 'for': [ 'md', 'txt'] }
-"Plug 'mattn/emmet-vim'
-"Plug 'mattn/vim-metarw-gdrive'
-"Plug 'mhinz/vim-startify'
-"Plug 'mileszs/ack.vim'
-"Plug 'mtth/scratch.vim'
-"Plug 'pangloss/vim-javascript', { 'for': [ 'javascript'] }
-"Plug 'plasticboy/vim-markdown'
-"Plug 'rayburgemeestre/phpfolding.vim', { 'for': [ 'php' ] }
-"Plug 'rust-lang/rust.vim', { 'for': [ 'rust'] }
-"Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-"Plug 'scrooloose/syntastic'
-"Plug 'tpope/vim-endwise' add end in ruby
-"Plug 'tpope/vim-fugitive' git tools
-"Plug 'tpope/vim-obsession'
-"Plug 'tpope/vim-repeat'
-"Plug 'tpope/vim-rsi'
-"Plug 'vim-scripts/closetag.vim', { 'for': [ 'html'] }
-"Plug 'vim-scripts/marvim'
-"Plug 'vim-scripts/textutil.vim'
-"Plug 'wincent/Command-T'
 Plug 'fatih/vim-go', { 'for': [ 'go'] }
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': [ 'php'] }
 Plug 'altercation/vim-colors-solarized'
@@ -202,6 +151,7 @@ Plug 'jez/vim-superman'
 Plug 'kana/vim-textobj-function'
 Plug 'kana/vim-textobj-user'
 Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim'
+Plug 'godlygeek/tabular' | Plug 'plasticboy/vim-markdown', { 'for': [ 'markdown' ] }
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'nelstrom/vim-visual-star-search'
 Plug 'tpope/vim-abolish'
@@ -222,56 +172,21 @@ Plug 'kshenoy/vim-signature'
 
 call plug#end()
 
-augroup VimrcColors
-au!
-  autocmd ColorScheme * highlight Todo ctermbg=DarkMagenta guibg=DarkMagenta
-  autocmd ColorScheme * highlight BadWords ctermbg=DarkRed guibg=DarkRed
-  autocmd ColorScheme * highlight Whitespace ctermbg=DarkGrey guibg=DarkGrey
-  autocmd ColorScheme * highlight OverLength ctermbg=DarkYellow guibg=DarkYellow
-augroup END
+if calendar_mode != '1'
+    augroup VimrcColors
+    au!
+      autocmd ColorScheme * highlight BadWords ctermbg=DarkMagenta guibg=DarkMagenta
+      autocmd ColorScheme * highlight Whitespace ctermbg=LightGrey guibg=LightGrey
+      autocmd ColorScheme * highlight Overlength ctermbg=DarkGrey guibg=DarkGrey
+    augroup END
 
-autocmd Syntax * call matchadd('Todo',  '\(TODO\|FIXME\|CHANGED\|XXX\|BUG\|HACK\)')
-autocmd Syntax * call matchadd('BadWords', '\(obviously\|basically\|simply\|of\scourse\|clearly\|just\|everyone\knows\|however\|easy\|obviamente\|basicamente\|simplesmente\|com\certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então\|fácil\|bem\)') 
+    autocmd Syntax * call matchadd('BadWords', '\c\<\(obviously\|basically\|simply\|of\scourse\|clearly\|just\|everyone\knows\|however\|easy\|obviamente\|basicamente\|simplesmente\|com\certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então\|fácil\|bem\)\>') 
 
-autocmd Syntax * call matchadd('Whitespace', '\s\+$')
-autocmd Syntax * call matchadd('OverLength', '\%>120v.\+')
-" endfunction
+    autocmd Syntax * call matchadd('Whitespace', '\s\+$')
+    autocmd Syntax * call matchadd('Overlength', '\%81v')
 
-"Marks
-" Highlight words to avoid in writing
+endif
 
-"bad words
-"signals for sentence breaking
-"Mark sentenceBreaking /which/
-
-
-"mark duplicated words and excedent whitespaces
-" highlight WrongPatterns ctermbg=red guibg=red
-" autocmd InsertEnter * match WrongPatterns /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
-" autocmd InsertLeave * match WrongPatterns /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
-" autocmd BufWinEnter * match WrongPatterns /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
-" match WrongPatterns /\w\s\{2,\}\w\|\s\+$\|\v<(\w+)\_s+\1>/
-" autocmd BufWinLeave * call clearmatches()
-"end mark text errors"
-
-" let marvim_store = '/home/jean/projects/vimrc/vim/marvim' 
-" let marvim_find_key = '<leader>mf' " change find key from <F2> to 'space' 
-" let marvim_store_key = '<leader>ms'     " change store key from <F3> to 'ms' 
-"let marvim_register = 'c'       " change used register from 'q' to 'c' 
-"let marvim_prefix = 0           " disable default syntax based prefix 
-
-"let g:ackprg = 'ag --vimgrep --smart-case'
-"cnoreabbrev ag Ack
-"cnoreabbrev aG Ack
-"cnoreabbrev Ag Ack
-"cnoreabbrev AG Ack
-
-"let g:unite_redraw_hold_candidates=50000
-"nnoremap <C-p> :Unite file_rec/async<cr>
-"nnoremap <leader>/ :Unite grep:.<cr>
-"nnoremap <leader>b :Unite -quick-match buffer<cr>
-"call unite#custom#profile('context.ignorecase', 'context.ignorecase', 1)
-"call unite#custom#source('file_rec/async', 'ignore_pattern', 'vendor/')
 
 "snippets
 augroup load_us
@@ -296,21 +211,8 @@ let &runtimepath.=',/home/jean/.vim/plugin/ns9tks-vim-l9-3bb534a720fa'
 let &runtimepath.=',/home/jean/.vim/plugin/ns9tks-vim-autocomplpop-13fe3d806464'
 " let g:ctrlp_max_files=0
 " let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
-" if executable('ag')
-"       let g:ctrlp_user_command = 'ag %s -U -l --nocolor -g ""'
-" endif
-"let NERDTreeMouseMode=3
-" let NERDTreeDirArrows=0
-"let NERDTreeMinimalUI=1
-" let NERDTreeShowLineNumbers=1
-
 
 "autocmd FileType php setlocal omnifunc=phpcomplete_extended#CompletePHP
-
-"colorscheme
-colorscheme solarized
-"set t_Co=16
-"let g:solarized_termcolors=16
 
 "makes a underline on the current cursor line
 :hi CursorLine cterm=underline ctermbg=NONE
@@ -376,8 +278,8 @@ let g:vimwiki_list = [
             \ {'path': '~/projects/compufacil/Docs/', 'syntax': 'markdown', 'ext': '.md'}]
 
 let g:vimwiki_autowriteall=0
-let g:airline_theme='solarized'
 
+let g:airline_theme='solarized'
 
 command Phpcsfixer : ! php-code-check `pwd`/%
     \ || print "Error on code check" && sleep 10
@@ -744,6 +646,12 @@ function! s:Filefy(str)
 endfunction
 call MapAction('Filefy', '<leader>y')
 
+function! s:BreakCommand(str)
+  let out = system('run_alias break_command ', a:str)
+  return out
+endfunction
+call MapAction('BreakCommand', '<leader>bc')
+
 function! s:preRun(str)
     return "$(".a:str.")"
 endfunction
@@ -799,7 +707,7 @@ endfunction
 call MapAction('UrlToJson', '<leader>ju')
 
 function! s:Alnum(str)
-  let out = system('alnum ', a:str)
+  let out = system('run_alias alnum ', a:str)
   return out
 endfunction
 call MapAction('Alnum', '<leader>a')
@@ -929,3 +837,4 @@ if !has('gui_running')
   set t_Co=256
 endif
 
+colorscheme solarized

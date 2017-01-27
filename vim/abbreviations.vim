@@ -124,4 +124,5 @@ Abolish youre you're
 Abolish youre you're
 Abolish youre you're
 Abolish youve you've
+Abolish hes he's
 Abolish Php PHP

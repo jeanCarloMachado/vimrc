@@ -222,6 +222,7 @@ let &runtimepath.=',/home/jean/.vim/plugin/ns9tks-vim-autocomplpop-13fe3d806464'
 
 "inoremap <Tab> <C-X><C-F>
 "inoremap <leader>; <C-o>A;<Esc>
+nnoremap <Leader>di :VimwikiMakeDiaryNote<cr>
 nnoremap <BS> :Rex<cr>
 nnoremap <Leader>fs :w ! sudo tee %<cr>
 " nnoremap <Leader>p :set paste!<cr>
@@ -329,6 +330,7 @@ au BufNewFile *.php 0r /home/jean/projects/dotfiles/snippet/template/php.php
 au BufNewFile *.c 0r /home/jean/projects/dotfiles/snippet/template/c.c
 "template for articles and science papers review
 au BufNewFile **/papers/*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
+au BufNewFile **/*revinew*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
 au BufNewFile */natural-computing/*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
 au BufNewFile */diary/*.md 0r /home/jean/projects/dotfiles/snippet/template/diary.md
 au BufNewFile */posts/*.md 0r /home/jean/projects/dotfiles/snippet/template/post.md
@@ -471,6 +473,7 @@ nnoremap <leader>h2 :call UnderlineHeading(2)<cr>
 nnoremap <leader>h3 :call UnderlineHeading(3)<cr>
 nnoremap <leader>h4 :call UnderlineHeading(4)<cr>
 nnoremap <leader>h5 :call UnderlineHeading(5)<cr>
+
 
 function! MoveUseOfTraitsToBody()
     normal! mL
@@ -618,17 +621,27 @@ call MapAction('Italic', '<leader>i')
 function! s:Quote(str)
     return "'".a:str."'"
 endfunction
-call MapAction('Quote', '<leader>q')
+call MapAction('Quote', "<leader>'")
 
 function! s:DoubleQuote(str)
     return '"'.a:str.'"'
 endfunction
 call MapAction('DoubleQuote', '<leader>"')
 
+function! s:Tag(str)
+    return '<'.a:str.'>'
+endfunction
+call MapAction('Tag', '<leader><')
+
 function! s:Parenthesis(str)
     return '('.a:str.')'
 endfunction
 call MapAction('Parenthesis', '<leader>(')
+
+function! s:Brackets(str)
+    return '['.a:str.']'
+endfunction
+call MapAction('Brackets', '<leader>[')
 
 function! s:Bold(str)
     return '*'.a:str.'*'
@@ -684,8 +697,7 @@ function! s:JsonBeautifier(str)
   let out = system('json-beautifier ', a:str)
   return out
 endfunction
-call MapAction('JsonBeautifier', '<leader>j')
-
+call MapAction('JsonBeautifier', '<leader>jb')
 
 function! s:JsonEncode(str)
   let out = system('json-encode ', a:str)
@@ -718,6 +730,13 @@ function! s:Unescape(str)
 endfunction
 call MapAction('Unescape', '<leader>us')
 
+function! s:SqlBeautifier(str)
+  let out = system('run_function sql_format', a:str)
+  return out
+endfunction
+call MapAction('SqlBeautifier', '<leader>sb')
+
+call MapAction('XmlBeautifier', '<leader>x')
 function! s:XmlBeautifier(str)
   let out = system('xml-beautifier ', a:str)
   return out
@@ -833,8 +852,5 @@ function! CurrentDocumentI()
 endfunction
 inoremap ;<cr> <end>;<cr>
 
-if !has('gui_running')
-  set t_Co=256
-endif
-
+set t_Co=256
 colorscheme solarized

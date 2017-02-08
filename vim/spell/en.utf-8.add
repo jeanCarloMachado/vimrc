@@ -229,3 +229,6 @@ have
 apk
 dpkg
 usr
+#ccuracies
+accuracies/!
+mentory

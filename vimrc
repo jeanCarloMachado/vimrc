@@ -1,4 +1,3 @@
-let calendar_mode=$CALENDAR_MODE
 filetype on
 filetype plugin on
 syntax enable
@@ -146,7 +145,6 @@ Plug 'adoy/vim-php-refactoring-toolbox', { 'for': [ 'php'] }
 Plug 'altercation/vim-colors-solarized'
 Plug 'bling/vim-airline'
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'itchyny/calendar.vim'
 Plug 'jez/vim-superman'
 Plug 'kana/vim-textobj-function'
 Plug 'kana/vim-textobj-user'
@@ -169,23 +167,22 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'tyru/open-browser.vim'
 Plug 'tyru/open-browser-github.vim'
 Plug 'kshenoy/vim-signature'
+Plug 'nelstrom/vim-markdown-folding', { 'for': [ 'markdown' ] }
+
 
 call plug#end()
 
-if calendar_mode != '1'
-    augroup VimrcColors
-    au!
-      autocmd ColorScheme * highlight BadWords ctermbg=DarkMagenta guibg=DarkMagenta
-      autocmd ColorScheme * highlight Whitespace ctermbg=LightGrey guibg=LightGrey
-      autocmd ColorScheme * highlight Overlength ctermbg=DarkGrey guibg=DarkGrey
-    augroup END
+augroup VimrcColors
+au!
+  autocmd ColorScheme * highlight BadWords ctermbg=DarkMagenta guibg=DarkMagenta
+  autocmd ColorScheme * highlight Whitespace ctermbg=LightGrey guibg=LightGrey
+  autocmd ColorScheme * highlight Overlength ctermbg=DarkGrey guibg=DarkGrey
+augroup END
 
-    autocmd Syntax * call matchadd('BadWords', '\c\<\(obviously\|basically\|simply\|of\scourse\|clearly\|just\|everyone\knows\|however\|easy\|obviamente\|basicamente\|simplesmente\|com\certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então\|fácil\|bem\)\>') 
+autocmd Syntax * call matchadd('BadWords', '\c\<\(obviously\|basically\|simply\|of\scourse\|clearly\|just\|everyone\knows\|however\|easy\|obviamente\|basicamente\|simplesmente\|com\certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então\|fácil\|bem\)\>') 
 
-    autocmd Syntax * call matchadd('Whitespace', '\s\+$')
-    autocmd Syntax * call matchadd('Overlength', '\%81v')
-
-endif
+autocmd Syntax * call matchadd('Whitespace', '\s\+$')
+autocmd Syntax * call matchadd('Overlength', '\%81v')
 
 
 "snippets
@@ -330,7 +327,7 @@ au BufNewFile *.php 0r /home/jean/projects/dotfiles/snippet/template/php.php
 au BufNewFile *.c 0r /home/jean/projects/dotfiles/snippet/template/c.c
 "template for articles and science papers review
 au BufNewFile **/papers/*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
-au BufNewFile **/*revinew*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
+au BufNewFile **/*review*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
 au BufNewFile */natural-computing/*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
 au BufNewFile */diary/*.md 0r /home/jean/projects/dotfiles/snippet/template/diary.md
 au BufNewFile */posts/*.md 0r /home/jean/projects/dotfiles/snippet/template/post.md
@@ -528,9 +525,6 @@ endfunction
 
 "nnoremap <leader>uc  :call UseClassKeywordInsteadOfString()<cr>
 
-let g:calendar_google_calendar = 1
-let g:calendar_frame = 'default'
-let g:calendar_google_task = 1
 
 
 " Adapted from unimpaired.vim by Tim Pope.
@@ -664,6 +658,11 @@ function! s:BreakCommand(str)
   return out
 endfunction
 call MapAction('BreakCommand', '<leader>bc')
+
+function! s:foldSomething(str)
+    return "%{{{".a:str."%}}}"
+endfunction
+call MapAction('foldSomething', '<leader>fo')
 
 function! s:preRun(str)
     return "$(".a:str.")"

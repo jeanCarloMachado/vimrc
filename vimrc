@@ -50,6 +50,8 @@ set gdefault
 "set guioptions-=L  "remove left-hand scroll bar
 set lazyredraw
 let g:openbrowser_github_always_used_branch="master"
+let g:solarized_termcolors=16
+let g:solarized_bold=1
 
 "indenting
 filetype plugin indent on
@@ -87,8 +89,6 @@ setlocal formatoptions=1
 set complete+=s
 set formatprg=par
 setlocal linebreak
-autocmd BufNewFile,BufReadPost *.md$ set filetype=markdown
-autocmd BufNewFile,BufReadPost *.md$ set spell spelllang=en_us
 
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
 set clipboard=unnamedplus
@@ -97,11 +97,15 @@ syntax sync minlines=256
 set nocursorcolumn
 set nocursorline
 "set relativenumber
-autocmd BufEnter * :syn sync maxlines=500
 set synmaxcol=200
 "}}}
+autocmd BufEnter * :syn sync maxlines=500
+autocmd BufEnter *.md$ set filetype=markdown
+autocmd BufEnter *.md$ set spell spelllang=en_us
 autocmd FileType markdown set commentstring=<!!--\ %s\ -->
-autocmd FileType markdown set syntax=markdown
+autocmd FileType markdown setl tw=66
+autocmd FileType TEX setl tw=66
+autocmd Filetype markdown setl formatoptions+=t
 "CTRLP with regex by default
 " let g:ctrlp_regexp = 0
 ":nnoremap <Space> @q
@@ -109,13 +113,6 @@ autocmd FileType markdown set syntax=markdown
 "set nowrapscan
 "no octal
 "performance tweaks
-"au FileType php setl ofu=phpcomplete#CompletePHP
-" au FileType html,xhtml setl ofu=htmlcomplete#CompleteTags
-" au FileType c setl ofu=ccomplete#CompleteCpp
-" au FileType css setl ofu=csscomplete#CompleteCSS
-au FileType markdown setl tw=66
-au Filetype markdown setl formatoptions+=t
-au FileType TEX setl tw=66
 
 "gvim options
 "set guioptions-=m  "remove menu bar
@@ -149,7 +146,6 @@ Plug 'jez/vim-superman'
 Plug 'kana/vim-textobj-function'
 Plug 'kana/vim-textobj-user'
 Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim'
-Plug 'godlygeek/tabular' | Plug 'plasticboy/vim-markdown', { 'for': [ 'markdown' ] }
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'nelstrom/vim-visual-star-search'
 Plug 'tpope/vim-abolish'
@@ -158,7 +154,7 @@ Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'vim-ruby/vim-ruby', { 'for': [ 'ruby'] }
+Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
 Plug 'vim-scripts/argtextobj.vim'
 Plug 'vimwiki/vimwiki'
 Plug 'wakatime/vim-wakatime'
@@ -166,16 +162,15 @@ Plug 'Raimondi/delimitMate'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'tyru/open-browser.vim'
 Plug 'tyru/open-browser-github.vim'
-Plug 'kshenoy/vim-signature'
 Plug 'nelstrom/vim-markdown-folding', { 'for': [ 'markdown' ] }
-
+Plug 'godlygeek/tabular' | Plug 'plasticboy/vim-markdown', { 'for': [ 'markdown' ] }
 
 call plug#end()
 
 augroup VimrcColors
 au!
   autocmd ColorScheme * highlight BadWords ctermbg=DarkMagenta guibg=DarkMagenta
-  autocmd ColorScheme * highlight Whitespace ctermbg=LightGrey guibg=LightGrey
+  autocmd ColorScheme * highlight Whitespace ctermbg=Grey guibg=Grey
   autocmd ColorScheme * highlight Overlength ctermbg=DarkGrey guibg=DarkGrey
 augroup END
 
@@ -322,15 +317,15 @@ autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
 nnoremap <leader>u :call RunPHPUnitTest(0)<cr>
 nnoremap <leader>f :call RunPHPUnitTest(1)<cr>
 
-au BufNewFile *.html 0r /home/jean/projects/dotfiles/snippet/template/html.html
-au BufNewFile *.php 0r /home/jean/projects/dotfiles/snippet/template/php.php
-au BufNewFile *.c 0r /home/jean/projects/dotfiles/snippet/template/c.c
+autocmd BufNewFile *.html 0r /home/jean/projects/dotfiles/snippet/template/html.html
+autocmd BufNewFile *.php 0r /home/jean/projects/dotfiles/snippet/template/php.php
+autocmd BufNewFile *.c 0r /home/jean/projects/dotfiles/snippet/template/c.c
 "template for articles and science papers review
-au BufNewFile **/papers/*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
-au BufNewFile **/*review*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
-au BufNewFile */natural-computing/*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
-au BufNewFile */diary/*.md 0r /home/jean/projects/dotfiles/snippet/template/diary.md
-au BufNewFile */posts/*.md 0r /home/jean/projects/dotfiles/snippet/template/post.md
+autocmd BufNewFile **/papers/*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
+autocmd BufNewFile **/*review*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
+autocmd BufNewFile */natural-computing/*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
+autocmd BufNewFile */diary/*.md 0r /home/jean/projects/dotfiles/snippet/template/diary.md
+autocmd BufNewFile */posts/*.md 0r /home/jean/projects/dotfiles/snippet/template/post.md
 
 function! OnlineDoc()
   if &ft =~ "cpp"
@@ -430,6 +425,7 @@ function! Chomp(str)
 endfunction
 
 map <c-p> :FZF<cr>
+let $FZF_DEFAULT_COMMAND = 'ag -a -g ""'
 
 " fix the last spelling error
 " nnoremap <leader>sp :normal! mm[s1z=`m<cr>
@@ -675,6 +671,11 @@ function! s:Trim(str)
 endfunction
 call MapAction('Trim', '<leader>t')
 
+function! s:googleIt(str)
+    let out = system('google-it ', a:str)
+endfunction
+call MapAction('googleIt', '<leader>gi')
+
 function! s:BCat(str)
     let out = system('browser-cat ', a:str)
 endfunction
@@ -703,7 +704,6 @@ function! s:JsonEncode(str)
   return out
 endfunction
 call MapAction('JsonToPhp', '<leader>jp')
-
 
 function! s:JsonToPhp(str)
   let out = system('json-to-php ', a:str)

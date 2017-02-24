@@ -105,7 +105,6 @@ Abolish theyre they're
 Abolish theyve they've
 Abolish thougth thought
 Abolish w3c W3C
-Abolish web Web
 Abolish webgl WebGL
 Abolish webgl WebGL
 Abolish webkit WebKit
@@ -126,3 +125,4 @@ Abolish youre you're
 Abolish youve you've
 Abolish hes he's
 Abolish Php PHP
+Abolish cuda CUDA

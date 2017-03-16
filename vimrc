@@ -2,10 +2,8 @@ filetype on
 filetype plugin on
 syntax enable
 let mapleader = "\<space>"
-set grepprg=ag
-autocmd filetype php set formatoptions+=t
 runtime macros/matchit.vim
-set tags=./tags,./.git/tags,../.git/tags
+set tags+=/usr/include/tags,./tags,./.git/tags,../.git/tags
 " this harder to deploy normal commands with this setting
 " set relativenumber
 "vim will treat all numerals as decimals, useful on num<C-a> with numbers like 007
@@ -44,10 +42,6 @@ set copyindent
 set autoindent
 set gdefault
 
-"set guioptions-=m  "remove menu bar
-"set guioptions-=T  "remove toolbar
-"set guioptions-=r  "remove right-hand scroll bar
-"set guioptions-=L  "remove left-hand scroll bar
 set lazyredraw
 let g:openbrowser_github_always_used_branch="master"
 let g:solarized_termcolors=16
@@ -60,7 +54,6 @@ set shiftwidth=4
 " set softtabstop=4
 set expandtab
 " set shiftround
-set guiheadroom=0
 "set antialias
 "set runtimepath+=/home/jean/.vim/snippets
 "show matching parenthesis
@@ -68,18 +61,13 @@ set showmatch
 set scrolloff=3                 " Minimum lines to keep above and below cursor"
 set autoread
 set foldenable
-" set smarttab
 "the quantity of normal commands recorded
 set history=1000
 set title
-" set visualbell
 " Allow using the repeat operator with a visual selection (!)
 " http://stackoverflow.com/a/8064607/127816
 vnoremap . :normal .<CR>
 set cursorline
-" if exists("g:ctrl_user_command")
-"       unlet g:ctrlp_user_command
-" endif
 set wildignore=*.swp,*.back,*.pyc,*.class,*.coverage.*,*\\vendor\\*
 set backupdir=~/.tmp
 set directory=~/.tmp "don't clutter dirs with swp and tmpfiles
@@ -96,33 +84,20 @@ set clipboard=unnamedplus
 syntax sync minlines=256
 set nocursorcolumn
 set nocursorline
-"set relativenumber
-set synmaxcol=200
 "}}}
 autocmd BufEnter * :syn sync maxlines=500
 autocmd BufEnter *.md$ set filetype=markdown
 autocmd BufEnter *.md$ set spell spelllang=en_us
-autocmd FileType markdown set commentstring=<!!--\ %s\ -->
 autocmd FileType markdown setl tw=66
+"the & in the end of the config will unset it to the default
+" autocmd FileType markdown set number&
 autocmd FileType TEX setl tw=66
 autocmd Filetype markdown setl formatoptions+=t
-"CTRLP with regex by default
-" let g:ctrlp_regexp = 0
-":nnoremap <Space> @q
-"disable search continuation on edges
-"set nowrapscan
-"no octal
-"performance tweaks
 
-"gvim options
-"set guioptions-=m  "remove menu bar
-"set guioptions-=T  "remove toolbar
-"set guioptions-=r  "remove right-hand scroll bar
-"set guioptions-=L  "remove left-hand scroll bar
 set nocompatible
-hi MatchParen cterm=none ctermbg=black ctermfg=yellow
-" Make it more obviouser when lines are too long
 
+set grepprg=ack\ --column\ --color\ $*
+set grepformat=%f:%l:%c:%m
 
 let theme=$THEME
 if theme == 'light'
@@ -140,7 +115,7 @@ call plug#begin()
 Plug 'fatih/vim-go', { 'for': [ 'go'] }
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': [ 'php'] }
 Plug 'altercation/vim-colors-solarized'
-Plug 'bling/vim-airline'
+Plug 'bling/vim-airline' | Plug 'vim-airline/vim-airline-themes'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'jez/vim-superman'
 Plug 'kana/vim-textobj-function'
@@ -150,47 +125,55 @@ Plug 'michaeljsmith/vim-indent-object'
 Plug 'nelstrom/vim-visual-star-search'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
-Plug 'vim-airline/vim-airline-themes'
 Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
 Plug 'vim-scripts/argtextobj.vim'
 Plug 'vimwiki/vimwiki'
 Plug 'wakatime/vim-wakatime'
-Plug 'Raimondi/delimitMate'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'tyru/open-browser.vim'
-Plug 'tyru/open-browser-github.vim'
-Plug 'nelstrom/vim-markdown-folding', { 'for': [ 'markdown' ] }
-Plug 'godlygeek/tabular' | Plug 'plasticboy/vim-markdown', { 'for': [ 'markdown' ] }
+Plug 'tyru/open-browser.vim' | Plug 'tyru/open-browser-github.vim'
+Plug 'tpope/vim-markdown', { 'for': ['markdown'] }
+Plug 'vim-syntastic/syntastic'
+
 
 call plug#end()
+let g:markdown_fenced_languages = ['html', 'python', 'bash=sh', 'c']
 
+"syntatic checker{{{
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_loc_list_height=5
+let g:syntastic_php_checkers = ['phpcs', 'phpmd']
+let g:syntastic_sh_checkers = ['shellcheck']
+"}}}
+
+
+"use h cterm-colors to get the list of colors
 augroup VimrcColors
 au!
-  autocmd ColorScheme * highlight BadWords ctermbg=DarkMagenta guibg=DarkMagenta
-  autocmd ColorScheme * highlight Whitespace ctermbg=Grey guibg=Grey
-  autocmd ColorScheme * highlight Overlength ctermbg=DarkGrey guibg=DarkGrey
+  autocmd ColorScheme * highlight WordsToAvoid ctermbg=DarkMagenta
+  autocmd ColorScheme * highlight HardWords ctermbg=DarkYellow
+  autocmd ColorScheme * highlight Whitespace ctermbg=Grey
+  autocmd ColorScheme * highlight Overlength ctermbg=DarkGrey
 augroup END
 
-autocmd Syntax * call matchadd('BadWords', '\c\<\(obviously\|basically\|simply\|of\scourse\|clearly\|just\|everyone\knows\|however\|easy\|obviamente\|basicamente\|simplesmente\|com\certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então\|fácil\|bem\)\>') 
-
+autocmd Syntax * call matchadd('WordsToAvoid', '\c\<\(obviously\|basically\|simply\|of\scourse\|clearly\|just\|little\|quite\|everyone\knows\|however\|easy\|obviamente\|basicamente\|simplesmente\|com\certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então\|fácil\|bem\)\>')
+"words that need to be revised
+autocmd Syntax * call matchadd('HardWords', '\c\<\(porquê\|porque\|por\sque\|its\)\>')
 autocmd Syntax * call matchadd('Whitespace', '\s\+$')
 autocmd Syntax * call matchadd('Overlength', '\%81v')
-
 
 "snippets
 augroup load_us
   autocmd!
   autocmd InsertEnter * call plug#load('ultisnips')
 augroup END
-
-" let g:SuperTabDefaultCompletionType = '<C-n>'
-" let g:SuperTabDefaultCompletionType.= "<c-x><c-o>"
-" let g:UltiSnipsExpandTrigger="<tab>"
-" let g:UltiSnipsJumpForwardTrigger="<c-b>"
-" let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 
 let g:netrw_localrmdir='rm -r'
 "put line numbers on netrw
@@ -204,7 +187,6 @@ let &runtimepath.=',/home/jean/.vim/plugin/ns9tks-vim-autocomplpop-13fe3d806464'
 " let g:ctrlp_max_files=0
 " let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
 
-"autocmd FileType php setlocal omnifunc=phpcomplete_extended#CompletePHP
 
 "makes a underline on the current cursor line
 :hi CursorLine cterm=underline ctermbg=NONE
@@ -245,16 +227,17 @@ nmap <leader>rmrf :!rm -rf %:p <cr>
 nmap <leader>k :Explore<cr>
 nmap <leader>pn :!echo %<cr>
 nmap <leader>pfn :!echo %:p<cr>
+"copy path name
+nmap <leader>cpn :!copy %:p<cr>
+"copy full name
 nmap <leader>cfn :!copy %:p<cr>
+
 nmap <leader>t :TagbarToggle<cr>
 nmap <leader>gk :!gitk %<cr>
 nmap <leader>dw \(\<\w\+\>\)\_s*\<\1\><cr>
 nmap <silent> <leader>ev :e $MYVIMRC<cr>
 nmap <silent> <leader>sv :so $MYVIMRC<cr>
-" nmap <silent> <leader>sn :e /home/jean/projects/snippet/vim/UltiSnips/php.snippets<cr>
-" nmap <silent> <leader>snc :e /home/jean/projects/snippet/vim/UltiSnips/php_clipp.snippets<cr>
 nnoremap <leader>c :noh<cr>
-" nnoremap <leader>cc :CtrlPClearAllCaches<cr>
 nnoremap <leader><space> :w<cr>
 
 "use C-p and C-n to browser normal mode commands history
@@ -267,15 +250,24 @@ cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 let wiki = {}
 let wiki.nested_syntaxes = {'python': 'python', 'c++': 'cpp', 'php': 'php'}
 let g:vimwiki_list = [
-            \ {'path': '~/projects/writing/', 'syntax': 'markdown', 'ext': '.md' },
+            \ {'path': '~/projects/writing/docs', 'syntax': 'markdown', 'ext': '.md' },
+            \ {'path': '~/projects/git-docs/docs/', 'syntax': 'markdown', 'ext': '.md' },
             \ {'path': '~/projects/compufacil/Docs/', 'syntax': 'markdown', 'ext': '.md'}]
 
 let g:vimwiki_autowriteall=0
-
 let g:airline_theme='solarized'
 
 command Phpcsfixer : ! php-code-check `pwd`/%
     \ || print "Error on code check" && sleep 10
+
+fun! Diary( arg )
+    let out = system("run_function diary_file " . a:arg )
+    execute "edit " . out
+endfunction
+command! -nargs=* Tomorrow call Diary( 'tomorrow' )
+command! -nargs=* Yesterday call Diary( 'yesterday' )
+command! -nargs=* Today call Diary( 'today' )
+command! -nargs=* Diary call Diary( '<args>' )
 
 function! RunPHPUnitTest(filter)
     cd %:p:h
@@ -313,7 +305,6 @@ endfunction
 
 "command Phpmystandard : ! printf "PHP my standard \n" && make-php `pwd`/%
 autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
-"autocmd filetype php nnoremap <leader>m :Phpmystandard<cr>
 nnoremap <leader>u :call RunPHPUnitTest(0)<cr>
 nnoremap <leader>f :call RunPHPUnitTest(1)<cr>
 
@@ -649,6 +640,7 @@ function! s:Filefy(str)
 endfunction
 call MapAction('Filefy', '<leader>y')
 
+
 function! s:BreakCommand(str)
   let out = system('run_alias break_command ', a:str)
   return out
@@ -672,7 +664,7 @@ endfunction
 call MapAction('Trim', '<leader>t')
 
 function! s:googleIt(str)
-    let out = system('google-it ', a:str)
+    let out = system('google-it &', a:str)
 endfunction
 call MapAction('googleIt', '<leader>gi')
 
@@ -728,6 +720,32 @@ function! s:Unescape(str)
   return out
 endfunction
 call MapAction('Unescape', '<leader>us')
+
+function! s:MarkDone(str)
+  let out = system('sed -r "s/(○ |◎ )//g; s/(.*)/● \1/g" ', a:str)
+  return out
+endfunction
+call MapAction('MarkDone', '<leader>md')
+
+function! s:MakeTask(str)
+  let out = system('sed -r "s/(◐ |◎ )//g; s/(.*)/○ \1/g" ', a:str)
+  return out
+endfunction
+call MapAction('MakeTask', '<leader>mt')
+
+function! s:MakeApointment(str)
+  let out = system('sed -r "s/(.*)/◐ \1/g" ', a:str)
+  return out
+endfunction
+call MapAction('MakeApointment', '<leader>ma')
+
+
+function! s:MakeSomeday(str)
+  let out = system('sed -r "s/(.*)/◎ \1/g" ', a:str)
+  return out
+endfunction
+call MapAction('MakeSomeday', '<leader>ms')
+
 
 function! s:SqlBeautifier(str)
   let out = system('run_function sql_format', a:str)
@@ -853,3 +871,16 @@ inoremap ;<cr> <end>;<cr>
 
 set t_Co=256
 colorscheme solarized
+
+function! RelativePath(filename)
+    let cwd = getcwd()
+    let s = substitute(a:filename, l:cwd . "/" , "", "")
+    return s
+endfunction
+
+nmap <leader>crn :call CopyCurrentRelativePath()<cr>
+function! CopyCurrentRelativePath()
+  let path = RelativePath(expand("%:p"))
+  let result = system('mycopy ', path)
+endfunction
+

@@ -24,11 +24,10 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
 Plug 'vim-scripts/argtextobj.vim'
-Plug 'vimwiki/vimwiki'
 Plug 'wakatime/vim-wakatime'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'tyru/open-browser.vim' | Plug 'tyru/open-browser-github.vim'
-Plug 'vim-syntastic/syntastic' "syntax checking
+Plug 'vim-syntastic/syntastic', { 'for': ['c', 'bash'] } "syntax checking
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 call plug#end()
 let &runtimepath.=',/home/jean/.vim/plugin/ns9tks-vim-l9-3bb534a720fa'
@@ -87,6 +86,36 @@ set foldmethod=marker
 autocmd BufRead * setlocal foldmethod=marker
 autocmd BufRead * normal zM
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
+"}}}
+"Hightlight rules {{{
+"use h cterm-colors to get the list of colors
+augroup VimrcColors
+au!
+  autocmd ColorScheme * highlight WordsToAvoid ctermbg=DarkMagenta
+  autocmd ColorScheme * highlight HardWords ctermbg=DarkYellow
+  autocmd ColorScheme * highlight Whitespace ctermbg=Grey
+  autocmd ColorScheme * highlight Overlength ctermbg=DarkGrey
+augroup END
+
+autocmd Syntax * call matchadd('WordsToAvoid', '\c\<\(obviously\|basically\|simply\|of\scourse\|clearly\|just\|little\|quite\|everyone\knows\|however\|easy\|obviamente\|basicamente\|simplesmente\|com\certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então\|fácil\|bem\)\>')
+"words that need to be revised
+autocmd Syntax * call matchadd('HardWords', '\c\<\(porquê\|porque\|por\sque\|its\)\>')
+autocmd Syntax * call matchadd('Whitespace', '\s\+$')
+autocmd Syntax * call matchadd('Overlength', '\%81v')
+"}}}
+"theme setting {{{
+let theme=$THEME
+if theme == 'light'
+    set background=light
+else
+    set background=dark
+endif
+
+let g:airline_theme='solarized'
+let g:solarized_termcolors=16
+let g:solarized_bold=1
+set t_Co=16 "used  to be 256
+colorscheme solarized
 "}}}
 "Enable custom operations over text blocks{{{
 " Adapted from unimpaired.vim by Tim Pope.
@@ -185,12 +214,14 @@ let g:syntastic_php_checkers = ['phpcs', 'phpmd']
 let g:syntastic_sh_checkers = ['shellcheck']
 "}}}
 "Markdown configs {{{
-autocmd FileType markdown setl tw=66
-au BufEnter,BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
-au BufEnter,BufNewFile,BufFilePre,BufRead *.md set syntax=markdown
+let g:vim_markdown_no_extensions_in_markdown = 1
+autocmd! BufEnter,BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
+autocmd! BufEnter,BufNewFile,BufFilePre,BufRead *.md set syntax=markdown
 autocmd BufEnter *.md$ set spell spelllang=en_us
+autocmd FileType markdown setl tw=66
 let g:vim_markdown_math = 1
 let g:vim_markdown_fenced_languages = ['html', 'python', 'bash=sh', 'c']
+autocmd FileType markdown setlocal commentstring="<!--%s-->"
 
 function UnderlineHeading(level)
     if a:level == 1
@@ -214,22 +245,6 @@ nnoremap <leader>h5 :call UnderlineHeading(5)<cr>
 
 
 "}}}
-"Hightlight rules {{{
-"use h cterm-colors to get the list of colors
-augroup VimrcColors
-au!
-  autocmd ColorScheme * highlight WordsToAvoid ctermbg=DarkMagenta
-  autocmd ColorScheme * highlight HardWords ctermbg=DarkYellow
-  autocmd ColorScheme * highlight Whitespace ctermbg=Grey
-  autocmd ColorScheme * highlight Overlength ctermbg=DarkGrey
-augroup END
-
-autocmd Syntax * call matchadd('WordsToAvoid', '\c\<\(obviously\|basically\|simply\|of\scourse\|clearly\|just\|little\|quite\|everyone\knows\|however\|easy\|obviamente\|basicamente\|simplesmente\|com\certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então\|fácil\|bem\)\>')
-"words that need to be revised
-autocmd Syntax * call matchadd('HardWords', '\c\<\(porquê\|porque\|por\sque\|its\)\>')
-autocmd Syntax * call matchadd('Whitespace', '\s\+$')
-autocmd Syntax * call matchadd('Overlength', '\%81v')
-"}}}
 "netrw{{{
 let g:netrw_localrmdir='rm -r'
 let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
@@ -247,32 +262,8 @@ nnoremap <leader>ls :call FixLastSpellingError()<cr>
 map <leader>spt :set spell spelllang=pt_br<cr>
 map <leader>sen :set spell spelllang=en_us<cr>
 "}}}
-"wiki {{{
-let wiki = {}
-let wiki.nested_syntaxes = {'python': 'python', 'c++': 'cpp', 'php': 'php'}
-let g:vimwiki_list = [
-            \ {'path': '~/projects/writing/docs', 'syntax': 'markdown', 'ext': '.md' },
-            \ {'path': '~/projects/git-docs/docs/', 'syntax': 'markdown', 'ext': '.md' },
-            \ {'path': '~/projects/compufacil/Docs/', 'syntax': 'markdown', 'ext': '.md'}]
-
-let g:vimwiki_autowriteall=0
-"}}}
-"theme setting {{{
-let theme=$THEME
-if theme == 'light'
-    set background=light
-else
-    set background=dark
-endif
-
-let g:airline_theme='solarized'
-let g:solarized_termcolors=16
-let g:solarized_bold=1
-set t_Co=16 "used  to be 256
-colorscheme solarized
-"}}}
 "diary{{{
-nnoremap <Leader>di :VimwikiMakeDiaryNote<cr>
+nnoremap <Leader>di :Today<cr>
 fun! Diary( arg )
     let out = system("run_function diary_file " . a:arg )
     execute "edit " . out
@@ -280,8 +271,15 @@ endfunction
 command! -nargs=* Tomorrow call Diary( 'tomorrow' )
 command! -nargs=* Yesterday call Diary( 'yesterday' )
 command! -nargs=* Today call Diary( 'today' )
+command! -nargs=* Someday call Diary( 'someday' )
 command! -nargs=* Diary call Diary( '<args>' )
 
+fun! BottomDiary( arg )
+    let out = system("run_function diary_file " . a:arg )
+    execute "split" . out
+    res 10
+endfunction
+command! -nargs=* BottomDiary call BottomDiary( '<args>' )
 "}}}
 "php{{{
 function! s:JsonToPhp(str)
@@ -512,6 +510,11 @@ function! s:ReverseString(str)
 endfunction
 call MapAction('ReverseString', '<leader>i')
 
+function! s:MathBlock(str)
+    return '$ '.a:str.' $'
+endfunction
+call MapAction('MathBlock', '<leader>mb')
+
 function! s:Italic(str)
     return '**'.a:str.'**'
 endfunction
@@ -538,6 +541,14 @@ function! s:MakeList(str)
 endfunction
 call MapAction('MakeList', '<leader>ml')
 
+
+function! s:MakeGraph(str)
+      let out = system('graph-easy', a:str)
+      return a:str . "\n" . out
+endfunction
+call MapAction('MakeGraph', '<leader>mg')
+
+
 function! s:Parenthesis(str)
     return '('.a:str.')'
 endfunction
@@ -554,7 +565,7 @@ endfunction
 call MapAction('Bold', '<leader>bo')
 
 function! s:CodeBlock(str)
-    return "```\n".a:str."\n```"
+    return "```sh\n".a:str."\n```"
 endfunction
 call MapAction('CodeBlock', '<leader>c')
 
@@ -572,7 +583,7 @@ endfunction
 call MapAction('BreakCommand', '<leader>bc')
 
 function! s:foldSomething(str)
-    return "%{{{".a:str."%}}}"
+    return "{{{".a:str."}}}"
 endfunction
 call MapAction('foldSomething', '<leader>fo')
 
@@ -679,6 +690,8 @@ call MapAction('XmlBeautifier', '<leader>x')
 
 "}}}
 "Generic functions{{{
+
+
 function! OnlineDoc()
   if &ft =~ "cpp"
     let s:urlTemplate = "http://doc.trolltech.com/4.1/%.html"
@@ -801,7 +814,9 @@ nnoremap <Leader>fs :w ! sudo tee %<cr>
 " nnoremap <Leader>p :set paste!<cr>
 nnoremap <Leader>dt :r ! date<cr>
 nnoremap <Leader>e :edit!<cr>
+nnoremap <Leader>qi   :q<cr>
 nnoremap <Leader>o :only<cr>
+nnoremap <Leader>ww :edit $WIKI_PATH/index.md<cr>
 nnoremap cwi ciw
 " inoremap <C-z> <Esc>[s1z=gi
 map - ddp

@@ -1,13 +1,10 @@
-"It's  easier to spot comments when they are at the same  line as the command
-"they represent. It's also a good practise to use folding to hide details of
-"features.
+"It's a good practise to use folding to hide details of
 
 "Plugins Load {{{
 filetype on
 filetype plugin on
 call plug#begin()
 Plug 'fatih/vim-go', { 'for': [ 'go'] }
-Plug 'adoy/vim-php-refactoring-toolbox', { 'for': [ 'php'] }
 Plug 'lervag/vimtex', { 'for': [ 'latex' ] } "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
 Plug 'altercation/vim-colors-solarized'
 Plug 'bling/vim-airline' | Plug 'vim-airline/vim-airline-themes'
@@ -86,6 +83,16 @@ set foldmethod=marker
 autocmd BufRead * setlocal foldmethod=marker
 autocmd BufRead * normal zM
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
+
+:call matchadd('Conceal', '!=', 901, 901, {'conceal': '≠'})
+:call matchadd('Conceal', '>=', 902, 602, {'conceal': '≥'})
+:call matchadd('Conceal', '<=', 903, 603, {'conceal': '≤'})
+:call matchadd('Conceal', '->', 904, 604, {'conceal': '➞'})
+:call matchadd('Conceal', '+=', 905, 605, {'conceal': '±'})
+:call matchadd('Conceal', 'null', 906, 606, {'conceal': 'ø'})
+:call matchadd('Conceal', 'sqrt', 907, 607, {'conceal': '√'})
+:call matchadd('Conceal', '=>', 908, 608, {'conceal': '➞'})
+
 "}}}
 "Hightlight rules {{{
 "use h cterm-colors to get the list of colors
@@ -273,6 +280,8 @@ command! -nargs=* Yesterday call Diary( 'yesterday' )
 command! -nargs=* Today call Diary( 'today' )
 command! -nargs=* Someday call Diary( 'someday' )
 command! -nargs=* Diary call Diary( '<args>' )
+command! -nargs=* Diary call Diary( '<args>' )
+
 
 fun! BottomDiary( arg )
     let out = system("run_function diary_file " . a:arg )
@@ -520,6 +529,11 @@ function! s:Italic(str)
 endfunction
 call MapAction('Italic', '<leader>i')
 
+function! s:Backtick(str)
+    return "`".a:str."`"
+endfunction
+call MapAction('Backtick', "<leader>`")
+
 function! s:Quote(str)
     return "'".a:str."'"
 endfunction
@@ -564,6 +578,7 @@ function! s:Bold(str)
 endfunction
 call MapAction('Bold', '<leader>bo')
 
+
 function! s:CodeBlock(str)
     return "```sh\n".a:str."\n```"
 endfunction
@@ -573,7 +588,7 @@ function! s:Filefy(str)
   let out = system('filefy ', a:str)
   return out
 endfunction
-call MapAction('Filefy', '<leader>y')
+call MapAction('Filefy', '<leader>fly')
 
 
 function! s:BreakCommand(str)
@@ -690,6 +705,20 @@ call MapAction('XmlBeautifier', '<leader>x')
 
 "}}}
 "Generic functions{{{
+
+function! Blame(arg)
+    let current_line = line(".") + 1
+    let file_name = expand('%')
+    let out = system('git blame '.file_name.' > /tmp/blame')
+    execute "vsplit +".current_line." /tmp/blame"
+endfunction
+command! -nargs=* Blame call Blame( '<args>' )
+
+
+function! Deploy(arg)
+    let out = system('run_alias deploy-blog &')
+endfunction
+command! -nargs=* Deploy call Deploy( 'blog' )
 
 
 function! OnlineDoc()
@@ -808,6 +837,7 @@ endfunction
 
 "}}}
 "Generic mappings{{{
+command! -nargs=* WikiCompufacil execute "vsplit /home/jean/projects/compufacil/Docs/index.md"
 :hi CursorLine cterm=underline ctermbg=NONE "makes a underline on the current cursor line
 nnoremap <BS> :Rex<cr>
 nnoremap <Leader>fs :w ! sudo tee %<cr>
@@ -826,22 +856,22 @@ map <leader>x :w<','> !bash<cr>
 " map <leader>bt :call ToggleBackgroundColour()<cr>
 map <leader>me :!chmod +x %<cr>
 nnoremap <leader>tn :tabnew<cr>
-map <leader>gp :!chmod 777 %<cr>
-map <leader>mk :!cd %% ; make<cr>
 map <leader>ck :!git checkout %<cr>
 nmap <leader>xo :!xdg-open % &<cr>
 "open director (file manager)
-nmap <leader>od :!thunar %:h<cr>
+nmap <leader>od :!run_alias file_manager %:h<cr>
 nmap <leader>sh :!cd %:h && bash<cr>
 nmap <leader>lc :r!  echo %:h<cr>
 nmap <leader>rmrf :!rm -rf %:p <cr>
 nmap <leader>k :Explore<cr>
 nmap <leader>pn :!echo %<cr>
 nmap <leader>pfn :!echo %:p<cr>
-nmap <leader>cpn :!copy %:p<cr> "copy path name
-nmap <leader>cfn :!copy %:p<cr> "copy full name
+"copy path name
+nmap <leader>cpn :!copy %:p<cr>
+"copy full name
+nmap <leader>cfn :!copy %:p<cr>
 nmap <leader>t :TagbarToggle<cr>
-nmap <leader>gk :!gitk %<cr>
+nmap <leader>gk :!gitk % &<cr>
 nmap <leader>dw \(\<\w\+\>\)\_s*\<\1\><cr>
 nmap <silent> <leader>ev :e $MY_VIMRC<cr>
 nmap <silent> <leader>sv :so $MY_VIMRC<cr>
@@ -854,4 +884,5 @@ cmap w!! w !sudo tee > /dev/null %
 " use %% to expand to the current buffer directory
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 "}}}
+
 

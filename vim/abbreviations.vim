@@ -75,7 +75,6 @@ Abolish length length
 Abolish lets let's
 Abolish maek make
 Abolish mozilla Mozilla
-Abolish music mpsyt
 Abolish neeed need
 Abolish nwe new
 Abolish offline off-line

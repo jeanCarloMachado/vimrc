@@ -1,11 +1,14 @@
 "It's a good practise to use folding to hide details of
+"Its better to organize the configs by semantic. Better to put wiki
+"mappings on the wiki section then on the mappings section
 
 "Plugins Load {{{
 filetype on
 filetype plugin on
 call plug#begin()
 Plug 'fatih/vim-go', { 'for': [ 'go'] }
-Plug 'lervag/vimtex', { 'for': [ 'latex' ] } "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
+"document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
+Plug 'lervag/vimtex', { 'for': [ 'latex' ] }
 Plug 'altercation/vim-colors-solarized'
 Plug 'bling/vim-airline' | Plug 'vim-airline/vim-airline-themes'
 Plug 'christoomey/vim-tmux-navigator'
@@ -16,14 +19,11 @@ Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim'
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'nelstrom/vim-visual-star-search'
 Plug 'tpope/vim-abolish'
-Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
 Plug 'vim-scripts/argtextobj.vim'
-Plug 'wakatime/vim-wakatime'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'tyru/open-browser.vim' | Plug 'tyru/open-browser-github.vim'
 Plug 'vim-syntastic/syntastic', { 'for': ['c', 'bash'] } "syntax checking
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 call plug#end()
@@ -44,7 +44,7 @@ set noswapfile
 set nobackup
 set nowritebackup
 set number
-set shell=/bin/bash
+set shell=/bin/zsh
 set encoding=utf-8
 set showmode
 set showcmd
@@ -77,7 +77,6 @@ set complete+=s
 set formatprg=par
 setlocal linebreak
 set clipboard=unnamedplus
-autocmd BufEnter * :syn sync maxlines=500
 set nocompatible
 set foldmethod=marker
 autocmd BufRead * setlocal foldmethod=marker
@@ -89,10 +88,154 @@ let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
 :call matchadd('Conceal', '<=', 903, 603, {'conceal': '≤'})
 :call matchadd('Conceal', '->', 904, 604, {'conceal': '➞'})
 :call matchadd('Conceal', '+=', 905, 605, {'conceal': '±'})
-:call matchadd('Conceal', 'null', 906, 606, {'conceal': 'ø'})
 :call matchadd('Conceal', 'sqrt', 907, 607, {'conceal': '√'})
 :call matchadd('Conceal', '=>', 908, 608, {'conceal': '➞'})
 
+"}}}
+"Generic functions{{{
+
+fun! ForceSave()
+     execute "w !sudo tee > /dev/null %"
+endfunction
+command! -nargs=* ForceSave call ForceSave()
+
+function! Blame(arg)
+    let current_line = line(".") + 1
+    let file_name = expand('%')
+    let out = system('git blame '.file_name.' > /tmp/blame')
+    execute "vsplit +".current_line." /tmp/blame"
+endfunction
+command! -nargs=* Blame call Blame( '<args>' )
+
+
+function! Deploy(arg)
+    let out = system('run_alias deploy-blog &')
+endfunction
+command! -nargs=* Deploy call Deploy( 'blog' )
+
+
+function! OnlineDoc()
+  if &ft =~ "cpp"
+    let s:urlTemplate = "http://doc.trolltech.com/4.1/%.html"
+  elseif &ft =~ "ruby"
+    let s:urlTemplate = "https://www.google.com.br/?q=ruby+%"
+  elseif &ft =~ "php"
+    let s:urlTemplate = "http://php.net/manual-lookup.php?pattern=%&scope=quickref"
+  elseif &ft =~ "perl" let s:urlTemplate = "http://perldoc.perl.org/functions/%.html"
+  else
+    return
+  endif
+  let s:browser = "browser"
+  let s:wordUnderCursor = expand("<cword>")
+  let s:url = substitute(s:urlTemplate, "%", s:wordUnderCursor, "g")
+  let s:cmd = "silent !" . s:browser . " " . s:url . "&"
+  execute s:cmd
+  redraw!
+endfunction
+" Online doc search.
+map <Leader>doc :call OnlineDoc()<cr>
+map <silent> <M-d> :call OnlineDoc()<cr>
+
+function! RenameFile()
+  let old_name = expand('%')
+  let new_name = input('New file name: ', expand('%'), 'file')
+  if new_name != '' && new_name != old_name
+    exec ':saveas ' . new_name
+    exec ':silent !rm ' . old_name
+    redraw!
+  endif
+endfunction
+map <Leader>rn :call RenameFile()<cr>
+
+function! CopyFile()
+  let old_name = expand('%')
+  let new_name = input('New file name: ', expand('%'), 'file')
+  if new_name != '' && new_name != old_name
+    exec ':saveas ' . new_name
+    redraw!
+  endif
+endfunction
+map <Leader>cp :call CopyFile()<cr>
+
+let @r=';.'
+
+" Strip the newline from the end of a string
+function! Chomp(str)
+  return substitute(a:str, '\n$', '', '')
+endfunction
+
+function! MoveEm(position)
+    let saved_cursor = getpos(".")
+    let previous_blank_line = search('^$', 'bn')
+    let target_line = previous_blank_line + a:position - 1
+    execute 'move ' . target_line
+    call setpos('.', saved_cursor)
+endfunction
+
+for position in range(1, 9)
+    execute 'nnoremap m' . position . ' :call MoveEm(' . position . ')<cr>'
+endfor
+
+function UseClassKeywordInsteadOfString()
+    normal! $F's::classF's\
+endfunction
+
+
+function! RelativePath(filename)
+    let cwd = getcwd()
+    let s = substitute(a:filename, l:cwd . "/" , "", "")
+    return s
+endfunction
+
+nmap <leader>crn :call CopyCurrentRelativePath()<cr>
+function! CopyCurrentRelativePath()
+  let path = RelativePath(expand("%:p"))
+let result = system('mycopy ', path)
+endfunction
+
+"}}}
+"Generic mappings{{{
+:hi CursorLine cterm=underline ctermbg=NONE "makes a underline on the current cursor line
+nnoremap <BS> :Rex<cr>
+nnoremap <Leader>fs :w ! sudo tee %<cr>
+nnoremap <Leader>dt :r ! date<cr>
+nnoremap <Leader>e :edit!<cr>
+nnoremap <Leader>o :only<cr>
+nnoremap cwi ciw
+map - ddp
+map _ dd2kp
+map <leader>i mmgg=G`m
+map <leader>x :w<','> !bash<cr>
+map <leader>me :!chmod +x %<cr>
+nnoremap <leader>tn :tabnew<cr>
+map <leader>ck :!git checkout %<cr>
+nmap <leader>xo :!xdg-open % &<cr>
+"open director (file manager)
+nmap <leader>od :!run_alias file_manager %:h<cr>
+nmap <leader>sh :!cd %:h && bash<cr>
+nmap <leader>lc :r!  echo %:h<cr>
+nmap <leader>rmrf :!rm -rf %:p <cr>
+nmap <leader>k :Explore<cr>
+nmap <leader>pn :!echo %<cr>
+nmap <leader>pfn :!echo %:p<cr>
+"copy path name
+nmap <leader>cpn :!copy %:p<cr>
+"copy full name
+nmap <leader>cfn :!copy %:p<cr>
+nmap <leader>gk :!gitk % &<cr>
+nmap <leader>dw \(\<\w\+\>\)\_s*\<\1\><cr>
+nmap <silent> <leader>ev :e $MY_VIMRC<cr>
+nmap <silent> <leader>sv :so $MY_VIMRC<cr>
+nnoremap <leader>c :noh<cr>
+nnoremap <leader><space> :w<cr>
+"use C-p and C-n to browser normal mode commands history
+cnoremap <C-p> <Up>
+cnoremap <C-n> <Down>
+" use %% to expand to the current buffer directory
+cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
+nnoremap <leader>cf :!filefy-clippboard<cr>
+map <c-p> :FZF<cr>
+let $FZF_DEFAULT_COMMAND = 'ag -a -g ""'
 "}}}
 "Hightlight rules {{{
 "use h cterm-colors to get the list of colors
@@ -124,71 +267,8 @@ let g:solarized_bold=1
 set t_Co=16 "used  to be 256
 colorscheme solarized
 "}}}
-"Enable custom operations over text blocks{{{
-" Adapted from unimpaired.vim by Tim Pope.
-function! s:DoAction(algorithm,type)
-  " backup settings that we will change
-  let sel_save = &selection
-  let cb_save = &clipboard
-  " make selection and clipboard work the way we need
-  set selection=inclusive clipboard-=unnamed clipboard-=unnamedplus
-  " backup the unnamed register, which we will be yanking into
-  let reg_save = @@
-  " yank the relevant text, and also set the visual selection (which will be reused if the text
-  " needs to be replaced)
-  if a:type =~ '^\d\+$'
-    " if type is a number, then select that many lines
-    silent exe 'normal! V'.a:type.'$y'
-  elseif a:type =~ '^.$'
-    " if type is 'v', 'V', or '<C-V>' (i.e. 0x16) then reselect the visual region
-    silent exe "normal! `<" . a:type . "`>y"
-  elseif a:type == 'line'
-    " line-based text motion
-    silent exe "normal! '[V']y"
-  elseif a:type == 'block'
-    " block-based text motion
-    silent exe "normal! `[\<C-V>`]y"
-  else
-    " char-based text motion
-    silent exe "normal! `[v`]y"
-  endif
-  " call the user-defined function, passing it the contents of the unnamed register
-  let repl = s:{a:algorithm}(@@)
-  " if the function returned a value, then replace the text
-  if type(repl) == 1
-    " put the replacement text into the unnamed register, and also set it to be a
-    " characterwise, linewise, or blockwise selection, based upon the selection type of the
-    " yank we did above
-    call setreg('@', repl, getregtype('@'))
-    " relect the visual region and paste
-    normal! gvp
-  endif
-  " restore saved settings and register value
-  let @@ = reg_save
-  let &selection = sel_save
-  let &clipboard = cb_save
-endfunction
-
-function! s:ActionOpfunc(type)
-  return s:DoAction(s:encode_algorithm, a:type)
-endfunction
-
-function! s:ActionSetup(algorithm)
-  let s:encode_algorithm = a:algorithm
-  let &opfunc = matchstr(expand('<sfile>'), '<SNR>\d\+_').'ActionOpfunc'
-endfunction
-
-function! MapAction(algorithm, key)
-  exe 'nnoremap <silent> <Plug>actions'    .a:algorithm.' :<C-U>call <SID>ActionSetup("'.a:algorithm.'")<CR>g@'
-  exe 'xnoremap <silent> <Plug>actions'    .a:algorithm.' :<C-U>call <SID>DoAction("'.a:algorithm.'",visualmode())<CR>'
-  exe 'nnoremap <silent> <Plug>actionsLine'.a:algorithm.' :<C-U>call <SID>DoAction("'.a:algorithm.'",v:count1)<CR>'
-  exe 'nmap '.a:key.'  <Plug>actions'.a:algorithm
-  exe 'xmap '.a:key.'  <Plug>actions'.a:algorithm
-  exe 'nmap '.a:key.a:key[strlen(a:key)-1].' <Plug>actionsLine'.a:algorithm
-endfunction
-
-"}}}
 "performance {{{
+autocmd BufEnter * :syn sync maxlines=500
 set lazyredraw "don't redraw screend when running macros
 syntax sync minlines=256
 set nocursorcolumn
@@ -228,8 +308,6 @@ autocmd BufEnter *.md$ set spell spelllang=en_us
 autocmd FileType markdown setl tw=66
 let g:vim_markdown_math = 1
 let g:vim_markdown_fenced_languages = ['html', 'python', 'bash=sh', 'c']
-autocmd FileType markdown setlocal commentstring="<!--%s-->"
-
 function UnderlineHeading(level)
     if a:level == 1
         normal! yypVr=
@@ -249,7 +327,6 @@ nnoremap <leader>h2 :call UnderlineHeading(2)<cr>
 nnoremap <leader>h3 :call UnderlineHeading(3)<cr>
 nnoremap <leader>h4 :call UnderlineHeading(4)<cr>
 nnoremap <leader>h5 :call UnderlineHeading(5)<cr>
-
 
 "}}}
 "netrw{{{
@@ -290,53 +367,43 @@ fun! BottomDiary( arg )
 endfunction
 command! -nargs=* BottomDiary call BottomDiary( '<args>' )
 "}}}
-"php{{{
-function! s:JsonToPhp(str)
-  let out = system('json-to-php ', a:str)
-  return out
-endfunction
-call MapAction('JsonToPhp', '<leader>jp')
+"wiki{{{
+let g:vim_markdown_no_default_key_mappings = 1
+function! Wiki(arg)
+    let wiki_path = $WIKI_PATH
 
-command Phpcsfixer : ! php-code-check `pwd`/%
-    \ || print "Error on code check" && sleep 10
-
-function! RunPHPUnitTest(filter)
-    cd %:p:h
-    if a:filter
-
-        normal! T yw
-        if @" =~ "^test*"
-            normal! mT
-        endif
-
-        normal! `T
-
-        normal! T yw
-        "
-        let myCommand="phpunit -c ". $PWD ."/Backend/phpunit.xml.dist --filter " . @" . " " . expand("%:p")
-        let result = system(myCommand)
-    else
-        let @n = expand('%:t') 
-        if @n =~ "Test"
-            normal! mA
-        endif
-        normal! `A
-
-
-        let myCommand = "phpunit -c ". $PWD . "/Backend/phpunit.xml.dist " . expand("%:p")
-        let result = system(myCommand)
+    if a:arg == 'compufacil'
+        let wiki_path = "/home/jean/projects/compufacil/Docs"
     endif
-    split __PHPUnit_Result__
-    normal! ggdG
-    setlocal buftype=nofile
-    call append(0, myCommand)
-    call append(0, split(result, '\v\n'))
-    cd -
+    "sets the current directory of the window localy to enable file searches
+    execute "lcd " . wiki_path
+    execute "edit " . wiki_path . "/index.md"
 endfunction
-"command Phpmystandard : ! printf "PHP my standard \n" && make-php `pwd`/%
-autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
-nnoremap <leader>u :call RunPHPUnitTest(0)<cr>
-nnoremap <leader>f :call RunPHPUnitTest(1)<cr>
+command! -nargs=* Wiki call Wiki( '<args>' )
+command! -nargs=* WikiCompufacil call Wiki( 'compufacil' )
+
+nnoremap <Leader>ww :Wiki<cr>
+nnoremap <Leader>wc :WikiCompufacil<cr>
+
+function! GetUrl()
+    normal! 0f(lvi(y
+    return @"
+endfunction
+
+function! OpenMarkdown()
+    let url = GetUrl()
+    let path = expand('%:p:h')
+    execute 'edit ' . path . '/' . url . '.md'
+endfunction
+nnoremap ge :call OpenMarkdown()<cr>
+
+function! OpenUrl()
+    let url = GetUrl()
+    execute '! notify-send "' . url ' "'
+    execute '! chromium "' . url . '" & '
+endfunction
+nnoremap gx :call OpenUrl()<cr>
+
 "}}}
 "templates load {{{
 autocmd BufNewFile *.php 0r /home/jean/projects/dotfiles/snippet/template/php.php
@@ -475,7 +542,6 @@ function! CurrentLineI()
   \ : 0
 endfunction
 
-
 call textobj#user#plugin('document', {
 \   '-': {
 \     'select-a-function': 'CurrentDocumentA',
@@ -502,7 +568,68 @@ function! CurrentDocumentI()
 endfunction
 inoremap ;<cr> <end>;<cr>
 "}}}
-"Generic Actions{{{
+"Actions over text blocks{{{
+function! s:DoAction(algorithm,type)
+  " backup settings that we will change
+  let sel_save = &selection
+  let cb_save = &clipboard
+  " make selection and clipboard work the way we need
+  set selection=inclusive clipboard-=unnamed clipboard-=unnamedplus
+  " backup the unnamed register, which we will be yanking into
+  let reg_save = @@
+  " yank the relevant text, and also set the visual selection (which will be reused if the text
+  " needs to be replaced)
+  if a:type =~ '^\d\+$'
+    " if type is a number, then select that many lines
+    silent exe 'normal! V'.a:type.'$y'
+  elseif a:type =~ '^.$'
+    " if type is 'v', 'V', or '<C-V>' (i.e. 0x16) then reselect the visual region
+    silent exe "normal! `<" . a:type . "`>y"
+  elseif a:type == 'line'
+    " line-based text motion
+    silent exe "normal! '[V']y"
+  elseif a:type == 'block'
+    " block-based text motion
+    silent exe "normal! `[\<C-V>`]y"
+  else
+    " char-based text motion
+    silent exe "normal! `[v`]y"
+  endif
+  " call the user-defined function, passing it the contents of the unnamed register
+  let repl = s:{a:algorithm}(@@)
+  " if the function returned a value, then replace the text
+  if type(repl) == 1
+    " put the replacement text into the unnamed register, and also set it to be a
+    " characterwise, linewise, or blockwise selection, based upon the selection type of the
+    " yank we did above
+    call setreg('@', repl, getregtype('@'))
+    " relect the visual region and paste
+    normal! gvp
+  endif
+  " restore saved settings and register value
+  let @@ = reg_save
+  let &selection = sel_save
+  let &clipboard = cb_save
+endfunction
+
+function! s:ActionOpfunc(type)
+  return s:DoAction(s:encode_algorithm, a:type)
+endfunction
+
+function! s:ActionSetup(algorithm)
+  let s:encode_algorithm = a:algorithm
+  let &opfunc = matchstr(expand('<sfile>'), '<SNR>\d\+_').'ActionOpfunc'
+endfunction
+
+function! MapAction(algorithm, key)
+  exe 'nnoremap <silent> <Plug>actions'    .a:algorithm.' :<C-U>call <SID>ActionSetup("'.a:algorithm.'")<CR>g@'
+  exe 'xnoremap <silent> <Plug>actions'    .a:algorithm.' :<C-U>call <SID>DoAction("'.a:algorithm.'",visualmode())<CR>'
+  exe 'nnoremap <silent> <Plug>actionsLine'.a:algorithm.' :<C-U>call <SID>DoAction("'.a:algorithm.'",v:count1)<CR>'
+  exe 'nmap '.a:key.'  <Plug>actions'.a:algorithm
+  exe 'xmap '.a:key.'  <Plug>actions'.a:algorithm
+  exe 'nmap '.a:key.a:key[strlen(a:key)-1].' <Plug>actionsLine'.a:algorithm
+endfunction
+
 function! s:ComputeMD5(str)
   let out = system('md5sum |cut -b 1-32', a:str)
   " Remove trailing newline.
@@ -562,7 +689,6 @@ function! s:MakeGraph(str)
 endfunction
 call MapAction('MakeGraph', '<leader>mg')
 
-
 function! s:Parenthesis(str)
     return '('.a:str.')'
 endfunction
@@ -577,7 +703,6 @@ function! s:Bold(str)
     return '*'.a:str.'*'
 endfunction
 call MapAction('Bold', '<leader>bo')
-
 
 function! s:CodeBlock(str)
     return "```sh\n".a:str."\n```"
@@ -683,7 +808,6 @@ function! s:MakeApointment(str)
 endfunction
 call MapAction('MakeApointment', '<leader>ma')
 
-
 function! s:MakeSomeday(str)
   let out = system('sed -r "s/(.*)/◎ \1/g" ', a:str)
   return out
@@ -704,185 +828,52 @@ endfunction
 call MapAction('XmlBeautifier', '<leader>x')
 
 "}}}
-"Generic functions{{{
-
-function! Blame(arg)
-    let current_line = line(".") + 1
-    let file_name = expand('%')
-    let out = system('git blame '.file_name.' > /tmp/blame')
-    execute "vsplit +".current_line." /tmp/blame"
+"php{{{
+function! s:JsonToPhp(str)
+  let out = system('json-to-php ', a:str)
+  return out
 endfunction
-command! -nargs=* Blame call Blame( '<args>' )
+call MapAction('JsonToPhp', '<leader>jp')
+
+command Phpcsfixer : ! php-code-check `pwd`/%
+    \ || print "Error on code check" && sleep 10
+
+function! RunPHPUnitTest(filter)
+    cd %:p:h
+    if a:filter
+
+        normal! T yw
+        if @" =~ "^test*"
+            normal! mT
+        endif
+
+        normal! `T
+
+        normal! T yw
+        "
+        let myCommand="phpunit -c ". $PWD ."/Backend/phpunit.xml.dist --filter " . @" . " " . expand("%:p")
+        let result = system(myCommand)
+    else
+        let @n = expand('%:t') 
+        if @n =~ "Test"
+            normal! mA
+        endif
+        normal! `A
 
 
-function! Deploy(arg)
-    let out = system('run_alias deploy-blog &')
+        let myCommand = "phpunit -c ". $PWD . "/Backend/phpunit.xml.dist " . expand("%:p")
+        let result = system(myCommand)
+    endif
+    split __PHPUnit_Result__
+    normal! ggdG
+    setlocal buftype=nofile
+    call append(0, myCommand)
+    call append(0, split(result, '\v\n'))
+    cd -
 endfunction
-command! -nargs=* Deploy call Deploy( 'blog' )
-
-
-function! OnlineDoc()
-  if &ft =~ "cpp"
-    let s:urlTemplate = "http://doc.trolltech.com/4.1/%.html"
-  elseif &ft =~ "ruby"
-    let s:urlTemplate = "https://www.google.com.br/?q=ruby+%"
-  elseif &ft =~ "php"
-    let s:urlTemplate = "http://php.net/manual-lookup.php?pattern=%&scope=quickref"
-  elseif &ft =~ "perl" let s:urlTemplate = "http://perldoc.perl.org/functions/%.html"
-  else
-    return
-  endif
-  let s:browser = "browser"
-  let s:wordUnderCursor = expand("<cword>")
-  let s:url = substitute(s:urlTemplate, "%", s:wordUnderCursor, "g")
-  let s:cmd = "silent !" . s:browser . " " . s:url . "&"
-  execute s:cmd
-  redraw!
-endfunction
-" Online doc search.
-map <Leader>doc :call OnlineDoc()<cr>
-map <silent> <M-d> :call OnlineDoc()<cr>
-
-" Merge a tab into a split in the previous window
-function! MergeTabs()
-  if tabpagenr() == 1
-    return
-  endif
-  let bufferName = bufname("%")
-  if tabpagenr("$") == tabpagenr()
-    close!
-  else
-    close!
-    tabprev
-  endif
-  split
-  execute "buffer " . bufferName
-endfunction
-nmap <C-W>u :call MergeTabs()<CR>
-
-
-function! RenameFile()
-  let old_name = expand('%')
-  let new_name = input('New file name: ', expand('%'), 'file')
-  if new_name != '' && new_name != old_name
-    exec ':saveas ' . new_name
-    exec ':silent !rm ' . old_name
-    redraw!
-  endif
-endfunction
-map <Leader>rn :call RenameFile()<cr>
-
-function! CopyFile()
-  let old_name = expand('%')
-  let new_name = input('New file name: ', expand('%'), 'file')
-  if new_name != '' && new_name != old_name
-    exec ':saveas ' . new_name
-    redraw!
-  endif
-endfunction
-map <Leader>cp :call CopyFile()<cr>
-
-let @r=';.'
-
-" Strip the newline from the end of a string
-function! Chomp(str)
-  return substitute(a:str, '\n$', '', '')
-endfunction
-
-map <c-p> :FZF<cr>
-let $FZF_DEFAULT_COMMAND = 'ag -a -g ""'
-
-
-function! MoveEm(position)
-    let saved_cursor = getpos(".")
-    let previous_blank_line = search('^$', 'bn')
-    let target_line = previous_blank_line + a:position - 1
-    execute 'move ' . target_line
-    call setpos('.', saved_cursor)
-endfunction
-
-for position in range(1, 9)
-    execute 'nnoremap m' . position . ' :call MoveEm(' . position . ')<cr>'
-endfor
-
-
-
-function! MoveUseOfTraitsToBody()
-    normal! mL
-    normal gg/^use.*\(Helper\|Trait\)dd/    useP>>wi\V:s/ as .*;/;/e$hviw*ddgg:w:bd
-    normal! `L
-endfunction
-
-nnoremap <leader>ttb :call MoveUseOfTraitsToBody()<cr>
-
-nnoremap <leader>cf :!filefy-clippboard<cr>
-
-
-function UseClassKeywordInsteadOfString()
-    normal! $F's::classF's\
-endfunction
-
-
-function! RelativePath(filename)
-    let cwd = getcwd()
-    let s = substitute(a:filename, l:cwd . "/" , "", "")
-    return s
-endfunction
-
-nmap <leader>crn :call CopyCurrentRelativePath()<cr>
-function! CopyCurrentRelativePath()
-  let path = RelativePath(expand("%:p"))
-let result = system('mycopy ', path)
-endfunction
-
-"}}}
-"Generic mappings{{{
-command! -nargs=* WikiCompufacil execute "vsplit /home/jean/projects/compufacil/Docs/index.md"
-:hi CursorLine cterm=underline ctermbg=NONE "makes a underline on the current cursor line
-nnoremap <BS> :Rex<cr>
-nnoremap <Leader>fs :w ! sudo tee %<cr>
-" nnoremap <Leader>p :set paste!<cr>
-nnoremap <Leader>dt :r ! date<cr>
-nnoremap <Leader>e :edit!<cr>
-nnoremap <Leader>qi   :q<cr>
-nnoremap <Leader>o :only<cr>
-nnoremap <Leader>ww :edit $WIKI_PATH/index.md<cr>
-nnoremap cwi ciw
-" inoremap <C-z> <Esc>[s1z=gi
-map - ddp
-map _ dd2kp
-map <leader>i mmgg=G`m
-map <leader>x :w<','> !bash<cr>
-" map <leader>bt :call ToggleBackgroundColour()<cr>
-map <leader>me :!chmod +x %<cr>
-nnoremap <leader>tn :tabnew<cr>
-map <leader>ck :!git checkout %<cr>
-nmap <leader>xo :!xdg-open % &<cr>
-"open director (file manager)
-nmap <leader>od :!run_alias file_manager %:h<cr>
-nmap <leader>sh :!cd %:h && bash<cr>
-nmap <leader>lc :r!  echo %:h<cr>
-nmap <leader>rmrf :!rm -rf %:p <cr>
-nmap <leader>k :Explore<cr>
-nmap <leader>pn :!echo %<cr>
-nmap <leader>pfn :!echo %:p<cr>
-"copy path name
-nmap <leader>cpn :!copy %:p<cr>
-"copy full name
-nmap <leader>cfn :!copy %:p<cr>
-nmap <leader>t :TagbarToggle<cr>
-nmap <leader>gk :!gitk % &<cr>
-nmap <leader>dw \(\<\w\+\>\)\_s*\<\1\><cr>
-nmap <silent> <leader>ev :e $MY_VIMRC<cr>
-nmap <silent> <leader>sv :so $MY_VIMRC<cr>
-nnoremap <leader>c :noh<cr>
-nnoremap <leader><space> :w<cr>
-"use C-p and C-n to browser normal mode commands history
-cnoremap <C-p> <Up>
-cnoremap <C-n> <Down>
-cmap w!! w !sudo tee > /dev/null %
-" use %% to expand to the current buffer directory
-cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
+autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
+nnoremap <leader>u :call RunPHPUnitTest(0)<cr>
+nnoremap <leader>f :call RunPHPUnitTest(1)<cr>
 "}}}
 
 

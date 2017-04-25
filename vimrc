@@ -308,47 +308,6 @@ set tabstop=4
 set shiftwidth=4
 set expandtab
 "}}}
-"syntatic checker{{{
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_loc_list_height=5
-let g:syntastic_php_checkers = ['phpcs', 'phpmd']
-let g:syntastic_sh_checkers = ['shellcheck']
-"}}}
-"Markdown configs {{{
-let g:vim_markdown_no_extensions_in_markdown = 1
-autocmd! BufEnter,BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
-autocmd! BufEnter,BufNewFile,BufFilePre,BufRead *.md set syntax=markdown
-autocmd BufEnter *.md$ set spell spelllang=en_us
-autocmd FileType markdown setl tw=66
-let g:vim_markdown_math = 1
-let g:vim_markdown_fenced_languages = ['html', 'python', 'bash=sh', 'c']
-function UnderlineHeading(level)
-    if a:level == 1
-        normal! yypVr=
-    elseif a:level == 2
-        normal! yypVr-
-    elseif a:level == 3
-        normal! I### 
-    elseif a:level == 4
-        normal! I#### 
-    elseif a:level == 5
-        normal! I##### 
-    endif
-endfunction
-
-nnoremap <leader>h1 :call UnderlineHeading(1)<cr>
-nnoremap <leader>h2 :call UnderlineHeading(2)<cr>
-nnoremap <leader>h3 :call UnderlineHeading(3)<cr>
-nnoremap <leader>h4 :call UnderlineHeading(4)<cr>
-nnoremap <leader>h5 :call UnderlineHeading(5)<cr>
-
-"}}}
 "Generic text-objects{{{
 
 call textobj#user#plugin('line', {
@@ -577,11 +536,6 @@ function! s:MathBlock(str)
 endfunction
 call MapAction('MathBlock', '<leader>mb')
 
-function! s:Italic(str)
-    return '**'.a:str.'**'
-endfunction
-call MapAction('Italic', '<leader>i')
-
 function! s:Backtick(str)
     return "`".a:str."`"
 endfunction
@@ -623,16 +577,6 @@ function! s:Brackets(str)
     return '['.a:str.']'
 endfunction
 call MapAction('Brackets', '<leader>[')
-
-function! s:Bold(str)
-    return '*'.a:str.'*'
-endfunction
-call MapAction('Bold', '<leader>bo')
-
-function! s:CodeBlock(str)
-    return "```sh\n".a:str."\n```"
-endfunction
-call MapAction('CodeBlock', '<leader>c')
 
 function! s:Filefy(str)
   let out = system('filefy ', a:str)
@@ -726,6 +670,63 @@ function! s:XmlBeautifier(str)
   return out
 endfunction
 call MapAction('XmlBeautifier', '<leader>x')
+
+"}}}
+"syntatic checker{{{
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_loc_list_height=5
+let g:syntastic_php_checkers = ['phpcs', 'phpmd']
+let g:syntastic_sh_checkers = ['shellcheck']
+"}}}
+"Markdown configs {{{
+let g:vim_markdown_no_extensions_in_markdown = 1
+autocmd! BufEnter,BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
+autocmd! BufEnter,BufNewFile,BufFilePre,BufRead *.md set syntax=markdown
+autocmd BufEnter *.md$ set spell spelllang=en_us
+autocmd FileType markdown setl tw=66
+let g:vim_markdown_math = 1
+let g:vim_markdown_fenced_languages = ['html', 'python', 'bash=sh', 'c']
+function UnderlineHeading(level)
+    if a:level == 1
+        normal! yypVr=
+    elseif a:level == 2
+        normal! yypVr-
+    elseif a:level == 3
+        normal! I### 
+    elseif a:level == 4
+        normal! I#### 
+    elseif a:level == 5
+        normal! I##### 
+    endif
+endfunction
+
+nnoremap <leader>h1 :call UnderlineHeading(1)<cr>
+nnoremap <leader>h2 :call UnderlineHeading(2)<cr>
+nnoremap <leader>h3 :call UnderlineHeading(3)<cr>
+nnoremap <leader>h4 :call UnderlineHeading(4)<cr>
+nnoremap <leader>h5 :call UnderlineHeading(5)<cr>
+
+function! s:Italic(str)
+    return '**'.a:str.'**'
+endfunction
+call MapAction('Italic', '<leader>i')
+
+function! s:Bold(str)
+    return '*'.a:str.'*'
+endfunction
+call MapAction('Bold', '<leader>bo')
+
+function! s:CodeBlock(str)
+    return "```sh\n".a:str."\n```"
+endfunction
+call MapAction('CodeBlock', '<leader>c')
+
 
 "}}}
 "diary{{{

@@ -1,13 +1,28 @@
-# vimrc
+vimrc
+=====
 
-My vim configurations
-
-For similar subject refer to my [personalScripts](https://github.com/jeanCarloMachado/personalScripts), my [snippets](https://github.com/jeanCarloMachado/snippet) and my [dotfiles](https://github.com/jeanCarloMachado/dotfiles).
+My awesome vim :).
 
 
-##Installation
+Features
+--------
 
-To work just:
+Optimized for:
+ - Software development
+ - Markdown editing
+ - Latex editing
+
+Beyond a text editor my vim serves as well as:
+ - wiki
+ - journal/diary
+ - task manager + calendar
+ - manual viewer (vman)
+ - pager (like less)
+
+Installation
+------------
+
+Simmply move this directory to your home.
 ```
 mv vim ~/.vim
 ```

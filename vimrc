@@ -200,11 +200,6 @@ for position in range(1, 9)
     execute 'nnoremap m' . position . ' :call MoveEm(' . position . ')<cr>'
 endfor
 
-function UseClassKeywordInsteadOfString()
-    normal! $F's::classF's\
-endfunction
-
-
 function! RelativePath(filename)
     let cwd = getcwd()
     let s = substitute(a:filename, l:cwd . "/" , "", "")
@@ -353,77 +348,6 @@ nnoremap <leader>h4 :call UnderlineHeading(4)<cr>
 nnoremap <leader>h5 :call UnderlineHeading(5)<cr>
 
 "}}}
-"diary{{{
-nnoremap <Leader>di :Today<cr>
-fun! Diary( arg )
-    let out = system("run_function diary_file " . a:arg )
-    execute "edit " . out
-endfunction
-command! -nargs=* Tomorrow call Diary( 'tomorrow' )
-command! -nargs=* Yesterday call Diary( 'yesterday' )
-command! -nargs=* Today call Diary( 'today' )
-command! -nargs=* Someday call Diary( 'someday' )
-command! -nargs=* Diary call Diary( '<args>' )
-command! -nargs=* Diary call Diary( '<args>' )
-
-
-fun! BottomDiary( arg )
-    let out = system("run_function diary_file " . a:arg )
-    execute "split" . out
-    res 10
-endfunction
-command! -nargs=* BottomDiary call BottomDiary( '<args>' )
-"}}}
-"wiki{{{
-let g:vim_markdown_no_default_key_mappings = 1
-function! Wiki(arg)
-    let wiki_path = $WIKI_PATH
-
-    if a:arg == 'compufacil'
-        let wiki_path = "/home/jean/projects/compufacil/Docs"
-    endif
-    "sets the current directory of the window localy to enable file searches
-    execute "lcd " . wiki_path
-    execute "edit " . wiki_path . "/index.md"
-endfunction
-command! -nargs=* Wiki call Wiki( '<args>' )
-command! -nargs=* WikiCompufacil call Wiki( 'compufacil' )
-
-nnoremap <Leader>ww :Wiki<cr>
-nnoremap <Leader>wc :WikiCompufacil<cr>
-
-function! GetUrl()
-    normal! $F(vi(y
-    return @"
-endfunction
-
-function! OpenMarkdown()
-    let url = GetUrl()
-    let path = expand('%:p:h')
-    execute 'edit ' . path . '/' . url . '.md'
-endfunction
-nnoremap <CR> :call OpenMarkdown()<cr>
-autocmd CmdwinEnter * nnoremap <CR> <CR>
-autocmd BufReadPost quickfix nnoremap <CR> <CR>
-
-function! OpenUrl()
-    let url = GetUrl()
-    "execute '! notify-send "' . url ' "'
-    execute '! chromium "' . url . '" & '
-endfunction
-nnoremap gx :call OpenUrl()<cr>
-
-"}}}
-"templates load {{{
-autocmd BufNewFile *.php 0r /home/jean/projects/dotfiles/snippet/template/php.php
-autocmd BufNewFile *.html 0r /home/jean/projects/dotfiles/snippet/template/html.html
-autocmd BufNewFile *.c 0r /home/jean/projects/dotfiles/snippet/template/c.c
-autocmd BufNewFile **/papers/*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
-autocmd BufNewFile **/*review*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
-autocmd BufNewFile */natural-computing/*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
-autocmd BufNewFile */diary/*.md 0r /home/jean/projects/dotfiles/snippet/template/diary.md
-autocmd BufNewFile */posts/*.md 0r /home/jean/projects/dotfiles/snippet/template/post.md
-"}}}
 "Generic text-objects{{{
 
 call textobj#user#plugin('line', {
@@ -569,7 +493,7 @@ function! CurrentDocumentI()
 endfunction
 inoremap ;<cr> <end>;<cr>
 "}}}
-"Actions over text blocks{{{
+"generic Actions over text blocks{{{
 function! s:DoAction(algorithm,type)
   " backup settings that we will change
   let sel_save = &selection
@@ -683,7 +607,6 @@ function! s:MakeList(str)
 endfunction
 call MapAction('MakeList', '<leader>ml')
 
-
 function! s:MakeGraph(str)
       let out = system('graph-easy', a:str)
       return a:str . "\n" . out
@@ -715,7 +638,6 @@ function! s:Filefy(str)
   return out
 endfunction
 call MapAction('Filefy', '<leader>fly')
-
 
 function! s:BreakCommand(str)
   let out = system('run_alias break_command ', a:str)
@@ -791,6 +713,42 @@ function! s:Unescape(str)
 endfunction
 call MapAction('Unescape', '<leader>us')
 
+function! s:SqlBeautifier(str)
+  let out = system('run_function sql_format', a:str)
+  return out
+endfunction
+call MapAction('SqlBeautifier', '<leader>sb')
+
+call MapAction('XmlBeautifier', '<leader>x')
+function! s:XmlBeautifier(str)
+  let out = system('xml-beautifier ', a:str)
+  return out
+endfunction
+call MapAction('XmlBeautifier', '<leader>x')
+
+"}}}
+"diary{{{
+nnoremap <Leader>di :Today<cr>
+fun! Diary( arg )
+    let out = system("run_function diary_file " . a:arg )
+    execute "edit " . out
+endfunction
+command! -nargs=* Tomorrow call Diary( 'tomorrow' )
+command! -nargs=* Yesterday call Diary( 'yesterday' )
+command! -nargs=* Today call Diary( 'today' )
+command! -nargs=* Someday call Diary( 'someday' )
+command! -nargs=* Diary call Diary( '<args>' )
+command! -nargs=* Diary call Diary( '<args>' )
+
+
+fun! BottomDiary( arg )
+    let out = system("run_function diary_file " . a:arg )
+    execute "split" . out
+    res 10
+endfunction
+command! -nargs=* BottomDiary call BottomDiary( '<args>' )
+"}}}
+"task manager {{{
 function! s:MarkDone(str)
   let out = system('sed -r "s/(○ |◎ )//g; s/(.*)/● \1/g" ', a:str)
   return out
@@ -815,19 +773,56 @@ function! s:MakeSomeday(str)
 endfunction
 call MapAction('MakeSomeday', '<leader>ms')
 
-function! s:SqlBeautifier(str)
-  let out = system('run_function sql_format', a:str)
-  return out
-endfunction
-call MapAction('SqlBeautifier', '<leader>sb')
+"}}}
+"wiki{{{
+let g:vim_markdown_no_default_key_mappings = 1
+function! Wiki(arg)
+    let wiki_path = $WIKI_PATH
 
-call MapAction('XmlBeautifier', '<leader>x')
-function! s:XmlBeautifier(str)
-  let out = system('xml-beautifier ', a:str)
-  return out
+    if a:arg == 'compufacil'
+        let wiki_path = "/home/jean/projects/compufacil/Docs"
+    endif
+    "sets the current directory of the window localy to enable file searches
+    execute "lcd " . wiki_path
+    execute "edit " . wiki_path . "/index.md"
 endfunction
-call MapAction('XmlBeautifier', '<leader>x')
+command! -nargs=* Wiki call Wiki( '<args>' )
+command! -nargs=* WikiCompufacil call Wiki( 'compufacil' )
 
+nnoremap <Leader>ww :Wiki<cr>
+nnoremap <Leader>wc :WikiCompufacil<cr>
+
+function! GetUrl()
+    normal! $F(vi(y
+    return @"
+endfunction
+
+function! OpenMarkdown()
+    let url = GetUrl()
+    let path = expand('%:p:h')
+    execute 'edit ' . path . '/' . url . '.md'
+endfunction
+nnoremap <CR> :call OpenMarkdown()<cr>
+autocmd CmdwinEnter * nnoremap <CR> <CR>
+autocmd BufReadPost quickfix nnoremap <CR> <CR>
+
+function! OpenUrl()
+    let url = GetUrl()
+    "execute '! notify-send "' . url ' "'
+    execute '! chromium "' . url . '" & '
+endfunction
+nnoremap gx :call OpenUrl()<cr>
+
+"}}}
+"templates load {{{
+autocmd BufNewFile *.php 0r /home/jean/projects/dotfiles/snippet/template/php.php
+autocmd BufNewFile *.html 0r /home/jean/projects/dotfiles/snippet/template/html.html
+autocmd BufNewFile *.c 0r /home/jean/projects/dotfiles/snippet/template/c.c
+autocmd BufNewFile **/papers/*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
+autocmd BufNewFile **/*review*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
+autocmd BufNewFile */natural-computing/*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
+autocmd BufNewFile */diary/*.md 0r /home/jean/projects/dotfiles/snippet/template/diary.md
+autocmd BufNewFile */posts/*.md 0r /home/jean/projects/dotfiles/snippet/template/post.md
 "}}}
 "php{{{
 function! s:JsonToPhp(str)
@@ -876,5 +871,4 @@ autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
 nnoremap <leader>u :call RunPHPUnitTest(0)<cr>
 nnoremap <leader>f :call RunPHPUnitTest(1)<cr>
 "}}}
-
 

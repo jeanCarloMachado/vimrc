@@ -28,8 +28,6 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'vim-syntastic/syntastic', { 'for': ['c', 'bash'] } "syntax checking
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 call plug#end()
-let &runtimepath.=',/home/jean/.vim/plugin/ns9tks-vim-l9-3bb534a720fa'
-let &runtimepath.=',/home/jean/.vim/plugin/ns9tks-vim-autocomplpop-13fe3d806464'
 "}}}
 "generic configs{{{
 syntax enable
@@ -66,6 +64,9 @@ set scrolloff=0 " Minimum lines to keep above and below cursor"
 set autoread
 set history=1000 "the quantity of normal commands recorded
 set foldenable
+set foldmethod=marker
+autocmd BufRead * setlocal foldmethod=marker
+autocmd BufRead * normal zM
 set title
 vnoremap . :normal .<CR> " Allow using the repeat operator with a visual selection
 set cursorline
@@ -78,9 +79,6 @@ set formatprg=par
 setlocal linebreak
 set clipboard=unnamedplus
 set nocompatible
-set foldmethod=marker
-autocmd BufRead * setlocal foldmethod=marker
-autocmd BufRead * normal zM
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
 
 :call matchadd('Conceal', '!=', 901, 901, {'conceal': '≠'})
@@ -594,11 +592,6 @@ function! s:foldSomething(str)
     return "{{{".a:str."}}}"
 endfunction
 call MapAction('foldSomething', '<leader>fo')
-
-function! s:preRun(str)
-    return "$(".a:str.")"
-endfunction
-call MapAction('preRun', '<leader>p')
 
 function! s:Trim(str)
   let out = system('trim ', a:str)

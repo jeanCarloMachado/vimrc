@@ -27,3 +27,4 @@ Simmply move this directory to your home.
 mv vim ~/.vim
 ```
 
+![Image](image.png)

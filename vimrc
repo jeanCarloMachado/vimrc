@@ -60,7 +60,6 @@ set ignorecase
 set smartcase
 set gdefault
 set conceallevel=2 "show pretty latex formulas
-let g:openbrowser_github_always_used_branch="master"
 set showmatch "show matching parenthesis
 set scrolloff=0 " Minimum lines to keep above and below cursor"
 set autoread
@@ -91,6 +90,31 @@ let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
 :call matchadd('Conceal', 'sqrt', 907, 607, {'conceal': '√'})
 :call matchadd('Conceal', '=>', 908, 608, {'conceal': '➞'})
 
+"}}}
+"Grep {{{
+set grepprg=ack\ --column\ --color\ $*
+set grepformat=%f:%l:%c:%m
+fun! Grepr( arg )
+    execute "grep " . a:arg . " %:p:h/*"
+endfunction
+command! -nargs=* Grepr call Grepr( '<args>' )
+"}}}
+"netrw{{{
+let g:netrw_localrmdir='rm -r'
+let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
+let g:netrw_liststyle=3
+let g:netrw_hide = 0
+"}}}
+"spelling {{{
+:hi clear SpellBad
+:hi SpellBad cterm=bold ctermbg=red
+setlocal nospell
+function! FixLastSpellingError()
+    normal! mm[s1z=`m
+endfunction
+nnoremap <leader>ls :call FixLastSpellingError()<cr>
+map <leader>spt :set spell spelllang=pt_br<cr>
+map <leader>sen :set spell spelllang=en_us<cr>
 "}}}
 "Generic functions{{{
 
@@ -329,23 +353,6 @@ nnoremap <leader>h4 :call UnderlineHeading(4)<cr>
 nnoremap <leader>h5 :call UnderlineHeading(5)<cr>
 
 "}}}
-"netrw{{{
-let g:netrw_localrmdir='rm -r'
-let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
-let g:netrw_liststyle=3
-let g:netrw_hide = 0
-"}}}
-"spelling {{{
-:hi clear SpellBad
-:hi SpellBad cterm=bold ctermbg=red
-setlocal nospell
-function! FixLastSpellingError()
-    normal! mm[s1z=`m
-endfunction
-nnoremap <leader>ls :call FixLastSpellingError()<cr>
-map <leader>spt :set spell spelllang=pt_br<cr>
-map <leader>sen :set spell spelllang=en_us<cr>
-"}}}
 "diary{{{
 nnoremap <Leader>di :Today<cr>
 fun! Diary( arg )
@@ -386,7 +393,7 @@ nnoremap <Leader>ww :Wiki<cr>
 nnoremap <Leader>wc :WikiCompufacil<cr>
 
 function! GetUrl()
-    normal! 0f(lvi(y
+    normal! $F(vi(y
     return @"
 endfunction
 
@@ -395,11 +402,13 @@ function! OpenMarkdown()
     let path = expand('%:p:h')
     execute 'edit ' . path . '/' . url . '.md'
 endfunction
-nnoremap ge :call OpenMarkdown()<cr>
+nnoremap <CR> :call OpenMarkdown()<cr>
+autocmd CmdwinEnter * nnoremap <CR> <CR>
+autocmd BufReadPost quickfix nnoremap <CR> <CR>
 
 function! OpenUrl()
     let url = GetUrl()
-    execute '! notify-send "' . url ' "'
+    "execute '! notify-send "' . url ' "'
     execute '! chromium "' . url . '" & '
 endfunction
 nnoremap gx :call OpenUrl()<cr>
@@ -414,14 +423,6 @@ autocmd BufNewFile **/*review*.md 0r /home/jean/projects/dotfiles/snippet/templa
 autocmd BufNewFile */natural-computing/*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
 autocmd BufNewFile */diary/*.md 0r /home/jean/projects/dotfiles/snippet/template/diary.md
 autocmd BufNewFile */posts/*.md 0r /home/jean/projects/dotfiles/snippet/template/post.md
-"}}}
-"Grep {{{
-set grepprg=ack\ --column\ --color\ $*
-set grepformat=%f:%l:%c:%m
-fun! Grepr( arg )
-    execute "grep " . a:arg . " %:p:h/*"
-endfunction
-command! -nargs=* Grepr call Grepr( '<args>' )
 "}}}
 "Generic text-objects{{{
 

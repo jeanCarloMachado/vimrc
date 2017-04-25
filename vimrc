@@ -122,14 +122,6 @@ fun! ForceSave()
 endfunction
 command! -nargs=* ForceSave call ForceSave()
 
-function! Blame(arg)
-    let current_line = line(".") + 1
-    let file_name = expand('%')
-    let out = system('git blame '.file_name.' > /tmp/blame')
-    execute "vsplit +".current_line." /tmp/blame"
-endfunction
-command! -nargs=* Blame call Blame( '<args>' )
-
 
 function! Deploy(arg)
     let out = system('run_alias deploy-blog &')
@@ -205,12 +197,6 @@ function! RelativePath(filename)
     return s
 endfunction
 
-nmap <leader>crn :call CopyCurrentRelativePath()<cr>
-function! CopyCurrentRelativePath()
-  let path = RelativePath(expand("%:p"))
-let result = system('mycopy ', path)
-endfunction
-
 "}}}
 "Generic mappings{{{
 :hi CursorLine cterm=underline ctermbg=NONE "makes a underline on the current cursor line
@@ -226,23 +212,16 @@ map <leader>i mmgg=G`m
 map <leader>x :w<','> !bash<cr>
 map <leader>me :!chmod +x %<cr>
 nnoremap <leader>tn :tabnew<cr>
-map <leader>ck :!git checkout %<cr>
-nmap <leader>xo :!xdg-open % &<cr>
 "open director (file manager)
-nmap <leader>od :!run_alias file_manager %:h<cr>
 nmap <leader>sh :!cd %:h && bash<cr>
 nmap <leader>lc :r!  echo %:h<cr>
 nmap <leader>rmrf :!rm -rf %:p <cr>
 nmap <leader>k :Explore<cr>
 nmap <leader>pn :!echo %<cr>
 nmap <leader>pfn :!echo %:p<cr>
-"copy path name
-nmap <leader>cpn :!copy %:p<cr>
-"copy full name
-nmap <leader>cfn :!copy %:p<cr>
-nmap <leader>gk :!gitk % &<cr>
 nmap <leader>dw \(\<\w\+\>\)\_s*\<\1\><cr>
-nmap <silent> <leader>ev :e $MY_VIMRC<cr>
+nmap <silent> <leader>ev :e $MY_VIMRC<cr>:lcd %:h<cr>
+
 nmap <silent> <leader>sv :so $MY_VIMRC<cr>
 nnoremap <leader>c :noh<cr>
 nnoremap <leader><space> :w<cr>
@@ -866,4 +845,35 @@ autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
 nnoremap <leader>u :call RunPHPUnitTest(0)<cr>
 nnoremap <leader>f :call RunPHPUnitTest(1)<cr>
 "}}}
+"info relative to file/git{{{
+nmap <leader>xo :!xdg-open % &<cr>
+nmap <leader>od :!run_alias file_manager %:h<cr>
+nmap <leader>crn :call CopyCurrentRelativePath()<cr>
+function! CopyCurrentRelativePath()
+  let path = RelativePath(expand("%:p"))
+let result = system('mycopy ', path)
+endfunction
+"copy path name
+nmap <leader>cpn :!copy %:p<cr>
+"copy full name
+nmap <leader>cfn :!copy %:p<cr>
+"}}}
+"git {{{
+nmap <leader>gk :!gitk % &<cr>
+map <leader>ck :!git checkout %<cr>
+function! Blame(arg)
+    let current_line = line(".") + 1
+    let file_name = expand('%')
+    let out = system('git blame '.file_name.' > /tmp/blame')
+    execute "vsplit +".current_line." /tmp/blame"
+endfunction
+command! -nargs=* Blame call Blame( '<args>' )
 
+function! OpenRepoOnGithub(arg)
+    let repo = system('git remote -v | cut -d ":" -f2 | cut -d "." -f1 | head -n 1')
+    let url = "https://github.com/" . repo . ".git"
+    let result = system("chromium " . url . " & ")
+endfunction
+command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
+
+"}}}

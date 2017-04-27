@@ -573,10 +573,10 @@ endfunction
 call MapAction('foldSomething', '<leader>fo')
 
 function! s:Trim(str)
-  let out = system('trim ', a:str)
+  let out = system('run_function trim ', a:str)
   return out
 endfunction
-call MapAction('Trim', '<leader>t')
+call MapAction('Trim', '<leader>tr')
 
 function! s:googleIt(str)
     let out = system('google-it &', a:str)
@@ -685,12 +685,12 @@ nnoremap <leader>h4 :call UnderlineHeading(4)<cr>
 nnoremap <leader>h5 :call UnderlineHeading(5)<cr>
 
 function! s:Italic(str)
-    return '**'.a:str.'**'
+    return '*'.a:str.'*'
 endfunction
 call MapAction('Italic', '<leader>i')
 
 function! s:Bold(str)
-    return '*'.a:str.'*'
+    return '**'.a:str.'**'
 endfunction
 call MapAction('Bold', '<leader>bo')
 

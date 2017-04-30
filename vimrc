@@ -749,6 +749,7 @@ call MapAction('MakeSomeday', '<leader>ms')
 
 "}}}
 "wiki{{{
+map <c-i> :FZF $WIKI_PATH<cr>
 let g:vim_markdown_no_default_key_mappings = 1
 function! Wiki(arg)
     let wiki_path = $WIKI_PATH
@@ -859,7 +860,7 @@ nmap <leader>cpn :!copy %:p<cr>
 nmap <leader>cfn :!copy %:p<cr>
 "}}}
 "git {{{
-nmap <leader>gk :!gitk % &<cr>
+nmap <leader>gk :!run_function terminal_run "git log -p --follow %" &<cr>
 map <leader>ck :!git checkout %<cr>
 function! Blame(arg)
     let current_line = line(".") + 1

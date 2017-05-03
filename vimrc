@@ -117,7 +117,7 @@ map <leader>sen :set spell spelllang=en_us<cr>
 "}}}
 "Generic functions{{{
 
-fun! ForceSave()
+fun! SaveForcing()
      execute "w !sudo tee > /dev/null %"
 endfunction
 command! -nargs=* ForceSave call ForceSave()

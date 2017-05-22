@@ -29,7 +29,7 @@ Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
 Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 Plug 'vim-scripts/argtextobj.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'vim-syntastic/syntastic', { 'for': ['c', 'bash', 'haskell', 'php'] } "syntax checking
+Plug 'vim-syntastic/syntastic', { 'for': ['c', 'bash', 'haskell'] } "syntax checking
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 call plug#end()
 "}}}
@@ -51,6 +51,7 @@ set shell=/bin/zsh
 set encoding=utf-8
 set showmode
 set showcmd
+"hides buffers instead of closing them
 set hidden
 set wildmenu "to autocomplete the suggestions like bash
 set wildmode=longest,list
@@ -83,13 +84,13 @@ set formatprg=par
 setlocal linebreak
 set clipboard=unnamedplus
 set nocompatible
+autocmd BufNewFile * if &filetype == "" | setlocal filetype=markdown syntax=markdown | endif
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
 
 "}}}
 "Concealing {{{
 :call matchadd('Conceal', '!=', 901, 901, {'conceal': '≠'})
 :call matchadd('Conceal', '->', 904, 604, {'conceal': '➞'})
-:call matchadd('Conceal', 'sqrt', 907, 607, {'conceal': '√'})
 :call matchadd('Conceal', '=>', 908, 608, {'conceal': '➞'})
 "}}}
 "Grep {{{
@@ -124,6 +125,12 @@ fun! SaveForcing()
 endfunction
 command! -nargs=* ForceSave call SaveForcing()
 command! -nargs=* SaveForce call SaveForcing()
+
+fun! WritingMode( arg )
+    set foldcolumn=4
+endfunction
+command! -nargs=* WritingMode call WritingMode( '<args>' )
+
 
 fun! ReloadVim()
      source $MY_VIMRC
@@ -234,6 +241,7 @@ nnoremap <leader>c :noh<cr>
 nnoremap <leader><space> :w<cr>
 "use C-p and C-n to browser normal mode commands history
 cnoremap <C-p> <Up>
+nnoremap <C-c> :q!<cr>
 cnoremap <C-n> <Down>
 " use %% to expand to the current buffer directory
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
@@ -277,6 +285,8 @@ set lazyredraw "don't redraw screend when running macros
 syntax sync minlines=256
 set nocursorcolumn
 set nocursorline
+"disables syntax for files going over a certain size
+autocmd BufReadPre * if getfsize(expand("%")) > 10000000 | syntax off | endif
 "}}}
 "undo {{{
 set undodir=/home/jean/.vim/undo/
@@ -762,7 +772,7 @@ fun! Wiki(arg)
     let wiki_path = $WIKI_PATH
 
     if a:arg == 'compufacil'
-        let wiki_path = "/home/jean/projects/compufacil/Docs"
+        let wiki_path = "/home/jean/projects/compufacil/Docs/src"
     endif
     "sets the current directory of the window localy to enable file searches
     execute "lcd " . wiki_path
@@ -770,6 +780,7 @@ fun! Wiki(arg)
 endfunction
 command! -nargs=* Wiki call Wiki( '<args>' )
 command! -nargs=* WikiCompufacil call Wiki( 'compufacil' )
+command! -nargs=* Quote :e $WIKI_PATH/quotes.md
 
 nnoremap <Leader>ww :Wiki<cr>
 nnoremap <Leader>wc :WikiCompufacil<cr>
@@ -798,6 +809,7 @@ nnoremap gx :call OpenUrl()<cr>
 "}}}
 "templates load {{{
 autocmd BufNewFile *.php 0r /home/jean/projects/dotfiles/snippet/template/php.php
+autocmd BufNewFile *.sh 0r /home/jean/projects/dotfiles/snippet/template/shell.sh
 autocmd BufNewFile *.html 0r /home/jean/projects/dotfiles/snippet/template/html.html
 autocmd BufNewFile *.c 0r /home/jean/projects/dotfiles/snippet/template/c.c
 autocmd BufNewFile **/papers/*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
@@ -869,7 +881,6 @@ fun! RunPHPUnitTest(filter)
             normal! mA
         endif
         normal! `A
-
 
         let myCommand = "phpunit -c ". $PWD . "/Backend/phpunit.xml.dist " . expand("%:p")
         let result = system(myCommand)

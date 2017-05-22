@@ -842,6 +842,16 @@ fun! Blame(arg)
 endfunction
 command! -nargs=* Blame call Blame( '<args>' )
 
+
+fun! CheckoutFile(arg)
+    let file_name = expand('%')
+    execute '!git checkout ' . file_name
+    execute 'edit!'
+endfunction
+command! -nargs=* CheckoutFile call CheckoutFile( '<args>' )
+
+
+
 fun! OpenRepoOnGithub(arg)
     let repo = system('git remote -v | cut -d ":" -f2 | cut -d "." -f1 | head -n 1')
     let url = "https://github.com/" . repo . ".git"

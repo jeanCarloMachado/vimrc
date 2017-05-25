@@ -832,7 +832,12 @@ nmap <leader>cpn :!copy %:p<cr>
 nmap <leader>cfn :!copy %:p<cr>
 "}}}
 "git {{{
-nmap <leader>gk :!run_function terminal_run "git log -p --follow %" &<cr>
+
+fun! GitLog()
+    let file_name = expand('%')
+    execute '!run_function terminal_run "cd $(dirname '.file_name.') ; git log -p --follow '.file_name.'"'
+endfunction
+nmap <leader>gk :call GitLog()<cr>
 map <leader>ck :!git checkout %<cr>
 fun! Blame(arg)
     let current_line = line(".") + 1

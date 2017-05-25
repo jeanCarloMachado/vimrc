@@ -247,7 +247,6 @@ cnoremap <C-n> <Down>
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 nnoremap <leader>cf :!filefy-clippboard<cr>
 map <c-p> :FZF<cr>
-let $FZF_DEFAULT_COMMAND = 'ag -a -g ""'
 "}}}
 "Hightlight rules {{{
 "use h cterm-colors to get the list of colors

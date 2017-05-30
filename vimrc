@@ -126,10 +126,14 @@ endfunction
 command! -nargs=* ForceSave call SaveForcing()
 command! -nargs=* SaveForce call SaveForcing()
 
-fun! WritingMode( arg )
-    set foldcolumn=4
+fun! WritingMode()
+    set foldcolumn=9
 endfunction
-command! -nargs=* WritingMode call WritingMode( '<args>' )
+command! -nargs=* WritingMode call WritingMode()
+let writer_mode=$WRITER_MODE
+if writer_mode == '1'
+    call WritingMode()
+endif
 
 
 fun! ReloadVim()
@@ -617,7 +621,7 @@ endfunction
 call MapAction('Interpret', '<leader>r')
 
 fun! s:JsonBeautifier(str)
-  let out = system('json-beautifier ', a:str)
+  let out = system('run_function json_beautifier ', a:str)
   return out
 endfunction
 call MapAction('JsonBeautifier', '<leader>jb')
@@ -719,8 +723,9 @@ call MapAction('CodeBlock', '<leader>c')
 "}}}
 "diary{{{
 nnoremap <Leader>di :Today<cr>
+nnoremap <Leader>to :Today<cr>
 fun! Diary( arg )
-    let out = system("run_function diary_file " . a:arg )
+    let out = system('run_function diary_file "' . a:arg . '"')
     execute "edit " . out
 endfunction
 command! -nargs=* Tomorrow call Diary( 'tomorrow' )
@@ -728,8 +733,7 @@ command! -nargs=* Yesterday call Diary( 'yesterday' )
 command! -nargs=* Today call Diary( 'today' )
 command! -nargs=* Someday call Diary( 'someday' )
 command! -nargs=* Diary call Diary( '<args>' )
-command! -nargs=* Diary call Diary( '<args>' )
-
+command! -nargs=* NextRetrospective call Diary( 'next monday' )
 
 fun! BottomDiary( arg )
     let out = system("run_function diary_file " . a:arg )
@@ -801,7 +805,7 @@ autocmd BufReadPost quickfix nnoremap <CR> <CR>
 fun! OpenUrl()
     let url = GetUrl()
     "execute '! notify-send "' . url ' "'
-    execute '! chromium "' . url . '" & '
+    execute '! $BROWSER "' . url . '" & '
 endfunction
 nnoremap gx :call OpenUrl()<cr>
 
@@ -833,10 +837,19 @@ nmap <leader>cfn :!copy %:p<cr>
 "git {{{
 
 fun! GitLog()
-    let file_name = expand('%')
-    execute '!run_function terminal_run "cd $(dirname '.file_name.') ; git log -p --follow '.file_name.'"'
+    execute '!run_function terminal_run "cd $(dirname %:p) ; git log -p --follow %:p" &'
 endfunction
 nmap <leader>gk :call GitLog()<cr>
+
+fun! FzfContent()
+    execute ':!cd  '.$PWD.' ;  fzf_content > /tmp/fzf_current '
+    redraw!
+    let out = system('cat /tmp/fzf_current')
+    execute 'edit '.out
+endfunction
+
+map <c-s> :call FzfContent()<cr>
+
 map <leader>ck :!git checkout %<cr>
 fun! Blame(arg)
     let current_line = line(".") + 1
@@ -859,7 +872,7 @@ command! -nargs=* CheckoutFile call CheckoutFile( '<args>' )
 fun! OpenRepoOnGithub(arg)
     let repo = system('git remote -v | cut -d ":" -f2 | cut -d "." -f1 | head -n 1')
     let url = "https://github.com/" . repo . ".git"
-    let result = system("chromium " . url . " & ")
+    let result = system("$BROWSER " . url . " & ")
 endfunction
 command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
 

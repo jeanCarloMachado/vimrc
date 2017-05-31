@@ -68,10 +68,6 @@ set showmatch "show matching parenthesis
 set scrolloff=0 " Minimum lines to keep above and below cursor"
 set autoread
 set history=1000 "the quantity of normal commands recorded
-set foldenable
-set foldmethod=marker
-autocmd BufRead * setlocal foldmethod=marker
-autocmd BufRead * normal zM
 set title
 vnoremap . :normal .<CR> " Allow using the repeat operator with a visual selection
 set cursorline
@@ -87,6 +83,13 @@ set nocompatible
 autocmd BufNewFile * if &filetype == "" | setlocal filetype=markdown syntax=markdown | endif
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
 
+"}}}
+"Fold {{{
+set foldenable
+set foldmethod=marker
+set foldcolumn=2
+autocmd BufRead * setlocal foldmethod=marker
+autocmd BufRead * normal zM
 "}}}
 "Concealing {{{
 :call matchadd('Conceal', '!=', 901, 901, {'conceal': '≠'})

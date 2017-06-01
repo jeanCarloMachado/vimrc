@@ -97,12 +97,13 @@ autocmd BufRead * normal zM
 :call matchadd('Conceal', '=>', 908, 608, {'conceal': '➞'})
 "}}}
 "Grep {{{
-set grepprg=ack\ --column\ --color\ $*
+set grepprg=ack\ -i\ --column\ $*
 set grepformat=%f:%l:%c:%m
 fun! Grepr( arg )
     execute "grep " . a:arg . " %:p:h/*"
 endfunction
 command! -nargs=* Grepr call Grepr( '<args>' )
+
 "}}}
 "netrw{{{
 let g:netrw_localrmdir='rm -r'
@@ -765,7 +766,7 @@ endfunction
 call MapAction('MakeApointment', '<leader>ma')
 
 fun! s:MakeSomeday(str)
-  let out = system('sed -r "s/(.*)/◎ \1/g" ', a:str)
+  let out = system('sed -r "s/(◐ |○ )//g; s/(.*)/◎ \1/g" ', a:str)
   return out
 endfunction
 call MapAction('MakeSomeday', '<leader>ms')
@@ -812,6 +813,14 @@ fun! OpenUrl()
 endfunction
 nnoremap gx :call OpenUrl()<cr>
 
+fun! GrepWiki( arg )
+    let old_path = $pwd
+    exec "cd " . $WIKI_PATH
+    execute "grep " . a:arg . "  "
+    exec "cd ". old_path
+endfunction
+command! -nargs=* GrepWiki call GrepWiki( '<args>' )
+command! -nargs=* WikiGrep call GrepWiki( '<args>' )
 "}}}
 "templates load {{{
 autocmd BufNewFile *.php 0r /home/jean/projects/dotfiles/snippet/template/php.php

@@ -80,16 +80,17 @@ set formatprg=par
 setlocal linebreak
 set clipboard=unnamedplus
 set nocompatible
-autocmd BufNewFile * if &filetype == "" | setlocal filetype=markdown syntax=markdown | endif
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
 
 "}}}
 "Fold {{{
 set foldenable
-set foldmethod=marker
-set foldcolumn=2
-autocmd BufRead * setlocal foldmethod=marker
-autocmd BufRead * normal zM
+set foldcolumn=5
+set foldlevel=1 "control the level to be opened by default (this opens just the first h1, levels)
+"hi Folded ctermbg=cyan
+" set foldmethod=marker
+" autocmd BufRead * setlocal foldmethod=marker
+" autocmd BufRead * normal zM
 "}}}
 "Concealing {{{
 :call matchadd('Conceal', '!=', 901, 901, {'conceal': '≠'})
@@ -114,7 +115,6 @@ let g:netrw_hide = 0
 "spelling {{{
 :hi clear SpellBad
 :hi SpellBad cterm=bold ctermbg=red
-setlocal nospell
 fun! FixLastSpellingError()
     normal! mm[s1z=`m
 endfunction
@@ -682,17 +682,23 @@ let g:syntastic_sh_checkers = ['shellcheck']
 "}}}
 "Markdown configs {{{
 let g:vim_markdown_no_extensions_in_markdown = 1
-autocmd! BufRead,BufNewFile *.md set filetype=markdown
-autocmd! BufRead,BufNewFile *.md set syntax=markdown
-autocmd BufEnter *.md$ set spell spelllang=en_us
+autocmd BufNewFile * if &filetype == "" | call MarkdownDefaultConfigs() | endif
+autocmd Filetype markdown call MarkdownDefaultConfigs()
+
+fun MarkdownDefaultConfigs()
+    "set filetype=markdown
+    set syntax=markdown
+    set spell spelllang=en_us
+endfunction
+
 autocmd FileType markdown setl tw=66
 let g:vim_markdown_math = 1
 let g:vim_markdown_fenced_languages = ['html', 'python', 'bash=sh', 'c']
 fun UnderlineHeading(level)
     if a:level == 1
-        normal! yypVr=
+        normal! I# 
     elseif a:level == 2
-        normal! yypVr-
+        normal! I## 
     elseif a:level == 3
         normal! I### 
     elseif a:level == 4
@@ -707,6 +713,30 @@ nnoremap <leader>h2 :call UnderlineHeading(2)<cr>
 nnoremap <leader>h3 :call UnderlineHeading(3)<cr>
 nnoremap <leader>h4 :call UnderlineHeading(4)<cr>
 nnoremap <leader>h5 :call UnderlineHeading(5)<cr>
+
+function! MarkdownLevel()
+    if getline(v:lnum) =~ '^# .*$'
+        return ">1"
+    endif
+    if getline(v:lnum) =~ '^## .*$'
+        return ">2"
+    endif
+    if getline(v:lnum) =~ '^### .*$'
+        return ">3"
+    endif
+    if getline(v:lnum) =~ '^#### .*$'
+        return ">4"
+    endif
+    if getline(v:lnum) =~ '^##### .*$'
+        return ">5"
+    endif
+    if getline(v:lnum) =~ '^###### .*$'
+        return ">6"
+    endif
+    return "="
+endfunction
+au BufEnter *.md setlocal foldexpr=MarkdownLevel()
+au BufEnter *.md setlocal foldmethod=expr
 
 fun! s:Italic(str)
     return '*'.a:str.'*'
@@ -777,7 +807,6 @@ map <c-i> :FZF $WIKI_PATH<cr>
 let g:vim_markdown_no_default_key_mappings = 1
 fun! Wiki(arg)
     let wiki_path = $WIKI_PATH
-
     if a:arg == 'compufacil'
         let wiki_path = "/home/jean/projects/compufacil/Docs/src"
     endif

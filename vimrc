@@ -85,9 +85,8 @@ let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
 "}}}
 "Fold {{{
 set foldenable
-set foldcolumn=5
+set foldcolumn=4
 set foldlevel=1 "control the level to be opened by default (this opens just the first h1, levels)
-"hi Folded ctermbg=cyan
 " set foldmethod=marker
 " autocmd BufRead * setlocal foldmethod=marker
 " autocmd BufRead * normal zM
@@ -131,7 +130,7 @@ command! -nargs=* ForceSave call SaveForcing()
 command! -nargs=* SaveForce call SaveForcing()
 
 fun! WritingMode()
-    set foldcolumn=9
+    set foldcolumn=5
 endfunction
 command! -nargs=* WritingMode call WritingMode()
 let writer_mode=$WRITER_MODE
@@ -283,7 +282,7 @@ endif
 let g:airline_theme='solarized'
 let g:solarized_termcolors=16
 let g:solarized_bold=1
-set t_Co=16 "used  to be 256
+set t_Co=256
 colorscheme solarized
 "}}}
 "performance {{{
@@ -689,6 +688,7 @@ fun MarkdownDefaultConfigs()
     "set filetype=markdown
     set syntax=markdown
     set spell spelllang=en_us
+    highlight Folded ctermfg=DarkYellow
 endfunction
 
 autocmd FileType markdown setl tw=66

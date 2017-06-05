@@ -112,8 +112,6 @@ let g:netrw_liststyle=3
 let g:netrw_hide = 0
 "}}}
 "spelling {{{
-:hi clear SpellBad
-:hi SpellBad cterm=bold ctermbg=red
 fun! FixLastSpellingError()
     normal! mm[s1z=`m
 endfunction
@@ -222,7 +220,7 @@ endfunction
 
 "}}}
 "Generic mappings{{{
-:hi CursorLine cterm=underline ctermbg=NONE "makes a underline on the current cursor line
+:highlight CursorLine cterm=underline ctermbg=NONE "makes a underline on the current cursor line
 nnoremap <BS> :Rex<cr>
 nnoremap <Leader>fs :w ! sudo tee %<cr>
 nnoremap <Leader>dt :r ! date<cr>
@@ -256,13 +254,17 @@ nnoremap <leader>cf :!filefy-clippboard<cr>
 map <c-p> :FZF<cr>
 "}}}
 "Hightlight rules {{{
+
 "use h cterm-colors to get the list of colors
+highlight SpellBad ctermfg=DarkYellow
 augroup VimrcColors
 au!
   autocmd ColorScheme * highlight WordsToAvoid ctermbg=DarkMagenta
   autocmd ColorScheme * highlight HardWords ctermbg=DarkYellow
   autocmd ColorScheme * highlight Whitespace ctermbg=Grey
   autocmd ColorScheme * highlight Overlength ctermbg=DarkGrey
+
+
 augroup END
 
 autocmd Syntax * call matchadd('WordsToAvoid', '\c\<\(obviously\|basically\|simply\|of\scourse\|clearly\|just\|little\|quite\|everyone\knows\|however\|easy\|obviamente\|basicamente\|simplesmente\|com\certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então\|fácil\|bem\)\>')

@@ -663,10 +663,10 @@ call MapAction('SqlBeautifier', '<leader>sb')
 
 call MapAction('XmlBeautifier', '<leader>x')
 fun! s:XmlBeautifier(str)
-  let out = system('xml-beautifier ', a:str)
+  let out = system('run_function xml_beautifier ', a:str)
   return out
 endfunction
-call MapAction('XmlBeautifier', '<leader>x')
+call MapAction('XmlBeautifier', '<leader>xb')
 
 "}}}
 "syntatic checker{{{

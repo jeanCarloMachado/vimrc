@@ -158,7 +158,9 @@ endfunction
 :highlight CursorLine cterm=underline ctermbg=NONE "makes a underline on the current cursor line
 nnoremap <BS> :Rex<cr>
 "to clear the search
-map <Leader>le :noh<cr>
+nnoremap + ddp
+nnoremap _ dd2kp
+nnoremap <Leader>le :noh<cr>
 nnoremap <Leader>fs :w ! sudo tee %<cr>
 nnoremap <Leader>dt :r ! date<cr>
 nnoremap <Leader>e :edit!<cr>
@@ -735,10 +737,9 @@ fun! s:MakeSomeday(str)
   return out
 endfunction
 call MapAction('MakeSomeday', '<leader>ms')
-
 "}}}
 "wiki{{{
-map <s-i> :FZF $CLIPP_PATH <cr>
+"map <ci> :FZF $CLIPP_PATH <cr>
 map <c-i> :FZF $WIKI_PATH<cr>
 let g:vim_markdown_no_default_key_mappings = 1
 fun! Wiki(arg)

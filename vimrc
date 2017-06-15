@@ -23,14 +23,14 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'
 "ghc depends on vimproc
-Plug 'Shougo/vimproc.vim', {'do' : 'make'}
-Plug 'eagletmt/ghcmod-vim', { 'for': ['haskell'] }
+Plug 'Shougo/vimproc.vim', {'do' : 'make'} | Plug 'eagletmt/ghcmod-vim', { 'for': ['haskell'] }
 Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
 Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 Plug 'vim-scripts/argtextobj.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'vim-syntastic/syntastic', { 'for': ['c', 'bash', 'haskell'] } "syntax checking
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
+Plug 'vim-scripts/tinymode.vim' | Plug 'breuckelen/vim-resize'
 call plug#end()
 "}}}
 "generic configs{{{
@@ -71,7 +71,7 @@ set history=1000 "the quantity of normal commands recorded
 set title
 vnoremap . :normal .<CR> " Allow using the repeat operator with a visual selection
 set cursorline
-set wildignore=*.swp,*.back,*.pyc,*.class,*.coverage.*,*\\vendor\\*
+set wildignore=*.swp,*.back,*.pyc,*.class,*.coverage.*
 set backupdir=~/.tmp
 set directory=~/.tmp "don't clutter dirs with swp and tmpfiles
 setlocal formatoptions=1
@@ -81,20 +81,19 @@ setlocal linebreak
 set clipboard=unnamedplus
 set nocompatible
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
-
 "}}}
 "Fold {{{
 set foldenable
 set foldcolumn=4
 set foldlevel=1 "control the level to be opened by default (this opens just the first h1, levels)
-" set foldmethod=marker
-" autocmd BufRead * setlocal foldmethod=marker
+set foldmethod=marker
+"autocmd BufRead * setlocal foldmethod=marker
 " autocmd BufRead * normal zM
 "}}}
 "Concealing {{{
-:call matchadd('Conceal', '!=', 901, 901, {'conceal': '≠'})
-:call matchadd('Conceal', '->', 904, 604, {'conceal': '➞'})
-:call matchadd('Conceal', '=>', 908, 608, {'conceal': '➞'})
+:call matchadd('Conceal', '!=', 999, -1, {'conceal': '≠'})
+:call matchadd('Conceal', '->', 999, -1, {'conceal': '➞'})
+:call matchadd('Conceal', '=>', 999, -1, {'conceal': '➞'})
 "}}}
 "Grep {{{
 set grepprg=ack\ -i\ --column\ $*
@@ -103,7 +102,6 @@ fun! Grepr( arg )
     execute "grep " . a:arg . " %:p:h/*"
 endfunction
 command! -nargs=* Grepr call Grepr( '<args>' )
-
 "}}}
 "netrw{{{
 let g:netrw_localrmdir='rm -r'
@@ -119,14 +117,19 @@ nnoremap <leader>ls :call FixLastSpellingError()<cr>
 map <leader>spt :set spell spelllang=pt_br<cr>
 map <leader>sen :set spell spelllang=en_us<cr>
 "}}}
+
+"resize{{{
+call tinymode#EnterMap("winresize", "<leader>h", "h")
+call tinymode#Map("winresize", "h", "CmdResizeLeft")
+call tinymode#EnterMap("winresize", "<leader>l", "l")
+call tinymode#Map("winresize", "l", "CmdResizeRight")
+call tinymode#EnterMap("winresize", "<leader>k", "k")
+call tinymode#Map("winresize", "k", "CmdResizeUp")
+call tinymode#EnterMap("winresize", "<leader>j", "j")
+call tinymode#Map("winresize", "j", "CmdResizeDown")
+call tinymode#ModeMsg("winresize", "Change window size h/j/k/l") 
+"}}}
 "Generic functions{{{
-
-fun! SaveForcing()
-     execute "w !sudo tee > /dev/null %"
-endfunction
-command! -nargs=* ForceSave call SaveForcing()
-command! -nargs=* SaveForce call SaveForcing()
-
 fun! WritingMode()
     set foldcolumn=5
 endfunction
@@ -136,99 +139,31 @@ if writer_mode == '1'
     call WritingMode()
 endif
 
-
+if !exists('*ReloadVim')
 fun! ReloadVim()
-     source $MY_VIMRC
+     silent source $MY_VIMRC
      execute "edit %"
 endfunction
 command! -nargs=* ReloadVim call ReloadVim()
 nmap <silent> <leader>sv :ReloadVim<cr>
-
-fun! Deploy(arg)
-    let out = system('run_alias deploy-blog &')
-endfunction
-command! -nargs=* Deploy call Deploy( 'blog' )
-
-
-fun! OnlineDoc()
-  if &ft =~ "cpp"
-    let s:urlTemplate = "http://doc.trolltech.com/4.1/%.html"
-  elseif &ft =~ "ruby"
-    let s:urlTemplate = "https://www.google.com.br/?q=ruby+%"
-  elseif &ft =~ "php"
-    let s:urlTemplate = "http://php.net/manual-lookup.php?pattern=%&scope=quickref"
-  elseif &ft =~ "perl" let s:urlTemplate = "http://perldoc.perl.org/functions/%.html"
-  else
-    return
-  endif
-  let s:browser = "browser"
-  let s:wordUnderCursor = expand("<cword>")
-  let s:url = substitute(s:urlTemplate, "%", s:wordUnderCursor, "g")
-  let s:cmd = "silent !" . s:browser . " " . s:url . "&"
-  execute s:cmd
-  redraw!
-endfunction
-" Online doc search.
-map <Leader>doc :call OnlineDoc()<cr>
-map <silent> <M-d> :call OnlineDoc()<cr>
-
-fun! RenameFile()
-  let old_name = expand('%')
-  let new_name = input('New file name: ', expand('%'), 'file')
-  if new_name != '' && new_name != old_name
-    exec ':saveas ' . new_name
-    exec ':silent !rm ' . old_name
-    redraw!
-  endif
-endfunction
-map <Leader>rn :call RenameFile()<cr>
-
-fun! CopyFile()
-  let old_name = expand('%')
-  let new_name = input('New file name: ', expand('%'), 'file')
-  if new_name != '' && new_name != old_name
-    exec ':saveas ' . new_name
-    redraw!
-  endif
-endfunction
-map <Leader>cp :call CopyFile()<cr>
-
-let @r=';.'
-
-" Strip the newline from the end of a string
-fun! Chomp(str)
-  return substitute(a:str, '\n$', '', '')
-endfunction
-
-fun! MoveEm(position)
-    let saved_cursor = getpos(".")
-    let previous_blank_line = search('^$', 'bn')
-    let target_line = previous_blank_line + a:position - 1
-    execute 'move ' . target_line
-    call setpos('.', saved_cursor)
-endfunction
-
-for position in range(1, 9)
-    execute 'nnoremap m' . position . ' :call MoveEm(' . position . ')<cr>'
-endfor
+endif
 
 fun! RelativePath(filename)
     let cwd = getcwd()
     let s = substitute(a:filename, l:cwd . "/" , "", "")
     return s
 endfunction
-
 "}}}
 "Generic mappings{{{
 :highlight CursorLine cterm=underline ctermbg=NONE "makes a underline on the current cursor line
 nnoremap <BS> :Rex<cr>
+"to clear the search
+map <Leader>le :noh<cr>
 nnoremap <Leader>fs :w ! sudo tee %<cr>
 nnoremap <Leader>dt :r ! date<cr>
 nnoremap <Leader>e :edit!<cr>
 nnoremap <Leader>o :only<cr>
 nnoremap cwi ciw
-map - ddp
-map _ dd2kp
 map <leader>i mmgg=G`m
 map <leader>x :w<','> !bash<cr>
 map <leader>me :!chmod +x %<cr>
@@ -263,8 +198,6 @@ au!
   autocmd ColorScheme * highlight HardWords ctermbg=DarkYellow
   autocmd ColorScheme * highlight Whitespace ctermbg=Grey
   autocmd ColorScheme * highlight Overlength ctermbg=DarkGrey
-
-
 augroup END
 
 autocmd Syntax * call matchadd('WordsToAvoid', '\c\<\(obviously\|basically\|simply\|of\scourse\|clearly\|just\|little\|quite\|everyone\knows\|however\|easy\|obviamente\|basicamente\|simplesmente\|com\certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então\|fácil\|bem\)\>')
@@ -686,7 +619,7 @@ let g:vim_markdown_no_extensions_in_markdown = 1
 autocmd BufNewFile * if &filetype == "" | call MarkdownDefaultConfigs() | endif
 autocmd Filetype markdown call MarkdownDefaultConfigs()
 
-fun MarkdownDefaultConfigs()
+fun! MarkdownDefaultConfigs()
     "set filetype=markdown
     set syntax=markdown
     set spell spelllang=en_us
@@ -695,8 +628,8 @@ endfunction
 
 autocmd FileType markdown setl tw=66
 let g:vim_markdown_math = 1
-let g:vim_markdown_fenced_languages = ['html', 'python', 'bash=sh', 'c']
-fun UnderlineHeading(level)
+let g:vim_markdown_fenced_languages = ['html', 'python', 'bash=sh', 'c', 'php']
+fun! UnderlineHeading(level)
     if a:level == 1
         normal! I# 
     elseif a:level == 2
@@ -805,6 +738,7 @@ call MapAction('MakeSomeday', '<leader>ms')
 
 "}}}
 "wiki{{{
+map <s-i> :FZF $CLIPP_PATH <cr>
 map <c-i> :FZF $WIKI_PATH<cr>
 let g:vim_markdown_no_default_key_mappings = 1
 fun! Wiki(arg)
@@ -818,10 +752,12 @@ fun! Wiki(arg)
 endfunction
 command! -nargs=* Wiki call Wiki( '<args>' )
 command! -nargs=* WikiCompufacil call Wiki( 'compufacil' )
+command! -nargs=* CompufacilWiki call Wiki( 'compufacil' )
 command! -nargs=* Quote :e $WIKI_PATH/quotes.md
 
 nnoremap <Leader>ww :Wiki<cr>
 nnoremap <Leader>wc :WikiCompufacil<cr>
+nnoremap <Leader>cw :WikiCompufacil<cr>
 
 fun! GetUrl()
     normal! $F(vi(y
@@ -854,17 +790,19 @@ command! -nargs=* GrepWiki call GrepWiki( '<args>' )
 command! -nargs=* WikiGrep call GrepWiki( '<args>' )
 "}}}
 "templates load {{{
-autocmd BufNewFile *.php 0r /home/jean/projects/dotfiles/snippet/template/php.php
-autocmd BufNewFile *.sh 0r /home/jean/projects/dotfiles/snippet/template/shell.sh
-autocmd BufNewFile *.html 0r /home/jean/projects/dotfiles/snippet/template/html.html
-autocmd BufNewFile *.c 0r /home/jean/projects/dotfiles/snippet/template/c.c
-autocmd BufNewFile **/papers/*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
-autocmd BufNewFile **/*review*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
-autocmd BufNewFile */natural-computing/*.md 0r /home/jean/projects/dotfiles/snippet/template/science-review.md
-autocmd BufNewFile */diary/*.md 0r /home/jean/projects/dotfiles/snippet/template/diary.md
-autocmd BufNewFile */posts/*.md 0r /home/jean/projects/dotfiles/snippet/template/post.md
+autocmd BufNewFile *Test.php 0r $TEMPLATES_DIR/php_test.php
+autocmd BufNewFile *Gateway.php 0r $TEMPLATES_DIR/php_gateway.php
+autocmd BufNewFile *.php 0r $TEMPLATES_DIR/php.php
+autocmd BufNewFile *.sh 0r $TEMPLATES_DIR/shell.sh
+autocmd BufNewFile *.html 0r $TEMPLATES_DIR/html.html
+autocmd BufNewFile *.c 0r $TEMPLATES_DIR/c.c
+autocmd BufNewFile **/papers/*.md 0r $TEMPLATES_DIR/science-review.md
+autocmd BufNewFile **/*review*.md 0r $TEMPLATES_DIR/science-review.md
+autocmd BufNewFile */natural-computing/*.md 0r $TEMPLATES_DIR/science-review.md
+autocmd BufNewFile */diary/*.md 0r $TEMPLATES_DIR/diary.md
+autocmd BufNewFile */posts/*.md 0r $TEMPLATES_DIR/post.md
 "}}}
-"info relative to file/git{{{
+"info relative to projects file, metadata{{{
 nmap <leader>xo :!xdg-open % &<cr>
 nmap <leader>od :!run_alias file_manager %:h<cr>
 nmap <leader>crn :call CopyCurrentRelativePath()<cr>
@@ -876,9 +814,62 @@ endfunction
 nmap <leader>cpn :!copy %:p<cr>
 "copy full name
 nmap <leader>cfn :!copy %:p<cr>
+fun! SaveForcing()
+     execute "w !sudo tee > /dev/null %"
+endfunction
+command! -nargs=* ForceSave call SaveForcing()
+command! -nargs=* SaveForce call SaveForcing()
+fun! OnlineDoc()
+  if &ft =~ "cpp"
+    let s:urlTemplate = "http://doc.trolltech.com/4.1/%.html"
+  elseif &ft =~ "ruby"
+    let s:urlTemplate = "https://www.google.com.br/?q=ruby+%"
+  elseif &ft =~ "php"
+    let s:urlTemplate = "http://php.net/manual-lookup.php?pattern=%&scope=quickref"
+  elseif &ft =~ "perl" let s:urlTemplate = "http://perldoc.perl.org/functions/%.html"
+  else
+    return
+  endif
+  let s:browser = "browser"
+  let s:wordUnderCursor = expand("<cword>")
+  let s:url = substitute(s:urlTemplate, "%", s:wordUnderCursor, "g")
+  let s:cmd = "silent !" . s:browser . " " . s:url . "&"
+  execute s:cmd
+  redraw!
+endfunction
+" Online doc search.
+map <Leader>doc :call OnlineDoc()<cr>
+map <silent> <M-d> :call OnlineDoc()<cr>
+
+fun! OpenTest()
+  let original_file = expand('%')
+  let out = system('echo "'.original_file.'" | run_function test_from_file')
+  execute 'edit '.out
+endfunction
+map <Leader>ot :call OpenTest()<cr>
+
+fun! RenameFile()
+  let old_name = expand('%')
+  let new_name = input('New file name: ', expand('%'), 'file')
+  if new_name != '' && new_name != old_name
+    exec ':saveas ' . new_name
+    exec ':silent !rm ' . old_name
+    redraw!
+  endif
+endfunction
+map <Leader>rn :call RenameFile()<cr>
+
+fun! CopyFile()
+  let old_name = expand('%')
+  let new_name = input('New file name: ', expand('%'), 'file')
+  if new_name != '' && new_name != old_name
+    exec ':saveas ' . new_name
+    redraw!
+  endif
+endfunction
+map <Leader>cp :call CopyFile()<cr>
 "}}}
 "git {{{
-
 fun! GitLog()
     execute '!run_function terminal_run "cd $(dirname %:p) ; git log -p --follow %:p" &'
 endfunction
@@ -890,7 +881,6 @@ fun! FzfContent()
     let out = system('cat /tmp/fzf_current')
     execute 'edit '.out
 endfunction
-
 map <c-s> :call FzfContent()<cr>
 
 map <leader>ck :!git checkout %<cr>
@@ -918,7 +908,6 @@ fun! OpenRepoOnGithub(arg)
     let result = system("$BROWSER " . url . " & ")
 endfunction
 command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
-
 "}}}
 "php{{{
 fun! s:JsonToPhp(str)
@@ -933,7 +922,6 @@ command Phpcsfixer : ! php-code-check `pwd`/%
 fun! RunPHPUnitTest(filter)
     cd %:p:h
     if a:filter
-
         normal! T yw
         if @" =~ "^test*"
             normal! mT
@@ -946,7 +934,7 @@ fun! RunPHPUnitTest(filter)
         let myCommand="phpunit -c ". $PWD ."/Backend/phpunit.xml.dist --filter " . @" . " " . expand("%:p")
         let result = system(myCommand)
     else
-        let @n = expand('%:t') 
+        let @n = expand('%:t')
         if @n =~ "Test"
             normal! mA
         endif
@@ -965,7 +953,4 @@ endfunction
 autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
 nnoremap <leader>u :call RunPHPUnitTest(0)<cr>
 nnoremap <leader>f :call RunPHPUnitTest(1)<cr>
-"}}}
-"haskell{{{
-"autocmd! BufWritePost *.hs execute "silent! GhcModCheck"
 "}}}

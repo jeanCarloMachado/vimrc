@@ -13,8 +13,10 @@ Plug 'altercation/vim-colors-solarized'
 Plug 'bling/vim-airline' | Plug 'vim-airline/vim-airline-themes'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'jez/vim-superman'
-Plug 'kana/vim-textobj-function'
+"enable the creation of custom text objects
 Plug 'kana/vim-textobj-user'
+"text object for a function: enables af and if
+Plug 'kana/vim-textobj-function'
 Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim'
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'nelstrom/vim-visual-star-search'
@@ -31,6 +33,8 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'vim-syntastic/syntastic', { 'for': ['c', 'bash', 'haskell'] } "syntax checking
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'vim-scripts/tinymode.vim' | Plug 'breuckelen/vim-resize'
+Plug 'majutsushi/tagbar'
+Plug 'jszakmeister/markdown2ctags'
 call plug#end()
 "}}}
 "generic configs{{{
@@ -117,7 +121,6 @@ nnoremap <leader>ls :call FixLastSpellingError()<cr>
 map <leader>spt :set spell spelllang=pt_br<cr>
 map <leader>sen :set spell spelllang=en_us<cr>
 "}}}
-
 "resize{{{
 call tinymode#EnterMap("winresize", "<leader>h", "h")
 call tinymode#Map("winresize", "h", "CmdResizeLeft")
@@ -148,18 +151,13 @@ command! -nargs=* ReloadVim call ReloadVim()
 nmap <silent> <leader>sv :ReloadVim<cr>
 endif
 
-fun! RelativePath(filename)
-    let cwd = getcwd()
-    let s = substitute(a:filename, l:cwd . "/" , "", "")
-    return s
-endfunction
 "}}}
 "Generic mappings{{{
-:highlight CursorLine cterm=underline ctermbg=NONE "makes a underline on the current cursor line
 nnoremap <BS> :Rex<cr>
 "to clear the search
 nnoremap + ddp
 nnoremap _ dd2kp
+nnoremap <leader>tt :TagbarToggle<cr>
 nnoremap <Leader>le :noh<cr>
 nnoremap <Leader>fs :w ! sudo tee %<cr>
 nnoremap <Leader>dt :r ! date<cr>
@@ -190,16 +188,18 @@ cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 nnoremap <leader>cf :!filefy-clippboard<cr>
 map <c-p> :FZF<cr>
 "}}}
-"Hightlight rules {{{
+"Highlight rules {{{
 
 "use h cterm-colors to get the list of colors
-highlight SpellBad ctermfg=DarkYellow
 augroup VimrcColors
 au!
-  autocmd ColorScheme * highlight WordsToAvoid ctermbg=DarkMagenta
-  autocmd ColorScheme * highlight HardWords ctermbg=DarkYellow
+  autocmd ColorScheme * highlight WordsToAvoid ctermfg=DarkBlue cterm=underline
+  autocmd ColorScheme * highlight HardWords ctermfg=DarkBlue cterm=underline
   autocmd ColorScheme * highlight Whitespace ctermbg=Grey
   autocmd ColorScheme * highlight Overlength ctermbg=DarkGrey
+  autocmd ColorScheme * highlight SpellBad ctermfg=DarkMagenta
+  "makes a underline on the current cursor line
+  autocmd ColorScheme * highlight CursorLine cterm=underline ctermbg=NONE
 augroup END
 
 autocmd Syntax * call matchadd('WordsToAvoid', '\c\<\(obviously\|basically\|simply\|of\scourse\|clearly\|just\|little\|quite\|everyone\knows\|however\|easy\|obviamente\|basicamente\|simplesmente\|com\certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então\|fácil\|bem\)\>')
@@ -245,7 +245,7 @@ set tabstop=4
 set shiftwidth=4
 set expandtab
 "}}}
-"Generic text-objects{{{
+"custom text objects{{{
 
 call textobj#user#plugin('line', {
 \   '-': {
@@ -335,35 +335,6 @@ call textobj#user#plugin('datetime', {
 \   },
 \ })
 
-call textobj#user#plugin('line', {
-\   '-': {
-\     'select-a-function': 'CurrentLineA',
-\     'select-a': 'al',
-\     'select-i-function': 'CurrentLineI',
-\     'select-i': 'il',
-\   },
-\ })
-
-fun! CurrentLineA()
-  normal! 0
-  let head_pos = getpos('.')
-  normal! $
-  let tail_pos = getpos('.')
-  return ['v', head_pos, tail_pos]
-endfunction
-
-fun! CurrentLineI()
-  normal! ^
-  let head_pos = getpos('.')
-  normal! g_
-  let tail_pos = getpos('.')
-  let non_blank_char_exists_p = getline('.')[head_pos[2] - 1] !~# '\s'
-  return
-  \ non_blank_char_exists_p
-  \ ? ['v', head_pos, tail_pos]
-  \ : 0
-endfunction
-
 call textobj#user#plugin('document', {
 \   '-': {
 \     'select-a-function': 'CurrentDocumentA',
@@ -390,7 +361,7 @@ fun! CurrentDocumentI()
 endfunction
 inoremap ;<cr> <end>;<cr>
 "}}}
-"generic Actions over text blocks{{{
+"actions over text blocks{{{
 fun! s:DoAction(algorithm,type)
   " backup settings that we will change
   let sel_save = &selection
@@ -620,12 +591,12 @@ let g:syntastic_sh_checkers = ['shellcheck']
 let g:vim_markdown_no_extensions_in_markdown = 1
 autocmd BufNewFile * if &filetype == "" | call MarkdownDefaultConfigs() | endif
 autocmd Filetype markdown call MarkdownDefaultConfigs()
+highlight Folded ctermfg=DarkYellow
 
 fun! MarkdownDefaultConfigs()
     "set filetype=markdown
     set syntax=markdown
     set spell spelllang=en_us
-    highlight Folded ctermfg=DarkYellow
 endfunction
 
 autocmd FileType markdown setl tw=66
@@ -764,19 +735,31 @@ fun! GetUrl()
     normal! $F(vi(y
     return @"
 endfunction
+fun! GetLine()
+    normal! yy
+    return @"
+endfunction
 
 fun! OpenMarkdown()
     let url = GetUrl()
     let path = expand('%:p:h')
     execute 'edit ' . path . '/' . url . '.md'
 endfunction
-nnoremap <CR> :call OpenMarkdown()<cr>
+
+fun! OpenFile()
+    let line = GetLine()
+    if ( line =~ "http" )
+        :call OpenUrl()
+    else
+        :call OpenMarkdown()
+    endif
+endfun
+nnoremap <CR> :call OpenFile()<cr>
 autocmd CmdwinEnter * nnoremap <CR> <CR>
 autocmd BufReadPost quickfix nnoremap <CR> <CR>
 
 fun! OpenUrl()
     let url = GetUrl()
-    "execute '! notify-send "' . url ' "'
     execute '! $BROWSER "' . url . '" & '
 endfunction
 nnoremap gx :call OpenUrl()<cr>
@@ -790,7 +773,7 @@ endfunction
 command! -nargs=* GrepWiki call GrepWiki( '<args>' )
 command! -nargs=* WikiGrep call GrepWiki( '<args>' )
 "}}}
-"templates load {{{
+"files templates matching {{{
 autocmd BufNewFile *Test.php 0r $TEMPLATES_DIR/php_test.php
 autocmd BufNewFile *Gateway.php 0r $TEMPLATES_DIR/php_gateway.php
 autocmd BufNewFile *.php 0r $TEMPLATES_DIR/php.php
@@ -799,18 +782,12 @@ autocmd BufNewFile *.html 0r $TEMPLATES_DIR/html.html
 autocmd BufNewFile *.c 0r $TEMPLATES_DIR/c.c
 autocmd BufNewFile **/papers/*.md 0r $TEMPLATES_DIR/science-review.md
 autocmd BufNewFile **/*review*.md 0r $TEMPLATES_DIR/science-review.md
-autocmd BufNewFile */natural-computing/*.md 0r $TEMPLATES_DIR/science-review.md
 autocmd BufNewFile */diary/*.md 0r $TEMPLATES_DIR/diary.md
 autocmd BufNewFile */posts/*.md 0r $TEMPLATES_DIR/post.md
 "}}}
 "info relative to projects file, metadata{{{
 nmap <leader>xo :!xdg-open % &<cr>
 nmap <leader>od :!run_alias file_manager %:h<cr>
-nmap <leader>crn :call CopyCurrentRelativePath()<cr>
-fun! CopyCurrentRelativePath()
-  let path = RelativePath(expand("%:p"))
-let result = system('mycopy ', path)
-endfunction
 "copy path name
 nmap <leader>cpn :!copy %:p<cr>
 "copy full name
@@ -820,27 +797,6 @@ fun! SaveForcing()
 endfunction
 command! -nargs=* ForceSave call SaveForcing()
 command! -nargs=* SaveForce call SaveForcing()
-fun! OnlineDoc()
-  if &ft =~ "cpp"
-    let s:urlTemplate = "http://doc.trolltech.com/4.1/%.html"
-  elseif &ft =~ "ruby"
-    let s:urlTemplate = "https://www.google.com.br/?q=ruby+%"
-  elseif &ft =~ "php"
-    let s:urlTemplate = "http://php.net/manual-lookup.php?pattern=%&scope=quickref"
-  elseif &ft =~ "perl" let s:urlTemplate = "http://perldoc.perl.org/functions/%.html"
-  else
-    return
-  endif
-  let s:browser = "browser"
-  let s:wordUnderCursor = expand("<cword>")
-  let s:url = substitute(s:urlTemplate, "%", s:wordUnderCursor, "g")
-  let s:cmd = "silent !" . s:browser . " " . s:url . "&"
-  execute s:cmd
-  redraw!
-endfunction
-" Online doc search.
-map <Leader>doc :call OnlineDoc()<cr>
-map <silent> <M-d> :call OnlineDoc()<cr>
 
 fun! OpenTest()
   let original_file = expand('%')
@@ -848,6 +804,17 @@ fun! OpenTest()
   execute 'edit '.out
 endfunction
 map <Leader>ot :call OpenTest()<cr>
+
+nmap <leader>crn :call CopyCurrentRelativePath()<cr>
+fun! CopyCurrentRelativePath()
+  let path = RelativePath(expand("%:p"))
+let result = system('mycopy ', path)
+endfunction
+fun! RelativePath(filename)
+    let cwd = getcwd()
+    let s = substitute(a:filename, l:cwd . "/" , "", "")
+    return s
+endfunction
 
 fun! RenameFile()
   let old_name = expand('%')
@@ -955,3 +922,18 @@ autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
 nnoremap <leader>u :call RunPHPUnitTest(0)<cr>
 nnoremap <leader>f :call RunPHPUnitTest(1)<cr>
 "}}}
+" Add support for markdown files in tagbar.
+let g:tagbar_type_markdown = {
+    \ 'ctagstype': 'markdown',
+    \ 'ctagsbin' : '/home/jean/projects/dotfiles/vimrc/vim/plugged/markdown2ctags/markdown2ctags.py',
+    \ 'ctagsargs' : '-f - --sort=yes',
+    \ 'kinds' : [
+        \ 's:sections',
+        \ 'i:images'
+    \ ],
+    \ 'sro' : '|',
+    \ 'kind2scope' : {
+        \ 's' : 'section',
+    \ },
+    \ 'sort': 0,
+\ }

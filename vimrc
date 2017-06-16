@@ -750,7 +750,9 @@ fun! OpenFile()
     let line = GetLine()
     if ( line =~ "http" )
         :call OpenUrl()
-    else
+    endif
+
+    if ( line != "\n" ) 
         :call OpenMarkdown()
     endif
 endfun
@@ -760,7 +762,7 @@ autocmd BufReadPost quickfix nnoremap <CR> <CR>
 
 fun! OpenUrl()
     let url = GetUrl()
-    execute '! $BROWSER "' . url . '" & '
+    silent execute '! $BROWSER "' . url . '" 1>/dev/null  & '
 endfunction
 nnoremap gx :call OpenUrl()<cr>
 

@@ -257,3 +257,7 @@ energization
 Mysql
 Postgres
 Compufacil
+Memcached
+Systemd
+XMPP
+Rabbitmq

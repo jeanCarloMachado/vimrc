@@ -601,7 +601,7 @@ endfunction
 
 autocmd FileType markdown setl tw=66
 let g:vim_markdown_math = 1
-let g:vim_markdown_fenced_languages = ['html', 'python', 'bash=sh', 'c', 'php']
+let g:vim_markdown_fenced_languages = ['html', 'python', 'bash=sh', 'c', 'php', 'hs=haskell']
 fun! UnderlineHeading(level)
     if a:level == 1
         normal! I# 

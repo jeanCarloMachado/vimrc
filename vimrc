@@ -244,6 +244,8 @@ set autoindent
 set tabstop=4
 set shiftwidth=4
 set expandtab
+autocmd filetype javascript set tabstop=2
+autocmd filetype javascript set shiftwidth=2
 "}}}
 "custom text objects{{{
 

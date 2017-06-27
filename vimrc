@@ -472,6 +472,13 @@ fun! s:MakeList(str)
 endfunction
 call MapAction('MakeList', '<leader>ml')
 
+
+fun! s:MakeNumberedList(str)
+      let out = system('echo "'.a:str.'" | nl -s". " -w1')
+      return out
+endfunction
+call MapAction('MakeNumberedList', '<leader>mnl')
+
 fun! s:MakeGraph(str)
       let out = system('graph-easy', a:str)
       return a:str . "\n" . out
@@ -550,6 +557,12 @@ fun! s:UrlToJson(str)
   return out
 endfunction
 call MapAction('UrlToJson', '<leader>ju')
+
+fun! s:OpenSelectedUrl(str)
+  silent call OpenUrl(a:str)
+endfunction
+call MapAction('OpenSelectedUrl', '<leader>ol')
+call MapAction('OpenSelectedUrl', '<leader>ou')
 
 fun! s:Alnum(str)
   let out = system('run_alias alnum ', a:str)
@@ -751,7 +764,8 @@ endfunction
 fun! OpenFile()
     let line = GetLine()
     if ( line =~ "http" )
-        :call OpenUrl()
+        let url = GetUrl()
+        :call OpenUrl(url)
     endif
 
     if ( line != "\n" ) 
@@ -762,9 +776,8 @@ nnoremap <CR> :call OpenFile()<cr>
 autocmd CmdwinEnter * nnoremap <CR> <CR>
 autocmd BufReadPost quickfix nnoremap <CR> <CR>
 
-fun! OpenUrl()
-    let url = GetUrl()
-    silent execute '! $BROWSER "' . url . '" 1>/dev/null  & '
+fun! OpenUrl(url)
+    silent execute '! $BROWSER "' . a:url . '" 1>/dev/null  &'
 endfunction
 nnoremap gx :call OpenUrl()<cr>
 
@@ -785,6 +798,7 @@ autocmd BufNewFile *.sh 0r $TEMPLATES_DIR/shell.sh
 autocmd BufNewFile *.html 0r $TEMPLATES_DIR/html.html
 autocmd BufNewFile *.c 0r $TEMPLATES_DIR/c.c
 autocmd BufNewFile **/papers/*.md 0r $TEMPLATES_DIR/science-review.md
+autocmd BufNewFile **/*_paper.md 0r $TEMPLATES_DIR/science-review.md
 autocmd BufNewFile **/*review*.md 0r $TEMPLATES_DIR/science-review.md
 autocmd BufNewFile */diary/*.md 0r $TEMPLATES_DIR/diary.md
 autocmd BufNewFile */posts/*.md 0r $TEMPLATES_DIR/post.md

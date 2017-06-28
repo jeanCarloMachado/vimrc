@@ -35,6 +35,7 @@ Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'vim-scripts/tinymode.vim' | Plug 'breuckelen/vim-resize'
 Plug 'majutsushi/tagbar'
 Plug 'jszakmeister/markdown2ctags'
+Plug 'junegunn/goyo.vim'
 call plug#end()
 "}}}
 "generic configs{{{
@@ -186,6 +187,8 @@ cnoremap <C-n> <Down>
 " use %% to expand to the current buffer directory
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 nnoremap <leader>cf :!filefy-clippboard<cr>
+" Default fzf layout
+" - down / up / left / right
 map <c-p> :FZF<cr>
 "}}}
 "Highlight rules {{{
@@ -217,6 +220,7 @@ else
 endif
 
 let g:airline_theme='solarized'
+set term=screen-256color
 let g:solarized_termcolors=16
 let g:solarized_bold=1
 set t_Co=256
@@ -815,6 +819,7 @@ fun! SaveForcing()
 endfunction
 command! -nargs=* ForceSave call SaveForcing()
 command! -nargs=* SaveForce call SaveForcing()
+command! -nargs=* WriterMode :Goyo
 
 fun! OpenTest()
   let original_file = expand('%')

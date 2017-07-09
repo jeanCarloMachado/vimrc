@@ -35,7 +35,7 @@ Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'vim-scripts/tinymode.vim' | Plug 'breuckelen/vim-resize'
 Plug 'majutsushi/tagbar'
 Plug 'jszakmeister/markdown2ctags'
-Plug 'junegunn/goyo.vim'
+Plug 'junegunn/goyo.vim' | Plug 'junegunn/limelight.vim'
 call plug#end()
 "}}}
 "generic configs{{{
@@ -200,7 +200,7 @@ au!
   autocmd ColorScheme * highlight HardWords ctermfg=DarkBlue cterm=underline
   autocmd ColorScheme * highlight Whitespace ctermbg=Grey
   autocmd ColorScheme * highlight Overlength ctermbg=DarkGrey
-  autocmd ColorScheme * highlight SpellBad ctermfg=DarkMagenta
+  autocmd ColorScheme * highlight SpellBad ctermfg=Brown
   "makes a underline on the current cursor line
   autocmd ColorScheme * highlight CursorLine cterm=underline ctermbg=NONE
 augroup END
@@ -820,6 +820,26 @@ endfunction
 command! -nargs=* ForceSave call SaveForcing()
 command! -nargs=* SaveForce call SaveForcing()
 command! -nargs=* WriterMode :Goyo
+autocmd! User GoyoEnter Limelight
+autocmd! User GoyoLeave Limelight!
+" Color name (:help cterm-colors) or ANSI code
+let g:limelight_conceal_ctermfg = 'gray'
+let g:limelight_conceal_ctermfg = 240
+
+" Color name (:help gui-colors) or RGB color
+let g:limelight_conceal_guifg = 'DarkGray'
+let g:limelight_conceal_guifg = '#777777'
+
+
+" Beginning/end of paragraph
+"   When there's no empty line between the paragraphs
+"   and each paragraph starts with indentation
+" let g:limelight_bop = '^\s'
+" let g:limelight_eop = '\ze\n^\s'
+
+" Highlighting priority (default: 10)
+"   Set it to -1 not to overrule hlsearch
+let g:limelight_priority = -1
 
 fun! OpenTest()
   let original_file = expand('%')

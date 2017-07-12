@@ -24,6 +24,7 @@ Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'
+Plug 'terryma/vim-multiple-cursors'
 "ghc depends on vimproc
 Plug 'Shougo/vimproc.vim', {'do' : 'make'} | Plug 'eagletmt/ghcmod-vim', { 'for': ['haskell'] }
 Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }

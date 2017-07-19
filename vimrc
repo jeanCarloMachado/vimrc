@@ -37,6 +37,7 @@ Plug 'vim-scripts/tinymode.vim' | Plug 'breuckelen/vim-resize'
 Plug 'majutsushi/tagbar'
 Plug 'jszakmeister/markdown2ctags'
 Plug 'junegunn/goyo.vim' | Plug 'junegunn/limelight.vim'
+Plug 'Shougo/neocomplete'
 call plug#end()
 "}}}
 "generic configs{{{
@@ -44,9 +45,9 @@ syntax enable
 let mapleader = "\<space>"
 runtime macros/matchit.vim
 set tags+=/usr/include/tags,./tags,./.git/tags,../.git/tags
+set mouse=a
 set nrformats= "vim will treat all numerals as decimals, useful on num<C-a> with numbers like 007
 set splitbelow
-set completeopt=menu
 set backspace=indent,eol,start
 set cot+=menuone
 set noswapfile
@@ -59,7 +60,6 @@ set showmode
 set showcmd
 "hides buffers instead of closing them
 set hidden
-set wildmenu "to autocomplete the suggestions like bash
 set wildmode=longest,list
 set ttyfast
 set ruler
@@ -81,7 +81,6 @@ set wildignore=*.swp,*.back,*.pyc,*.class,*.coverage.*
 set backupdir=~/.tmp
 set directory=~/.tmp "don't clutter dirs with swp and tmpfiles
 setlocal formatoptions=1
-set complete+=s
 set formatprg=par
 setlocal linebreak
 set clipboard=unnamedplus
@@ -96,7 +95,7 @@ set foldmethod=marker
 "autocmd BufRead * setlocal foldmethod=marker
 " autocmd BufRead * normal zM
 "}}}
-"Concealing {{{
+"Concealing ligature {{{
 :call matchadd('Conceal', '!=', 999, -1, {'conceal': '≠'})
 :call matchadd('Conceal', '->', 999, -1, {'conceal': '➞'})
 :call matchadd('Conceal', '=>', 999, -1, {'conceal': '➞'})
@@ -110,10 +109,20 @@ endfunction
 command! -nargs=* Grepr call Grepr( '<args>' )
 "}}}
 "netrw{{{
+nnoremap <leader>k :Explore<cr>
+nnoremap <leader>K :call ExploreCurrentBufferDirectory()<cr>
+fun! ExploreCurrentBufferDirectory()
+    let current_directory = expand('%:p:h')
+    execute "Explore ".current_directory
+
+endfunction
+
 let g:netrw_localrmdir='rm -r'
 let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
 let g:netrw_liststyle=3
 let g:netrw_hide = 0
+set browsedir=current
+let g:netrw_banner = 0
 "}}}
 "spelling {{{
 fun! FixLastSpellingError()
@@ -123,26 +132,115 @@ nnoremap <leader>ls :call FixLastSpellingError()<cr>
 map <leader>spt :set spell spelllang=pt_br<cr>
 map <leader>sen :set spell spelllang=en_us<cr>
 "}}}
+"autocompletion {{{
+" set wildmenu "to autocomplete the suggestions like bash
+" set completeopt=menu
+" set complete+=s
+"Note: This option must be set in .vimrc(_vimrc).  NOT IN .gvimrc(_gvimrc)!
+" Disable AutoComplPop.
+let g:acp_enableAtStartup = 0
+" Use neocomplete.
+let g:neocomplete#enable_at_startup = 1
+" Use smartcase.
+let g:neocomplete#enable_smart_case = 1
+" Set minimum syntax keyword length.
+let g:neocomplete#sources#syntax#min_keyword_length = 3
+
+" Define dictionary.
+let g:neocomplete#sources#dictionary#dictionaries = {
+    \ 'default' : '',
+    \ 'vimshell' : $HOME.'/.vimshell_hist',
+    \ 'scheme' : $HOME.'/.gosh_completions'
+        \ }
+
+" Define keyword.
+if !exists('g:neocomplete#keyword_patterns')
+    let g:neocomplete#keyword_patterns = {}
+endif
+let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+
+" Plugin key-mappings.
+inoremap <expr><C-g>     neocomplete#undo_completion()
+inoremap <expr><C-l>     neocomplete#complete_common_string()
+
+" Recommended key-mappings.
+" <CR>: close popup and save indent.
+inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+function! s:my_cr_function()
+  return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
+  " For no inserting <CR> key.
+  "return pumvisible() ? "\<C-y>" : "\<CR>"
+endfunction
+" <TAB>: completion.
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+" <C-h>, <BS>: close popup and delete backword char.
+inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
+" Close popup by <Space>.
+"inoremap <expr><Space> pumvisible() ? "\<C-y>" : "\<Space>"
+
+" AutoComplPop like behavior.
+"let g:neocomplete#enable_auto_select = 1
+
+" Shell like behavior(not recommended).
+"set completeopt+=longest
+"let g:neocomplete#enable_auto_select = 1
+"let g:neocomplete#disable_auto_complete = 1
+"inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
+
+" Enable omni completion.
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+
+" Enable heavy omni completion.
+if !exists('g:neocomplete#sources#omni#input_patterns')
+  let g:neocomplete#sources#omni#input_patterns = {}
+endif
+"let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+"let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
+"let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+
+" For perlomni.vim setting.
+" https://github.com/c9s/perlomni.vim
+let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
+"}}}
 "resize{{{
-call tinymode#EnterMap("winresize", "<leader>h", "h")
-call tinymode#Map("winresize", "h", "CmdResizeLeft")
-call tinymode#EnterMap("winresize", "<leader>l", "l")
-call tinymode#Map("winresize", "l", "CmdResizeRight")
-call tinymode#EnterMap("winresize", "<leader>k", "k")
-call tinymode#Map("winresize", "k", "CmdResizeUp")
-call tinymode#EnterMap("winresize", "<leader>j", "j")
-call tinymode#Map("winresize", "j", "CmdResizeDown")
-call tinymode#ModeMsg("winresize", "Change window size h/j/k/l") 
+" call tinymode#EnterMap("winresize", "<leader>h", "h")
+" call tinymode#Map("winresize", "h", "CmdResizeLeft")
+" call tinymode#EnterMap("winresize", "<leader>l", "l")
+" call tinymode#Map("winresize", "l", "CmdResizeRight")
+" call tinymode#EnterMap("winresize", "<leader>k", "k")
+" call tinymode#Map("winresize", "k", "CmdResizeUp")
+" call tinymode#EnterMap("winresize", "<leader>j", "j")
+" call tinymode#Map("winresize", "j", "CmdResizeDown")
+" call tinymode#ModeMsg("winresize", "Change window size h/j/k/l") 
 "}}}
 "Generic functions{{{
 fun! WritingMode()
-    set foldcolumn=5
+    :Goyo
+    "execute "!notify-send 'test'"
 endfunction
 command! -nargs=* WritingMode call WritingMode()
+map <Leader>wm :call WritingMode()<cr>
 let writer_mode=$WRITER_MODE
-if writer_mode == '1'
-    call WritingMode()
-endif
+
+fun! Talk()
+    :e $WIKI_PATH/talks.md
+endfunction
+command! -nargs=* Talk call Talk()
+
+fun! Remember()
+    :e /home/jean/.remember
+endfunction
+command! -nargs=* Remember call Remember()
+
+fun! Quotes()
+    :e /home/jean/Dropbox/wiki/src/quotes.md
+endfunction
+command! -nargs=* Quotes call Quotes()
 
 if !exists('*ReloadVim')
 fun! ReloadVim()
@@ -172,12 +270,10 @@ map <leader>me :!chmod +x %<cr>
 nnoremap <leader>tn :tabnew<cr>
 "open director (file manager)
 nmap <leader>sh :!cd %:h && bash<cr>
-nmap <leader>lc :r!  echo %:h<cr>
+"remove current  file
 nmap <leader>rmrf :!rm -rf %:p <cr>
-nmap <leader>k :Explore<cr>
 nmap <leader>pn :!echo %<cr>
 nmap <leader>pfn :!echo %:p<cr>
-nmap <leader>dw \(\<\w\+\>\)\_s*\<\1\><cr>
 nmap <silent> <leader>ev :e $MY_VIMRC<cr>:lcd %:h<cr>
 nnoremap <leader>c :noh<cr>
 nnoremap <leader><space> :w<cr>
@@ -570,7 +666,7 @@ call MapAction('OpenSelectedUrl', '<leader>ol')
 call MapAction('OpenSelectedUrl', '<leader>ou')
 
 fun! s:Alnum(str)
-  let out = system('run_alias alnum ', a:str)
+  let out = system('run_function alnum ', a:str)
   return out
 endfunction
 call MapAction('Alnum', '<leader>a')
@@ -820,7 +916,6 @@ fun! SaveForcing()
 endfunction
 command! -nargs=* ForceSave call SaveForcing()
 command! -nargs=* SaveForce call SaveForcing()
-command! -nargs=* WriterMode :Goyo
 autocmd! User GoyoEnter Limelight
 autocmd! User GoyoLeave Limelight!
 " Color name (:help cterm-colors) or ANSI code
@@ -933,6 +1028,8 @@ command Phpcsfixer : ! php-code-check `pwd`/%
 
 fun! RunPHPUnitTest(filter)
     cd %:p:h
+    let test_command = "phpunit -c ". $CLIPP_PATH . "/Backend/phpunit.xml.dist " . expand("%:p")
+
     if a:filter
         normal! T yw
         if @" =~ "^test*"
@@ -940,33 +1037,30 @@ fun! RunPHPUnitTest(filter)
         endif
 
         normal! `T
-
         normal! T yw
-        "
-        let myCommand="phpunit -c ". $PWD ."/Backend/phpunit.xml.dist --filter " . @" . " " . expand("%:p")
-        let result = system(myCommand)
+        let test_command="phpunit -c ". $CLIPP_PATH ."/Backend/phpunit.xml.dist " . expand("%:p") . " --filter " . @" . " "
     else
         let @n = expand('%:t')
         if @n =~ "Test"
             normal! mA
         endif
         normal! `A
-
-        let myCommand = "phpunit -c ". $PWD . "/Backend/phpunit.xml.dist " . expand("%:p")
-        let result = system(myCommand)
     endif
+
+    let result = system(test_command)
+
     split __PHPUnit_Result__
     normal! ggdG
     setlocal buftype=nofile
     call append(0, myCommand)
     call append(0, split(result, '\v\n'))
     cd -
-endfunction
-autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
+endfun
 nnoremap <leader>u :call RunPHPUnitTest(0)<cr>
 nnoremap <leader>f :call RunPHPUnitTest(1)<cr>
+autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
 "}}}
-" Add support for markdown files in tagbar.
+" tagbar {{{
 let g:tagbar_type_markdown = {
     \ 'ctagstype': 'markdown',
     \ 'ctagsbin' : '/home/jean/projects/dotfiles/vimrc/vim/plugged/markdown2ctags/markdown2ctags.py',
@@ -981,3 +1075,5 @@ let g:tagbar_type_markdown = {
     \ },
     \ 'sort': 0,
 \ }
+
+"}}}

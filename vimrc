@@ -1,17 +1,18 @@
 "It's a good practise to use folding to hide details of
 "Its better to organize the configs by semantic. Better to put wiki
 "mappings on the wiki section then on the mappings section
-
 "Plugins Load {{{
 filetype on
 filetype plugin on
 call plug#begin()
+
 Plug 'fatih/vim-go', { 'for': [ 'go'] }
 "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
 Plug 'lervag/vimtex', { 'for': [ 'latex' ] }
 Plug 'altercation/vim-colors-solarized'
 Plug 'bling/vim-airline' | Plug 'vim-airline/vim-airline-themes'
 Plug 'christoomey/vim-tmux-navigator'
+Plug 'jiangmiao/auto-pairs'
 Plug 'jez/vim-superman'
 "enable the creation of custom text objects
 Plug 'kana/vim-textobj-user'
@@ -31,15 +32,15 @@ Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
 Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 Plug 'vim-scripts/argtextobj.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'vim-syntastic/syntastic', { 'for': ['c', 'bash', 'haskell'] } "syntax checking
+Plug 'vim-syntastic/syntastic', { 'for': ['c', 'bash', 'haskell', 'make' ] } "syntax checking
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'vim-scripts/tinymode.vim' | Plug 'breuckelen/vim-resize'
-Plug 'majutsushi/tagbar'
-Plug 'jszakmeister/markdown2ctags'
+Plug 'majutsushi/tagbar' | Plug 'jszakmeister/markdown2ctags', { 'for': ['markdown'] }
 Plug 'junegunn/goyo.vim' | Plug 'junegunn/limelight.vim'
 Plug 'Shougo/neocomplete'
 call plug#end()
 "}}}
+
 "generic configs{{{
 syntax enable
 let mapleader = "\<space>"
@@ -50,9 +51,6 @@ set nrformats= "vim will treat all numerals as decimals, useful on num<C-a> with
 set splitbelow
 set backspace=indent,eol,start
 set cot+=menuone
-set noswapfile
-set nobackup
-set nowritebackup
 set number
 set shell=/bin/zsh
 set encoding=utf-8
@@ -69,7 +67,6 @@ set incsearch
 set ignorecase
 set smartcase
 set gdefault
-set conceallevel=2 "show pretty latex formulas
 set showmatch "show matching parenthesis
 set scrolloff=0 " Minimum lines to keep above and below cursor"
 set autoread
@@ -78,8 +75,6 @@ set title
 vnoremap . :normal .<CR> " Allow using the repeat operator with a visual selection
 set cursorline
 set wildignore=*.swp,*.back,*.pyc,*.class,*.coverage.*
-set backupdir=~/.tmp
-set directory=~/.tmp "don't clutter dirs with swp and tmpfiles
 setlocal formatoptions=1
 set formatprg=par
 setlocal linebreak
@@ -87,6 +82,17 @@ set clipboard=unnamedplus
 set nocompatible
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
 "}}}
+
+" backup options{{{
+set swapfile
+set backup
+set writebackup
+set backupdir=~/.vim_tmp
+set directory=~/.vim_tmp "don't clutter dirs with swp and tmpfiles
+"don't show alert message when the swap already exists
+set shortmess+=A
+"}}}
+
 "Fold {{{
 set foldenable
 set foldcolumn=4
@@ -95,10 +101,15 @@ set foldmethod=marker
 "autocmd BufRead * setlocal foldmethod=marker
 " autocmd BufRead * normal zM
 "}}}
-"Concealing ligature {{{
-:call matchadd('Conceal', '!=', 999, -1, {'conceal': '≠'})
-:call matchadd('Conceal', '->', 999, -1, {'conceal': '➞'})
-:call matchadd('Conceal', '=>', 999, -1, {'conceal': '➞'})
+"Concealing {{{
+autocmd FileType php call matchadd('Conceal', '!=', 999, -1, {'conceal': '≠'})
+autocmd FileType php call matchadd('Conceal', '->', 999, -1, {'conceal': '➞'})
+autocmd FileType php call matchadd('Conceal', '=>', 999, -1, {'conceal': '➞'})
+autocmd FileType markdown call matchadd('Conceal', '# ', 999, -1, {'conceal': ''})
+autocmd FileType markdown call matchadd('Conceal', '## ', 999, -1, {'conceal': ''})
+autocmd FileType markdown call matchadd('Conceal', '### ', 999, -1, {'conceal': ''})
+autocmd FileType markdown call matchadd('Conceal', '#### ', 999, -1, {'conceal': ''})
+set conceallevel=2 "show pretty latex formulas
 "}}}
 "Grep {{{
 set grepprg=ack\ -i\ --column\ $*
@@ -128,6 +139,7 @@ let g:netrw_banner = 0
 fun! FixLastSpellingError()
     normal! mm[s1z=`m
 endfunction
+
 nnoremap <leader>ls :call FixLastSpellingError()<cr>
 map <leader>spt :set spell spelllang=pt_br<cr>
 map <leader>sen :set spell spelllang=en_us<cr>
@@ -178,15 +190,6 @@ inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
 " Close popup by <Space>.
 "inoremap <expr><Space> pumvisible() ? "\<C-y>" : "\<Space>"
-
-" AutoComplPop like behavior.
-"let g:neocomplete#enable_auto_select = 1
-
-" Shell like behavior(not recommended).
-"set completeopt+=longest
-"let g:neocomplete#enable_auto_select = 1
-"let g:neocomplete#disable_auto_complete = 1
-"inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
 
 " Enable omni completion.
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
@@ -242,6 +245,13 @@ fun! Quotes()
 endfunction
 command! -nargs=* Quotes call Quotes()
 
+fun! Meditation()
+:e /home/jean/Dropbox/wiki/src/meditation/meditation.md
+endfunction
+command! -nargs=* Meditation call Meditation()
+
+
+
 if !exists('*ReloadVim')
 fun! ReloadVim()
      silent source $MY_VIMRC
@@ -252,12 +262,15 @@ nmap <silent> <leader>sv :ReloadVim<cr>
 endif
 
 "}}}
+
 "Generic mappings{{{
+nnoremap <leader>; :normal!mtA;<esc>`t
 nnoremap <BS> :Rex<cr>
 "to clear the search
 nnoremap + ddp
 nnoremap _ dd2kp
 nnoremap <leader>tt :TagbarToggle<cr>
+let g:tagbar_width=30
 nnoremap <Leader>le :noh<cr>
 nnoremap <Leader>fs :w ! sudo tee %<cr>
 nnoremap <Leader>dt :r ! date<cr>
@@ -629,6 +642,12 @@ fun! s:BCat(str)
 endfunction
 call MapAction('BCat', '<leader>v')
 
+fun! s:MarkdownToHtml(str)
+    let out = system('pandoc --highlight-style=espresso -o /tmp/fp.html ',a:str)
+    execute '! browser /tmp/fp.html'
+endfunction
+call MapAction('MarkdownToHtml', '<leader>mh')
+
 fun! s:Decode(str)
   let out = system('url-decode ', a:str)
   return out
@@ -792,6 +811,16 @@ command! -nargs=* Today call Diary( 'today' )
 command! -nargs=* Someday call Diary( 'someday' )
 command! -nargs=* Diary call Diary( '<args>' )
 command! -nargs=* NextRetrospective call Diary( 'next monday' )
+
+fun! GrepDiary( arg )
+    let old_path = $pwd
+    exec "cd " . $DIARY_PATH
+    execute "grep " . a:arg . "  "
+    exec "cd ". old_path
+endfunction
+command! -nargs=* GrepDiary call GrepDiary( '<args>' )
+command! -nargs=* DiaryGrep call GrepDiary( '<args>' )
+
 
 fun! BottomDiary( arg )
     let out = system("run_function diary_file " . a:arg )

@@ -9,6 +9,7 @@ call plug#begin()
 Plug 'fatih/vim-go', { 'for': [ 'go'] }
 "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
 Plug 'lervag/vimtex', { 'for': [ 'latex' ] }
+Plug 'ElmCast/elm-vim', { 'for': [ 'elm' ] }
 Plug 'altercation/vim-colors-solarized'
 Plug 'bling/vim-airline' | Plug 'vim-airline/vim-airline-themes'
 Plug 'christoomey/vim-tmux-navigator'
@@ -148,7 +149,7 @@ map <leader>sen :set spell spelllang=en_us<cr>
 " set wildmenu "to autocomplete the suggestions like bash
 " set completeopt=menu
 " set complete+=s
-"Note: This option must be set in .vimrc(_vimrc).  NOT IN .gvimrc(_gvimrc)!
+
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
 " Use neocomplete.
@@ -264,6 +265,7 @@ endif
 "}}}
 
 "Generic mappings{{{
+nnoremap <leader>gv  :! gvim %:p<cr>
 nnoremap <leader>; :normal!mtA;<esc>`t
 nnoremap <BS> :Rex<cr>
 "to clear the search
@@ -643,10 +645,13 @@ endfunction
 call MapAction('BCat', '<leader>v')
 
 fun! s:MarkdownToHtml(str)
-    let out = system('pandoc --highlight-style=espresso -o /tmp/fp.html ',a:str)
-    execute '! browser /tmp/fp.html'
+    let file_name_without_extension = system('md5sum  | run_function alnum ', expand("%:r"))
+
+    let out = system('pandoc -o /tmp/'.file_name_without_extension.'.html ',a:str)
+    silent execute '! browser /tmp/'.file_name_without_extension.'.html 1>/dev/null & '
 endfunction
 call MapAction('MarkdownToHtml', '<leader>mh')
+
 
 fun! s:Decode(str)
   let out = system('url-decode ', a:str)
@@ -725,6 +730,7 @@ let g:syntastic_sh_checkers = ['shellcheck']
 "Markdown configs {{{
 let g:vim_markdown_no_extensions_in_markdown = 1
 autocmd BufNewFile * if &filetype == "" | call MarkdownDefaultConfigs() | endif
+autocmd BufNewFile * if &filetype == "txt" | call MarkdownDefaultConfigs() | endif
 autocmd Filetype markdown call MarkdownDefaultConfigs()
 highlight Folded ctermfg=DarkYellow
 
@@ -736,7 +742,7 @@ endfunction
 
 autocmd FileType markdown setl tw=66
 let g:vim_markdown_math = 1
-let g:vim_markdown_fenced_languages = ['html', 'python', 'bash=sh', 'c', 'php', 'hs=haskell']
+let g:vim_markdown_fenced_languages = ['html', 'python', 'bash=sh', 'c', 'php', 'hs=haskell', 'elm']
 fun! UnderlineHeading(level)
     if a:level == 1
         normal! I# 
@@ -1106,3 +1112,11 @@ let g:tagbar_type_markdown = {
 \ }
 
 "}}}
+" gvim {{{
+
+:set guioptions-=m  "remove menu bar
+:set guioptions-=T  "remove toolbar
+:set guioptions-=r  "remove right-hand scroll bar
+:set guioptions-=L  "remove left-hand scroll bar
+:set guifont=DejaVu\ Sans\ Mono\ 14
+" }}}

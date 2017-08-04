@@ -729,8 +729,8 @@ let g:syntastic_sh_checkers = ['shellcheck']
 "}}}
 "Markdown configs {{{
 let g:vim_markdown_no_extensions_in_markdown = 1
-autocmd BufNewFile * if &filetype == "" | call MarkdownDefaultConfigs() | endif
-autocmd BufNewFile * if &filetype == "txt" | call MarkdownDefaultConfigs() | endif
+"autocmd BufNewFile * if &filetype == "" | call MarkdownDefaultConfigs() | endif
+"autocmd BufNewFile * if &filetype == "txt" | call MarkdownDefaultConfigs() | endif
 autocmd Filetype markdown call MarkdownDefaultConfigs()
 highlight Folded ctermfg=DarkYellow
 
@@ -742,7 +742,8 @@ endfunction
 
 autocmd FileType markdown setl tw=66
 let g:vim_markdown_math = 1
-let g:vim_markdown_fenced_languages = ['html', 'python', 'bash=sh', 'c', 'php', 'hs=haskell', 'elm']
+"syntax highlight for markdown
+let g:vim_markdown_fenced_languages = ['html', 'py=python', 'bash=sh', 'c', 'php', 'hs=haskell', 'elm']
 fun! UnderlineHeading(level)
     if a:level == 1
         normal! I# 
@@ -904,7 +905,7 @@ fun! OpenFile()
         :call OpenUrl(url)
     endif
 
-    if ( line != "\n" ) 
+    if ( line != "\n" )
         :call OpenMarkdown()
     endif
 endfun
@@ -1110,13 +1111,22 @@ let g:tagbar_type_markdown = {
     \ },
     \ 'sort': 0,
 \ }
-
 "}}}
-" gvim {{{
 
+" gvim {{{
 :set guioptions-=m  "remove menu bar
 :set guioptions-=T  "remove toolbar
 :set guioptions-=r  "remove right-hand scroll bar
 :set guioptions-=L  "remove left-hand scroll bar
 :set guifont=DejaVu\ Sans\ Mono\ 14
 " }}}
+
+" macros {{{
+fun! RepeatAndMove()
+    let @q ="n."
+    normal! @q
+endfunction
+nnoremap <leader>rm :RepeatAndMove(<cr>
+command! -nargs=* RepeatAndMove call RepeatAndMove()
+" }}}
+"

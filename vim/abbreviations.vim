@@ -126,3 +126,5 @@ Abolish hes he's
 Abolish Php PHP
 Abolish cuda CUDA
 Abolish Email E-mail
+Abolish cleint client
+Abolish sevice service

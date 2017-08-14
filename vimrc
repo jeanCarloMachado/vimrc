@@ -507,7 +507,7 @@ fun! s:DoAction(algorithm,type)
     silent exe "normal! `[v`]y"
   endif
   " call the user-defined function, passing it the contents of the unnamed register
-  let repl = s:{a:algorithm}(@@)
+  let repl = s:{a:algorithm}(Chomp(@@))
   " if the function returned a value, then replace the text
   if type(repl) == 1
     " put the replacement text into the unnamed register, and also set it to be a
@@ -548,6 +548,14 @@ fun! s:ComputeMD5(str)
   return out
 endfunction
 call MapAction('ComputeMD5','<leader>M')
+
+function! Chomp(string)
+    return substitute(a:string, '\n\+$', '', '')
+endfunction
+
+function! ChompedSystem( ... )
+    return substitute(call('system', a:000), '\n\+$', '', '')
+endfunction
 
 fun! s:ReverseString(str)
   let out = join(reverse(split(a:str, '\zs')), '')
@@ -643,14 +651,6 @@ fun! s:BCat(str)
     let out = system('browser-cat ', a:str)
 endfunction
 call MapAction('BCat', '<leader>v')
-
-fun! s:MarkdownToHtml(str)
-    let file_name_without_extension = system('md5sum  | run_function alnum ', expand("%:r"))
-
-    let out = system('pandoc -o /tmp/'.file_name_without_extension.'.html ',a:str)
-    silent execute '! browser /tmp/'.file_name_without_extension.'.html 1>/dev/null & '
-endfunction
-call MapAction('MarkdownToHtml', '<leader>mh')
 
 
 fun! s:Decode(str)
@@ -798,11 +798,23 @@ fun! s:Bold(str)
 endfunction
 call MapAction('Bold', '<leader>bo')
 
+fun! s:Highlight(str)
+    return '***'.a:str.'***'
+endfunction
+call MapAction('Highlight', '<leader>hl')
+
+
 fun! s:CodeBlock(str)
     return "```sh\n".a:str."\n```"
 endfunction
 call MapAction('CodeBlock', '<leader>c')
 
+fun! s:MarkdownToHtml(str)
+    let file_name_without_extension = system('md5sum  | run_function alnum ', expand("%:r"))
+    let out = system('pandoc -o /tmp/'.file_name_without_extension.'.html ',a:str)
+    silent execute '! browser /tmp/'.file_name_without_extension.'.html 1>/dev/null & '
+endfunction
+call MapAction('MarkdownToHtml', '<leader>mh')
 
 "}}}
 "diary{{{
@@ -1129,4 +1141,13 @@ endfunction
 nnoremap <leader>rm :RepeatAndMove(<cr>
 command! -nargs=* RepeatAndMove call RepeatAndMove()
 " }}}
-"
+
+" C lang {{{
+fun! CFiletypeConfigs()
+    "compile through gcc when there's no makefile
+    if !filereadable(expand("%:p:h")."/Makefile")
+        setlocal makeprg=gcc\ -Wall\ -Wextra\ -o\ %<\ %
+    endif
+endfun
+autocmd filetype c call CFiletypeConfigs()
+"}}}

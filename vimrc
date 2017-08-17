@@ -121,20 +121,66 @@ endfunction
 command! -nargs=* Grepr call Grepr( '<args>' )
 "}}}
 "netrw{{{
-nnoremap <leader>k :Explore<cr>
-nnoremap <leader>K :call ExploreCurrentBufferDirectory()<cr>
-fun! ExploreCurrentBufferDirectory()
-    let current_directory = expand('%:p:h')
-    execute "Explore ".current_directory
-
-endfunction
-
 let g:netrw_localrmdir='rm -r'
 let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
 let g:netrw_liststyle=3
-let g:netrw_hide = 0
 set browsedir=current
-let g:netrw_banner = 0
+let g:netrw_banner = 0 "nobanner
+let g:netrw_altv=1              " open files on right
+let g:netrw_browse_split=0
+
+nnoremap <leader>k :call VexToggle(getcwd())<cr>
+nnoremap <leader>K :call VexToggle("")<cr>
+
+fun! VexToggle(dir)
+    if exists("t:vex_buf_nr")
+        call VexClose()
+    else
+        call VexOpen(a:dir)
+    endif
+endf
+
+fun! VexOpen(dir)
+    let g:netrw_browse_split=4
+    let vex_width = 35
+
+    execute "Vexplore" . a:dir
+    let t:vex_buf_nr = bufnr("%")
+    wincmd H
+
+    call VexSize(vex_width)
+endf
+
+fun! VexClose()
+
+    let cur_win_nr = winnr()
+    let target_nr = ( cur_win_nr == 1 ? winnr("#") : cur_win_nr )
+
+    1wincmd w
+    close
+    unlet t:vex_buf_nr
+
+    execute (target_nr - 1) . "wincmd w"
+    call NormalizeWidths()
+endf
+
+fun! VexSize(vex_width)
+    execute "vertical resize" . a:vex_width
+    set winfixwidth
+    call NormalizeWidths()
+endf
+
+fun! NormalizeWidths()
+    let eadir_pref = &eadirection
+    set eadirection=hor
+    set equalalways! equalalways!
+    let &eadirection = eadir_pref
+endf
+
+augroup NetrwGroup
+    autocmd! BufEnter * call NormalizeWidths()
+augroup END
+"
 "}}}
 "spelling {{{
 fun! FixLastSpellingError()
@@ -211,17 +257,6 @@ endif
 " https://github.com/c9s/perlomni.vim
 let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
 "}}}
-"resize{{{
-" call tinymode#EnterMap("winresize", "<leader>h", "h")
-" call tinymode#Map("winresize", "h", "CmdResizeLeft")
-" call tinymode#EnterMap("winresize", "<leader>l", "l")
-" call tinymode#Map("winresize", "l", "CmdResizeRight")
-" call tinymode#EnterMap("winresize", "<leader>k", "k")
-" call tinymode#Map("winresize", "k", "CmdResizeUp")
-" call tinymode#EnterMap("winresize", "<leader>j", "j")
-" call tinymode#Map("winresize", "j", "CmdResizeDown")
-" call tinymode#ModeMsg("winresize", "Change window size h/j/k/l") 
-"}}}
 "Generic functions{{{
 fun! WritingMode()
     :Goyo
@@ -267,6 +302,7 @@ endif
 "Generic mappings{{{
 nnoremap <leader>gv  :! gvim %:p<cr>
 nnoremap <leader>; :normal!mtA;<esc>`t
+nnoremap <leader>, :normal!mtA,<esc>`t
 nnoremap <BS> :Rex<cr>
 "to clear the search
 nnoremap + ddp
@@ -921,7 +957,7 @@ fun! OpenFile()
         :call OpenMarkdown()
     endif
 endfun
-nnoremap <CR> :call OpenFile()<cr>
+autocmd FileType markdown nnoremap <CR> :call OpenFile()<cr>
 autocmd CmdwinEnter * nnoremap <CR> <CR>
 autocmd BufReadPost quickfix nnoremap <CR> <CR>
 
@@ -987,8 +1023,14 @@ let g:limelight_priority = -1
 
 fun! OpenTest()
   let original_file = expand('%')
+
+  "mark position as service
+  normal! mS
   let out = system('echo "'.original_file.'" | run_function test_from_file')
   execute 'edit '.out
+
+  "mark position as test
+  normal! mT
 endfunction
 map <Leader>ot :call OpenTest()<cr>
 

@@ -13,6 +13,7 @@ Plug 'ElmCast/elm-vim', { 'for': [ 'elm' ] }
 Plug 'altercation/vim-colors-solarized'
 Plug 'bling/vim-airline' | Plug 'vim-airline/vim-airline-themes'
 Plug 'christoomey/vim-tmux-navigator'
+Plug 'tpope/vim-characterize'
 Plug 'jiangmiao/auto-pairs'
 Plug 'jez/vim-superman'
 "enable the creation of custom text objects

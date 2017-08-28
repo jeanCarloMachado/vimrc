@@ -684,10 +684,11 @@ fun! s:googleIt(str)
 endfunction
 call MapAction('googleIt', '<leader>gi')
 
+"render a html chunk on the browser
 fun! s:BCat(str)
     let out = system('browser-cat ', a:str)
 endfunction
-call MapAction('BCat', '<leader>v')
+call MapAction('BCat', '<leader>vi')
 
 
 fun! s:Decode(str)

@@ -37,7 +37,6 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'vim-syntastic/syntastic', { 'for': ['c', 'bash', 'haskell', 'make' ] } "syntax checking
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'vim-scripts/tinymode.vim' | Plug 'breuckelen/vim-resize'
-Plug 'majutsushi/tagbar' | Plug 'jszakmeister/markdown2ctags', { 'for': ['markdown'] }
 Plug 'junegunn/goyo.vim' | Plug 'junegunn/limelight.vim'
 Plug 'Shougo/neocomplete'
 call plug#end()
@@ -54,7 +53,7 @@ set splitbelow
 set backspace=indent,eol,start
 set cot+=menuone
 set number
-set shell=/bin/zsh
+set shell=$SHELL
 set encoding=utf-8
 set showmode
 set showcmd
@@ -271,6 +270,12 @@ fun! Talk()
     :e $WIKI_PATH/talks.md
 endfunction
 command! -nargs=* Talk call Talk()
+
+fun! Glossary()
+    :e $WIKI_PATH/glossary.md
+endfunction
+command! -nargs=* Glossary call Glossary()
+
 
 fun! Remember()
     :e /home/jean/.remember
@@ -650,6 +655,12 @@ fun! s:Parenthesis(str)
     return '('.a:str.')'
 endfunction
 call MapAction('Parenthesis', '<leader>(')
+
+
+fun! s:Dollars(str)
+    return '$'.a:str.'$'
+endfunction
+call MapAction('Dollars', '<leader>$')
 
 fun! s:Brackets(str)
     return '['.a:str.']'

@@ -10,6 +10,7 @@ Plug 'fatih/vim-go', { 'for': [ 'go'] }
 "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
 Plug 'lervag/vimtex', { 'for': [ 'latex' ] }
 Plug 'ElmCast/elm-vim', { 'for': [ 'elm' ] }
+Plug 'dhruvasagar/vim-table-mode', { 'for': [ 'latex', 'markdown' ] }
 Plug 'altercation/vim-colors-solarized'
 Plug 'bling/vim-airline' | Plug 'vim-airline/vim-airline-themes'
 Plug 'christoomey/vim-tmux-navigator'
@@ -131,6 +132,7 @@ let g:netrw_browse_split=0
 
 nnoremap <leader>k :call VexToggle(getcwd())<cr>
 nnoremap <leader>K :call VexToggle("")<cr>
+nnoremap <leader>tm :TableModeToggle<cr>
 
 fun! VexToggle(dir)
     if exists("t:vex_buf_nr")
@@ -790,6 +792,8 @@ fun! MarkdownDefaultConfigs()
 endfunction
 
 autocmd FileType markdown setl tw=66
+"this feature is from vim and it supports the latex syntax so look at the
+"latex reference to know how to use it
 let g:vim_markdown_math = 1
 "syntax highlight for markdown
 let g:vim_markdown_fenced_languages = ['html', 'py=python', 'bash=sh', 'c', 'php', 'hs=haskell', 'elm']

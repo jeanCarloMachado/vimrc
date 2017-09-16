@@ -37,9 +37,9 @@ Plug 'vim-scripts/argtextobj.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'vim-syntastic/syntastic', { 'for': ['c', 'bash', 'haskell', 'make' ] } "syntax checking
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
-Plug 'vim-scripts/tinymode.vim' | Plug 'breuckelen/vim-resize'
+Plug 'wakatime/vim-wakatime'
+"writer mode
 Plug 'junegunn/goyo.vim' | Plug 'junegunn/limelight.vim'
-Plug 'Shougo/neocomplete'
 call plug#end()
 "}}}
 
@@ -290,11 +290,14 @@ endfunction
 command! -nargs=* Quotes call Quotes()
 
 fun! Meditation()
-:e /home/jean/Dropbox/wiki/src/meditation/meditation.md
+:e $WIKI_PATH/meditation/meditation.md
 endfunction
 command! -nargs=* Meditation call Meditation()
 
-
+fun! Date()
+:e $WIKI_PATH/pua/personal_history.md
+endfunction
+command! -nargs=* Date call Date()
 
 if !exists('*ReloadVim')
 fun! ReloadVim()
@@ -1210,3 +1213,23 @@ fun! CFiletypeConfigs()
 endfun
 autocmd filetype c call CFiletypeConfigs()
 "}}}
+" file is large from 10mb
+let g:LargeFile = 1024 * 1024 * 10
+augroup LargeFile 
+ autocmd BufReadPre * let f=getfsize(expand("<afile>")) | if f > g:LargeFile || f == -2 | call LargeFile() | endif
+augroup END
+
+function LargeFile()
+ " no syntax highlighting etc
+ set eventignore+=FileType
+ set syntax=clear
+ set ft=
+ " save memory when other file is viewed
+ setlocal bufhidden=unload
+ " is read-only (write with :w new_filename)
+ setlocal buftype=nowrite
+ " no undo possible
+ setlocal undolevels=-1
+ " display message
+ autocmd VimEnter *  echo "The file is larger than " . (g:LargeFile / 1024 / 1024) . " MB, so some options are changed (see .vimrc for details)."
+endfunction

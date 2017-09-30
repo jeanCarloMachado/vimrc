@@ -85,15 +85,6 @@ set nocompatible
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
 "}}}
 
-" backup options{{{
-set swapfile
-set backup
-set writebackup
-set backupdir=~/.vim_tmp
-set directory=~/.vim_tmp "don't clutter dirs with swp and tmpfiles
-"don't show alert message when the swap already exists
-set shortmess+=A
-"}}}
 
 "Fold {{{
 set foldenable
@@ -129,60 +120,8 @@ set browsedir=current
 let g:netrw_banner = 0 "nobanner
 let g:netrw_altv=1              " open files on right
 let g:netrw_browse_split=0
-
-nnoremap <leader>k :call VexToggle(getcwd())<cr>
-nnoremap <leader>K :call VexToggle("")<cr>
-nnoremap <leader>tm :TableModeToggle<cr>
-
-fun! VexToggle(dir)
-    if exists("t:vex_buf_nr")
-        call VexClose()
-    else
-        call VexOpen(a:dir)
-    endif
-endf
-
-fun! VexOpen(dir)
-    let g:netrw_browse_split=4
-    let vex_width = 35
-
-    execute "Vexplore" . a:dir
-    let t:vex_buf_nr = bufnr("%")
-    wincmd H
-
-    call VexSize(vex_width)
-endf
-
-fun! VexClose()
-
-    let cur_win_nr = winnr()
-    let target_nr = ( cur_win_nr == 1 ? winnr("#") : cur_win_nr )
-
-    1wincmd w
-    close
-    unlet t:vex_buf_nr
-
-    execute (target_nr - 1) . "wincmd w"
-    call NormalizeWidths()
-endf
-
-fun! VexSize(vex_width)
-    execute "vertical resize" . a:vex_width
-    set winfixwidth
-    call NormalizeWidths()
-endf
-
-fun! NormalizeWidths()
-    let eadir_pref = &eadirection
-    set eadirection=hor
-    set equalalways! equalalways!
-    let &eadirection = eadir_pref
-endf
-
-augroup NetrwGroup
-    autocmd! BufEnter * call NormalizeWidths()
-augroup END
-"
+nnoremap <leader>k :Lexplore<cr>
+let g:netrw_winsize = 25
 "}}}
 "spelling {{{
 fun! FixLastSpellingError()
@@ -240,12 +179,6 @@ inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
 " Close popup by <Space>.
 "inoremap <expr><Space> pumvisible() ? "\<C-y>" : "\<Space>"
 
-" Enable omni completion.
-autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
 " Enable heavy omni completion.
 if !exists('g:neocomplete#sources#omni#input_patterns')
@@ -284,6 +217,12 @@ fun! Remember()
 endfunction
 command! -nargs=* Remember call Remember()
 
+
+fun! Functions()
+    :e /home/jean/projects/dotfiles/functions.sh
+endfunction
+command! -nargs=* Functions call Functions()
+
 fun! Quotes()
     :e /home/jean/Dropbox/wiki/src/quotes.md
 endfunction
@@ -318,8 +257,6 @@ nnoremap <BS> :Rex<cr>
 "to clear the search
 nnoremap + ddp
 nnoremap _ dd2kp
-nnoremap <leader>tt :TagbarToggle<cr>
-let g:tagbar_width=30
 nnoremap <Leader>le :noh<cr>
 nnoremap <Leader>fs :w ! sudo tee %<cr>
 nnoremap <Leader>dt :r ! date<cr>
@@ -395,10 +332,22 @@ set nocursorline
 autocmd BufReadPre * if getfsize(expand("%")) > 10000000 | syntax off | endif
 "}}}
 "undo {{{
-set undodir=/home/jean/.vim/undo/
+"enable undoing
 set undofile
+set undodir=/home/jean/.vim/undo/
 set undolevels=1000
 set undoreload=10000
+"}}}
+" backup options{{{
+set backup
+set writebackup
+set backupdir=/home/jean/.vim/backup
+"don't clutter dirs with swp and tmpfiles
+
+set swapfile
+set directory=/home/jean/.vim/swap
+"don't show alert message when the swap already exists
+set shortmess+=A
 "}}}
 "indenting {{{
 filetype plugin indent on
@@ -643,12 +592,18 @@ fun! s:MakeList(str)
 endfunction
 call MapAction('MakeList', '<leader>ml')
 
+fun! s:Translate(str)
+      let out = system('translate ', a:str)
+      return out
+endfunction
+call MapAction('Translate', '<leader>ti')
 
 fun! s:MakeNumberedList(str)
       let out = system('echo "'.a:str.'" | nl -s". " -w1')
       return out
 endfunction
 call MapAction('MakeNumberedList', '<leader>mnl')
+
 
 fun! s:MakeGraph(str)
       let out = system('graph-easy', a:str)
@@ -660,6 +615,11 @@ fun! s:Parenthesis(str)
     return '('.a:str.')'
 endfunction
 call MapAction('Parenthesis', '<leader>(')
+
+fun! s:Braces(str)
+    return '{'.a:str.'}'
+endfunction
+call MapAction('Braces', '<leader>{')
 
 
 fun! s:Dollars(str)
@@ -696,7 +656,7 @@ endfunction
 call MapAction('Trim', '<leader>tr')
 
 fun! s:googleIt(str)
-    let out = system('google-it &', a:str)
+    let out = system('google_it &', a:str)
 endfunction
 call MapAction('googleIt', '<leader>gi')
 
@@ -880,12 +840,20 @@ fun! Diary( arg )
     let out = system('run_function diary_file "' . a:arg . '"')
     execute "edit " . out
 endfunction
+
 command! -nargs=* Tomorrow call Diary( 'tomorrow' )
 command! -nargs=* Yesterday call Diary( 'yesterday' )
 command! -nargs=* Today call Diary( 'today' )
 command! -nargs=* Someday call Diary( 'someday' )
 command! -nargs=* Diary call Diary( '<args>' )
 command! -nargs=* NextRetrospective call Diary( 'next monday' )
+
+fun! WeekSummary()
+    let out = system('run_function weekly_summary_file')
+    execute "edit " . out
+endfunction
+command! -nargs=* WeekSummary call WeekSummary()
+map <Leader>ws :call WeekSummary()<cr>
 
 fun! GrepDiary( arg )
     let old_path = $pwd
@@ -997,7 +965,6 @@ command! -nargs=* WikiGrep call GrepWiki( '<args>' )
 "}}}
 "files templates matching {{{
 autocmd BufNewFile *Test.php 0r $TEMPLATES_DIR/php_test.php
-autocmd BufNewFile *Gateway.php 0r $TEMPLATES_DIR/php_gateway.php
 autocmd BufNewFile *.php 0r $TEMPLATES_DIR/php.php
 autocmd BufNewFile *.sh 0r $TEMPLATES_DIR/shell.sh
 autocmd BufNewFile *.html 0r $TEMPLATES_DIR/html.html
@@ -1170,23 +1137,6 @@ nnoremap <leader>u :call RunPHPUnitTest(0)<cr>
 nnoremap <leader>f :call RunPHPUnitTest(1)<cr>
 autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
 "}}}
-" tagbar {{{
-let g:tagbar_type_markdown = {
-    \ 'ctagstype': 'markdown',
-    \ 'ctagsbin' : '/home/jean/projects/dotfiles/vimrc/vim/plugged/markdown2ctags/markdown2ctags.py',
-    \ 'ctagsargs' : '-f - --sort=yes',
-    \ 'kinds' : [
-        \ 's:sections',
-        \ 'i:images'
-    \ ],
-    \ 'sro' : '|',
-    \ 'kind2scope' : {
-        \ 's' : 'section',
-    \ },
-    \ 'sort': 0,
-\ }
-"}}}
-
 " gvim {{{
 :set guioptions-=m  "remove menu bar
 :set guioptions-=T  "remove toolbar
@@ -1194,7 +1144,6 @@ let g:tagbar_type_markdown = {
 :set guioptions-=L  "remove left-hand scroll bar
 :set guifont=DejaVu\ Sans\ Mono\ 14
 " }}}
-
 " macros {{{
 fun! RepeatAndMove()
     let @q ="n."
@@ -1203,7 +1152,6 @@ endfunction
 nnoremap <leader>rm :RepeatAndMove(<cr>
 command! -nargs=* RepeatAndMove call RepeatAndMove()
 " }}}
-
 " C lang {{{
 fun! CFiletypeConfigs()
     "compile through gcc when there's no makefile
@@ -1213,23 +1161,7 @@ fun! CFiletypeConfigs()
 endfun
 autocmd filetype c call CFiletypeConfigs()
 "}}}
-" file is large from 10mb
-let g:LargeFile = 1024 * 1024 * 10
-augroup LargeFile 
- autocmd BufReadPre * let f=getfsize(expand("<afile>")) | if f > g:LargeFile || f == -2 | call LargeFile() | endif
-augroup END
+nnoremap <leader>tm :TableModeToggle<cr>
 
-function LargeFile()
- " no syntax highlighting etc
- set eventignore+=FileType
- set syntax=clear
- set ft=
- " save memory when other file is viewed
- setlocal bufhidden=unload
- " is read-only (write with :w new_filename)
- setlocal buftype=nowrite
- " no undo possible
- setlocal undolevels=-1
- " display message
- autocmd VimEnter *  echo "The file is larger than " . (g:LargeFile / 1024 / 1024) . " MB, so some options are changed (see .vimrc for details)."
-endfunction
+nnoremap <silent> <Leader>+ :exe "resize " . (winheight(0) * 3/2)<CR>
+nnoremap <silent> <Leader>- :exe "resize " . (winheight(0) * 2/3)<CR>

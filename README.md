@@ -1,11 +1,9 @@
-vimrc
-=====
+# vimrc
 
 My awesome vim :).
 
 
-Features
---------
+## Features
 
 Optimized for:
  - Software development

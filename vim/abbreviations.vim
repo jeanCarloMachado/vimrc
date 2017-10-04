@@ -18,7 +18,6 @@ Abolish adn and
 Abolish adqSql addSql
 Abolish ahve have
 Abolish algorítmos algoritmos
-Abolish android Android
 Abolish apis api's
 Abolish arent aren't
 Abolish asmjs asm.js
@@ -65,9 +64,7 @@ Abolish indexdb IndexedDB
 Abolish isnt isn't
 Abolish its it's
 Abolish ive I've
-Abolish javascript JavaScript
 Abolish joinville Joinville
-Abolish JQuery jQuery
 Abolish knowl knowledge
 Abolish lenght length
 Abolish length length
@@ -103,8 +100,6 @@ Abolish theyre they're
 Abolish theyve they've
 Abolish thougth thought
 Abolish w3c W3C
-Abolish webgl WebGL
-Abolish webgl WebGL
 Abolish webkit WebKit
 Abolish webvr WebVR
 Abolish wen when
@@ -122,8 +117,6 @@ Abolish youre you're
 Abolish youre you're
 Abolish youve you've
 Abolish hes he's
-Abolish Php PHP
-Abolish cuda CUDA
 Abolish Email E-mail
 Abolish cleint client
 Abolish sevice service

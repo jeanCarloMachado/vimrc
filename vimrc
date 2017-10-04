@@ -15,14 +15,14 @@ Plug 'altercation/vim-colors-solarized'
 Plug 'bling/vim-airline' | Plug 'vim-airline/vim-airline-themes'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'tpope/vim-characterize'
+Plug 'vim-utils/vim-man'
 Plug 'jiangmiao/auto-pairs'
 Plug 'jez/vim-superman'
-"enable the creation of custom text objects
-Plug 'kana/vim-textobj-user'
-"text object for a function: enables af and if
-Plug 'kana/vim-textobj-function'
+Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
+Plug 'kana/vim-textobj-function' "text object for a function: enables af and if
 Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim'
 Plug 'michaeljsmith/vim-indent-object'
+Plug 'dyng/ctrlsf.vim' "grep like sublime one
 Plug 'nelstrom/vim-visual-star-search'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-surround'
@@ -54,18 +54,17 @@ set splitbelow
 set backspace=indent,eol,start
 set cot+=menuone
 set number
-set shell=$SHELL
+set shell=zsh
 set encoding=utf-8
 set showmode
 set showcmd
-"hides buffers instead of closing them
-set hidden
+set hidden "hides buffers instead of closing them
 set wildmode=longest,list
 set ttyfast
 set ruler
 set laststatus=2
 set hlsearch " match while typing the search
-set incsearch
+set incsearch "show the next match while entering a search
 set ignorecase
 set smartcase
 set gdefault
@@ -105,7 +104,7 @@ autocmd FileType markdown call matchadd('Conceal', '#### ', 999, -1, {'conceal':
 set conceallevel=2 "show pretty latex formulas
 "}}}
 "Grep {{{
-set grepprg=ack\ -i\ --column\ $*
+set grepprg=rg\ --vimgrep
 set grepformat=%f:%l:%c:%m
 fun! Grepr( arg )
     execute "grep " . a:arg . " %:p:h/*"
@@ -113,22 +112,17 @@ endfunction
 command! -nargs=* Grepr call Grepr( '<args>' )
 "}}}
 "netrw{{{
-let g:netrw_localrmdir='rm -r'
-let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
-let g:netrw_liststyle=3
-set browsedir=current
-let g:netrw_banner = 0 "nobanner
-let g:netrw_altv=1              " open files on right
-let g:netrw_browse_split=0
-nnoremap <leader>k :Lexplore<cr>
-let g:netrw_winsize = 25
+nnoremap <leader>k :Vexplore<cr>
+let g:netrw_winsize = 25 "window width
+let g:netrw_browse_split=4 "open on the previous window
+let g:netrw_altv=1 "open vertical splits on the right
 "}}}
 "spelling {{{
 fun! FixLastSpellingError()
     normal! mm[s1z=`m
 endfunction
 
-nnoremap <leader>ls :call FixLastSpellingError()<cr>
+nnoremap <leader>fs :call FixLastSpellingError()<cr>
 map <leader>spt :set spell spelllang=pt_br<cr>
 map <leader>sen :set spell spelllang=en_us<cr>
 "}}}
@@ -250,15 +244,15 @@ endif
 "}}}
 
 "Generic mappings{{{
+nnoremap <leader>ls  :ls<cr>
 nnoremap <leader>gv  :! gvim %:p<cr>
 nnoremap <leader>; :normal!mtA;<esc>`t
 nnoremap <leader>, :normal!mtA,<esc>`t
 nnoremap <BS> :Rex<cr>
-"to clear the search
+nnoremap <leader>fi :CtrlSF 
 nnoremap + ddp
 nnoremap _ dd2kp
 nnoremap <Leader>le :noh<cr>
-nnoremap <Leader>fs :w ! sudo tee %<cr>
 nnoremap <Leader>dt :r ! date<cr>
 nnoremap <Leader>e :edit!<cr>
 nnoremap <Leader>o :only<cr>
@@ -268,13 +262,14 @@ map <leader>x :w<','> !bash<cr>
 map <leader>me :!chmod +x %<cr>
 nnoremap <leader>tn :tabnew<cr>
 "open director (file manager)
-nmap <leader>sh :!cd %:h && bash<cr>
+nmap <leader>sh :!cd %:h && zsh <cr>
 "remove current  file
 nmap <leader>rmrf :!rm -rf %:p <cr>
 nmap <leader>pn :!echo %<cr>
 nmap <leader>pfn :!echo %:p<cr>
 nmap <silent> <leader>ev :e $MY_VIMRC<cr>:lcd %:h<cr>
 nnoremap <leader>c :noh<cr>
+"set shellcmdflag=-ic "make vim :! behave like a normal prompt
 nnoremap <leader><space> :w<cr>
 "use C-p and C-n to browser normal mode commands history
 cnoremap <C-p> <Up>
@@ -289,7 +284,6 @@ map <c-p> :FZF<cr>
 "}}}
 "Highlight rules {{{
 
-"use h cterm-colors to get the list of colors
 augroup VimrcColors
 au!
   autocmd ColorScheme * highlight WordsToAvoid ctermfg=DarkBlue cterm=underline
@@ -1165,3 +1159,6 @@ nnoremap <leader>tm :TableModeToggle<cr>
 
 nnoremap <silent> <Leader>+ :exe "resize " . (winheight(0) * 3/2)<CR>
 nnoremap <silent> <Leader>- :exe "resize " . (winheight(0) * 2/3)<CR>
+
+set exrc "enable vimrc per project
+set secure "disable unsecure options

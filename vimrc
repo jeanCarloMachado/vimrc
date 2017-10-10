@@ -680,10 +680,10 @@ endfunction
 call MapAction('JsonBeautifier', '<leader>jb')
 
 fun! s:JsonEncode(str)
-  let out = system('json-encode ', a:str)
+  let out = system('json_encode_from_php', a:str)
   return out
 endfunction
-call MapAction('JsonEncode', '<leader>je')
+call MapAction('JsonEncode', '<leader>pj')
 
 fun! s:UrlToJson(str)
   let out = system('url-to-json ', a:str)

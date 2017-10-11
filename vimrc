@@ -1,6 +1,7 @@
 "It's a good practise to use folding to hide details of
 "Its better to organize the configs by semantic. Better to put wiki
 "mappings on the wiki section then on the mappings section
+
 "Plugins Load {{{
 filetype on
 filetype plugin on
@@ -25,7 +26,6 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'wakatime/vim-wakatime'
 Plug 'lervag/vimtex', { 'for': [ 'latex' ] }
 Plug 'ElmCast/elm-vim', { 'for': [ 'elm' ] }
-Plug 'dhruvasagar/vim-table-mode', { 'for': [ 'latex', 'markdown' ] }
 Plug 'fatih/vim-go', { 'for': [ 'go'] }
 Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
 Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
@@ -39,16 +39,16 @@ let mapleader = "\<space>"
 runtime macros/matchit.vim
 set tags+=/usr/include/tags,./tags,./.git/tags,../.git/tags
 set mouse=a
-set splitbelow
+set splitbelow "When on, splitting a window will put the new window below the current
 set backspace=indent,eol,start
-set cot+=menuone
-set number
+set cot+=menuone "Use the popup menu also when there is only one match
+set number "show numbers
 set shell=zsh
 set encoding=utf-8
 set showmode "If in Insert, Replace or Visual mode put a message on the last line
 set showcmd "Show (partial) command in the last line of the screen
 set hidden "hides buffers instead of closing them
-set ttyfast
+set ttyfast "Improves smoothness of redrawing when there are multiple windows
 set ruler
 set laststatus=2
 set hlsearch " match while typing the search
@@ -62,7 +62,6 @@ set autoread "automaically read a file again when it's changed outside vim
 set history=5000 "the quantity of normal commands recorded
 set title "When on, the title of the window will be set to the value of 'titlestring'
 vnoremap . :normal .<CR> "Allow using the repeat operator with a visual selection
-set cursorline
 setlocal formatoptions=1
 set formatprg=par
 setlocal linebreak
@@ -70,6 +69,7 @@ set clipboard=unnamedplus
 set nocompatible
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
 "}}}
+
 " autocomplete {{{
 set wildmenu
 inoremap <Tab> <C-X><C-F>
@@ -84,6 +84,7 @@ set foldmethod=marker
 "autocmd BufRead * setlocal foldmethod=marker
 " autocmd BufRead * normal zM
 "}}}
+
 "Concealing {{{
 autocmd FileType php call matchadd('Conceal', '!=', 999, -1, {'conceal': '≠'})
 autocmd FileType php call matchadd('Conceal', '->', 999, -1, {'conceal': '➞'})
@@ -94,6 +95,7 @@ autocmd FileType markdown call matchadd('Conceal', '### ', 999, -1, {'conceal': 
 autocmd FileType markdown call matchadd('Conceal', '#### ', 999, -1, {'conceal': ''})
 set conceallevel=2 "show pretty latex formulas
 "}}}
+
 "Grep {{{
 set grepprg=rg\ --vimgrep
 set grepformat=%f:%l:%c:%m
@@ -102,12 +104,14 @@ fun! Grepr( arg )
 endfunction
 command! -nargs=* Grepr call Grepr( '<args>' )
 "}}}
+
 "netrw{{{
 nnoremap <leader>k :Vexplore<cr>
 let g:netrw_winsize = 25 "window width
 let g:netrw_browse_split=4 "open on the previous window
 let g:netrw_altv=1 "open vertical splits on the right
 "}}}
+
 "spelling {{{
 fun! FixLastSpellingError()
     normal! mm[s1z=`m
@@ -117,6 +121,7 @@ nnoremap <leader>fs :call FixLastSpellingError()<cr>
 map <leader>spt :set spell spelllang=pt_br<cr>
 map <leader>sen :set spell spelllang=en_us<cr>
 "}}}
+
 "Generic functions{{{
 fun! WritingMode()
     :Goyo
@@ -173,6 +178,7 @@ nmap <silent> <leader>sv :ReloadVim<cr>
 endif
 
 "}}}
+
 "Generic mappings{{{
 nnoremap <leader>ls  :ls<cr>
 nnoremap <leader>gv  :! gvim %:p<cr>
@@ -211,15 +217,16 @@ nnoremap <leader>cf :!filefy-clippboard<cr>
 " Default fzf layout
 map <c-p> :FZF<cr>
 "}}}
+
 "performance {{{
 autocmd BufEnter * :syn sync maxlines=500
 set lazyredraw "don't redraw screend when running macros
 syntax sync minlines=256
 set nocursorcolumn
-set nocursorline
 "disables syntax for files going over a certain size
 autocmd BufReadPre * if getfsize(expand("%")) > 10000000 | syntax off | endif
 "}}}
+
 "undo {{{
 "enable undoing
 set undofile
@@ -227,6 +234,7 @@ set undodir=/home/jean/.vim/undo/
 set undolevels=1000
 set undoreload=10000
 "}}}
+
 " backup options{{{
 set backup
 set writebackup
@@ -238,6 +246,7 @@ set directory=/home/jean/.vim/swap
 "don't show alert message when the swap already exists
 set shortmess+=A
 "}}}
+
 "indenting {{{
 filetype plugin indent on
 set copyindent
@@ -248,6 +257,7 @@ set expandtab
 autocmd filetype javascript set tabstop=2
 autocmd filetype javascript set shiftwidth=2
 "}}}
+
 "custom text objects{{{
 
 call textobj#user#plugin('line', {
@@ -364,6 +374,7 @@ fun! CurrentDocumentI()
 endfunction
 inoremap ;<cr> <end>;<cr>
 "}}}
+
 "actions over text blocks{{{
 fun! s:DoAction(algorithm,type)
   " backup settings that we will change
@@ -618,6 +629,7 @@ endfunction
 call MapAction('XmlBeautifier', '<leader>xb')
 
 "}}}
+
 "syntatic checker{{{
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
@@ -627,6 +639,7 @@ let g:syntastic_loc_list_height=5
 let g:syntastic_php_checkers = ['phpcs', 'phpmd']
 let g:syntastic_sh_checkers = ['shellcheck']
 "}}}
+
 "Markdown configs {{{
 let g:vim_markdown_no_extensions_in_markdown = 1
 "autocmd BufNewFile * if &filetype == "" | call MarkdownDefaultConfigs() | endif
@@ -719,6 +732,7 @@ endfunction
 call MapAction('MarkdownToHtml', '<leader>mh')
 
 "}}}
+
 "diary{{{
 nnoremap <Leader>di :Today<cr>
 nnoremap <Leader>to :Today<cr>
@@ -758,6 +772,7 @@ fun! BottomDiary( arg )
 endfunction
 command! -nargs=* BottomDiary call BottomDiary( '<args>' )
 "}}}
+
 "task manager {{{
 fun! s:MarkDone(str)
   let out = system('sed -r "s/(○ |◎ )//g; s/(.*)/● \1/g" ', a:str)
@@ -783,6 +798,7 @@ fun! s:MakeSomeday(str)
 endfunction
 call MapAction('MakeSomeday', '<leader>ms')
 "}}}
+
 "wiki{{{
 "map <ci> :FZF $CLIPP_PATH <cr>
 map <c-i> :FZF $WIKI_PATH<cr>
@@ -849,6 +865,7 @@ endfunction
 command! -nargs=* GrepWiki call GrepWiki( '<args>' )
 command! -nargs=* WikiGrep call GrepWiki( '<args>' )
 "}}}
+
 "files templates matching {{{
 autocmd BufNewFile *Test.php 0r $TEMPLATES_DIR/php_test.php
 autocmd BufNewFile *.php 0r $TEMPLATES_DIR/php.php
@@ -861,6 +878,7 @@ autocmd BufNewFile **/*review*.md 0r $TEMPLATES_DIR/science-review.md
 autocmd BufNewFile */diary/*.md 0r $TEMPLATES_DIR/diary.md
 autocmd BufNewFile */posts/*.md 0r $TEMPLATES_DIR/post.md
 "}}}
+
 "info relative to projects file, metadata{{{
 nmap <leader>xo :!xdg-open % &<cr>
 nmap <leader>od :!run_alias file_manager %:h<cr>
@@ -939,6 +957,7 @@ fun! CopyFile()
 endfunction
 map <Leader>cp :call CopyFile()<cr>
 "}}}
+
 "git {{{
 fun! GitLog()
     execute '!run_function terminal_run "cd $(dirname %:p) ; git log -p --follow %:p" &'
@@ -979,6 +998,7 @@ fun! OpenRepoOnGithub(arg)
 endfunction
 command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
 "}}}
+
 "php{{{
 fun! s:JsonToPhp(str)
   let out = system('json-to-php ', a:str)
@@ -1023,6 +1043,7 @@ nnoremap <leader>u :call RunPHPUnitTest(0)<cr>
 nnoremap <leader>f :call RunPHPUnitTest(1)<cr>
 autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
 "}}}
+
 " gvim {{{
 :set guioptions-=m  "remove menu bar
 :set guioptions-=T  "remove toolbar
@@ -1030,6 +1051,7 @@ autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
 :set guioptions-=L  "remove left-hand scroll bar
 :set guifont=DejaVu\ Sans\ Mono\ 14
 " }}}
+
 " macros {{{
 fun! RepeatAndMove()
     let @q ="n."
@@ -1038,6 +1060,7 @@ endfunction
 nnoremap <leader>rm :RepeatAndMove(<cr>
 command! -nargs=* RepeatAndMove call RepeatAndMove()
 " }}}
+
 " C lang {{{
 fun! CFiletypeConfigs()
     "compile through gcc when there's no makefile
@@ -1047,13 +1070,6 @@ fun! CFiletypeConfigs()
 endfun
 autocmd filetype c call CFiletypeConfigs()
 "}}}
-nnoremap <leader>tm :TableModeToggle<cr>
-
-nnoremap <silent> <Leader>+ :exe "resize " . (winheight(0) * 3/2)<CR>
-nnoremap <silent> <Leader>- :exe "resize " . (winheight(0) * 2/3)<CR>
-
-set exrc "enable vimrc per project
-set secure "disable unsecure options
 
 "statusline{{{
 set statusline=
@@ -1065,6 +1081,12 @@ set statusline +=/%L               "total lines
 set statusline +=%4v\              "virtual column number
 set statusline +=U%04B\           "character under cursor
 "}}}
+
+"cursorline{{{
+"set cursorline "show the cursor line
+"autocmd ColorScheme * highlight CursorLine ctermbg=0 "cursorline theme
+"}}}
+
 "theme, colors, highlights {{{
 set background=dark
 augroup VimrcColors
@@ -1075,7 +1097,6 @@ au!
   autocmd ColorScheme * highlight Overlength ctermbg=DarkGrey
   autocmd ColorScheme * highlight SpellBad ctermfg=Brown
   "makes a underline on the current cursor line
-  autocmd ColorScheme * highlight CursorLine cterm=underline ctermbg=0
 augroup END
 
 autocmd Syntax * call matchadd('WordsToAvoid', '\c\<\(obviously\|basically\|simply\|of\scourse\|clearly\|just\|little\|quite\|everyone\knows\|however\|easy\|obviamente\|basicamente\|simplesmente\|com\certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então\|fácil\|bem\)\>')
@@ -1090,3 +1111,9 @@ set term=screen-256color
 let g:solarized_bold=1
 set t_Co=256
 "}}}
+
+" vimrc per project {{{
+set exrc "enable vimrc per project
+set secure "disable unsecure options
+"}}}
+

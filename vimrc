@@ -6,40 +6,30 @@ filetype on
 filetype plugin on
 call plug#begin()
 
-Plug 'fatih/vim-go', { 'for': [ 'go'] }
 "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
-Plug 'lervag/vimtex', { 'for': [ 'latex' ] }
-Plug 'ElmCast/elm-vim', { 'for': [ 'elm' ] }
-Plug 'dhruvasagar/vim-table-mode', { 'for': [ 'latex', 'markdown' ] }
 Plug 'altercation/vim-colors-solarized'
-Plug 'bling/vim-airline' | Plug 'vim-airline/vim-airline-themes'
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'tpope/vim-characterize'
-Plug 'vim-utils/vim-man'
-Plug 'jiangmiao/auto-pairs'
-Plug 'jez/vim-superman'
+Plug 'vim-utils/vim-man' "view manuals inside vim
 Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
 Plug 'kana/vim-textobj-function' "text object for a function: enables af and if
-Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim'
-Plug 'michaeljsmith/vim-indent-object'
+Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim' "gist support
+Plug 'michaeljsmith/vim-indent-object' "same identation text object
+Plug 'vim-scripts/argtextobj.vim'
 Plug 'dyng/ctrlsf.vim' "grep like sublime one
 Plug 'nelstrom/vim-visual-star-search'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-unimpaired'
-Plug 'terryma/vim-multiple-cursors'
-"ghc depends on vimproc
-Plug 'Shougo/vimproc.vim', {'do' : 'make'} | Plug 'eagletmt/ghcmod-vim', { 'for': ['haskell'] }
+Plug 'junegunn/goyo.vim' | Plug 'junegunn/limelight.vim' "writer mode
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'wakatime/vim-wakatime'
+Plug 'lervag/vimtex', { 'for': [ 'latex' ] }
+Plug 'ElmCast/elm-vim', { 'for': [ 'elm' ] }
+Plug 'dhruvasagar/vim-table-mode', { 'for': [ 'latex', 'markdown' ] }
+Plug 'fatih/vim-go', { 'for': [ 'go'] }
 Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
 Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
-Plug 'vim-scripts/argtextobj.vim'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'vim-syntastic/syntastic', { 'for': ['c', 'bash', 'haskell', 'make' ] } "syntax checking
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
-Plug 'wakatime/vim-wakatime'
-"writer mode
-Plug 'junegunn/goyo.vim' | Plug 'junegunn/limelight.vim'
 call plug#end()
 "}}}
 
@@ -49,17 +39,15 @@ let mapleader = "\<space>"
 runtime macros/matchit.vim
 set tags+=/usr/include/tags,./tags,./.git/tags,../.git/tags
 set mouse=a
-set nrformats= "vim will treat all numerals as decimals, useful on num<C-a> with numbers like 007
 set splitbelow
 set backspace=indent,eol,start
 set cot+=menuone
 set number
 set shell=zsh
 set encoding=utf-8
-set showmode
-set showcmd
+set showmode "If in Insert, Replace or Visual mode put a message on the last line
+set showcmd "Show (partial) command in the last line of the screen
 set hidden "hides buffers instead of closing them
-set wildmode=longest,list
 set ttyfast
 set ruler
 set laststatus=2
@@ -67,15 +55,14 @@ set hlsearch " match while typing the search
 set incsearch "show the next match while entering a search
 set ignorecase
 set smartcase
-set gdefault
+set gdefault "When on, the :substitute flag 'g' is default on
 set showmatch "show matching parenthesis
 set scrolloff=0 " Minimum lines to keep above and below cursor"
-set autoread
-set history=1000 "the quantity of normal commands recorded
-set title
-vnoremap . :normal .<CR> " Allow using the repeat operator with a visual selection
+set autoread "automaically read a file again when it's changed outside vim
+set history=5000 "the quantity of normal commands recorded
+set title "When on, the title of the window will be set to the value of 'titlestring'
+vnoremap . :normal .<CR> "Allow using the repeat operator with a visual selection
 set cursorline
-set wildignore=*.swp,*.back,*.pyc,*.class,*.coverage.*
 setlocal formatoptions=1
 set formatprg=par
 setlocal linebreak
@@ -83,11 +70,15 @@ set clipboard=unnamedplus
 set nocompatible
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
 "}}}
-
+" autocomplete {{{
+set wildmenu
+inoremap <Tab> <C-X><C-F>
+set wildmode=longest,list
+"}}}
 
 "Fold {{{
 set foldenable
-set foldcolumn=4
+set foldcolumn=1
 set foldlevel=1 "control the level to be opened by default (this opens just the first h1, levels)
 set foldmethod=marker
 "autocmd BufRead * setlocal foldmethod=marker
@@ -125,66 +116,6 @@ endfunction
 nnoremap <leader>fs :call FixLastSpellingError()<cr>
 map <leader>spt :set spell spelllang=pt_br<cr>
 map <leader>sen :set spell spelllang=en_us<cr>
-"}}}
-"autocompletion {{{
-" set wildmenu "to autocomplete the suggestions like bash
-" set completeopt=menu
-" set complete+=s
-
-" Disable AutoComplPop.
-let g:acp_enableAtStartup = 0
-" Use neocomplete.
-let g:neocomplete#enable_at_startup = 1
-" Use smartcase.
-let g:neocomplete#enable_smart_case = 1
-" Set minimum syntax keyword length.
-let g:neocomplete#sources#syntax#min_keyword_length = 3
-
-" Define dictionary.
-let g:neocomplete#sources#dictionary#dictionaries = {
-    \ 'default' : '',
-    \ 'vimshell' : $HOME.'/.vimshell_hist',
-    \ 'scheme' : $HOME.'/.gosh_completions'
-        \ }
-
-" Define keyword.
-if !exists('g:neocomplete#keyword_patterns')
-    let g:neocomplete#keyword_patterns = {}
-endif
-let g:neocomplete#keyword_patterns['default'] = '\h\w*'
-
-" Plugin key-mappings.
-inoremap <expr><C-g>     neocomplete#undo_completion()
-inoremap <expr><C-l>     neocomplete#complete_common_string()
-
-" Recommended key-mappings.
-" <CR>: close popup and save indent.
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function()
-  return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
-  " For no inserting <CR> key.
-  "return pumvisible() ? "\<C-y>" : "\<CR>"
-endfunction
-" <TAB>: completion.
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-" <C-h>, <BS>: close popup and delete backword char.
-inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-" Close popup by <Space>.
-"inoremap <expr><Space> pumvisible() ? "\<C-y>" : "\<Space>"
-
-
-" Enable heavy omni completion.
-if !exists('g:neocomplete#sources#omni#input_patterns')
-  let g:neocomplete#sources#omni#input_patterns = {}
-endif
-"let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-"let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
-"let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-
-" For perlomni.vim setting.
-" https://github.com/c9s/perlomni.vim
-let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
 "}}}
 "Generic functions{{{
 fun! WritingMode()
@@ -242,7 +173,6 @@ nmap <silent> <leader>sv :ReloadVim<cr>
 endif
 
 "}}}
-
 "Generic mappings{{{
 nnoremap <leader>ls  :ls<cr>
 nnoremap <leader>gv  :! gvim %:p<cr>
@@ -279,42 +209,7 @@ cnoremap <C-n> <Down>
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 nnoremap <leader>cf :!filefy-clippboard<cr>
 " Default fzf layout
-" - down / up / left / right
 map <c-p> :FZF<cr>
-"}}}
-"Highlight rules {{{
-
-augroup VimrcColors
-au!
-  autocmd ColorScheme * highlight WordsToAvoid ctermfg=DarkBlue cterm=underline
-  autocmd ColorScheme * highlight HardWords ctermfg=DarkBlue cterm=underline
-  autocmd ColorScheme * highlight Whitespace ctermbg=Grey
-  autocmd ColorScheme * highlight Overlength ctermbg=DarkGrey
-  autocmd ColorScheme * highlight SpellBad ctermfg=Brown
-  "makes a underline on the current cursor line
-  autocmd ColorScheme * highlight CursorLine cterm=underline ctermbg=NONE
-augroup END
-
-autocmd Syntax * call matchadd('WordsToAvoid', '\c\<\(obviously\|basically\|simply\|of\scourse\|clearly\|just\|little\|quite\|everyone\knows\|however\|easy\|obviamente\|basicamente\|simplesmente\|com\certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então\|fácil\|bem\)\>')
-"words that need to be revised
-autocmd Syntax * call matchadd('HardWords', '\c\<\(porquê\|porque\|por\sque\|its\)\>')
-autocmd Syntax * call matchadd('Whitespace', '\s\+$')
-autocmd Syntax * call matchadd('Overlength', '\%81v')
-"}}}
-"theme setting {{{
-let theme=$THEME
-if theme == 'light'
-    set background=light
-else
-    set background=dark
-endif
-
-let g:airline_theme='solarized'
-set term=screen-256color
-let g:solarized_termcolors=16
-let g:solarized_bold=1
-set t_Co=256
-colorscheme solarized
 "}}}
 "performance {{{
 autocmd BufEnter * :syn sync maxlines=500
@@ -724,9 +619,6 @@ call MapAction('XmlBeautifier', '<leader>xb')
 
 "}}}
 "syntatic checker{{{
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
@@ -1162,3 +1054,39 @@ nnoremap <silent> <Leader>- :exe "resize " . (winheight(0) * 2/3)<CR>
 
 set exrc "enable vimrc per project
 set secure "disable unsecure options
+
+"statusline{{{
+set statusline=
+set statusline +=\ %n\             "buffer number
+set statusline +=\ %<%F            "full path
+set statusline +=%m                "modified flag
+set statusline +=%=%5l             "current line
+set statusline +=/%L               "total lines
+set statusline +=%4v\              "virtual column number
+set statusline +=U%04B\           "character under cursor
+"}}}
+"theme, colors, highlights {{{
+set background=dark
+augroup VimrcColors
+au!
+  autocmd ColorScheme * highlight WordsToAvoid ctermfg=DarkBlue cterm=underline
+  autocmd ColorScheme * highlight HardWords ctermfg=DarkBlue cterm=underline
+  autocmd ColorScheme * highlight Whitespace ctermbg=Grey
+  autocmd ColorScheme * highlight Overlength ctermbg=DarkGrey
+  autocmd ColorScheme * highlight SpellBad ctermfg=Brown
+  "makes a underline on the current cursor line
+  autocmd ColorScheme * highlight CursorLine cterm=underline ctermbg=0
+augroup END
+
+autocmd Syntax * call matchadd('WordsToAvoid', '\c\<\(obviously\|basically\|simply\|of\scourse\|clearly\|just\|little\|quite\|everyone\knows\|however\|easy\|obviamente\|basicamente\|simplesmente\|com\certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então\|fácil\|bem\)\>')
+"words that need to be revised
+autocmd Syntax * call matchadd('HardWords', '\c\<\(porquê\|porque\|por\sque\|its\)\>')
+autocmd Syntax * call matchadd('Whitespace', '\s\+$')
+autocmd Syntax * call matchadd('Overlength', '\%81v')
+
+colorscheme solarized
+hi StatusLine ctermfg=12 ctermbg=0 cterm=NONE
+set term=screen-256color
+let g:solarized_bold=1
+set t_Co=256
+"}}}

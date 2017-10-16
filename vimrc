@@ -6,7 +6,6 @@
 filetype on
 filetype plugin on
 call plug#begin()
-
 "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
 Plug 'altercation/vim-colors-solarized'
 Plug 'christoomey/vim-tmux-navigator'
@@ -20,6 +19,7 @@ Plug 'dyng/ctrlsf.vim' "grep like sublime one
 Plug 'nelstrom/vim-visual-star-search'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-surround'
+Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-commentary'
 Plug 'junegunn/goyo.vim' | Plug 'junegunn/limelight.vim' "writer mode
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -34,13 +34,13 @@ call plug#end()
 "}}}
 
 "generic configs{{{
-syntax enable
+set nocompatible
 let mapleader = "\<space>"
-runtime macros/matchit.vim
+runtime macros/matchit.vim "Enable extended % matching
 set tags+=/usr/include/tags,./tags,./.git/tags,../.git/tags
 set mouse=a
 set splitbelow "When on, splitting a window will put the new window below the current
-set backspace=indent,eol,start
+set backspace=indent,eol,start "make the backspace work like in most other programs
 set cot+=menuone "Use the popup menu also when there is only one match
 set number "show numbers
 set shell=zsh
@@ -48,13 +48,7 @@ set encoding=utf-8
 set showmode "If in Insert, Replace or Visual mode put a message on the last line
 set showcmd "Show (partial) command in the last line of the screen
 set hidden "hides buffers instead of closing them
-set ttyfast "Improves smoothness of redrawing when there are multiple windows
-set ruler
-set laststatus=2
-set hlsearch " match while typing the search
-set incsearch "show the next match while entering a search
-set ignorecase
-set smartcase
+set laststatus=2 "when the last window will have a status line: 2: always
 set gdefault "When on, the :substitute flag 'g' is default on
 set showmatch "show matching parenthesis
 set scrolloff=0 " Minimum lines to keep above and below cursor"
@@ -64,15 +58,22 @@ set title "When on, the title of the window will be set to the value of 'titlest
 vnoremap . :normal .<CR> "Allow using the repeat operator with a visual selection
 setlocal formatoptions=1
 set formatprg=par
-setlocal linebreak
+setlocal linebreak "wrap long lines at a character in 'breakat'
 set clipboard=unnamedplus
-set nocompatible
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
+"set scrolloff=3 "alway 3 lines instead of reaching bottom uppper screen
+"}}}
+
+" search{{{
+set hlsearch " match while typing the search
+set incsearch "show the next match while entering a search
+set ignorecase "the case of normal letters is ignored
+set smartcase "Override the 'ignorecase' option if the search pattern contains upper case characters
 "}}}
 
 " autocomplete {{{
 set wildmenu
-inoremap <Tab> <C-X><C-F>
+inoremap <S-Tab> <C-X><C-F>
 set wildmode=longest,list
 "}}}
 
@@ -199,8 +200,7 @@ map <leader>me :!chmod +x %<cr>
 nnoremap <leader>tn :tabnew<cr>
 "open director (file manager)
 nmap <leader>sh :!cd %:h && zsh <cr>
-"remove current  file
-nmap <leader>rmrf :!rm -rf %:p <cr>
+nmap <leader>rmrf :!rm -rf %:p <cr> "remove current  file
 nmap <leader>pn :!echo %<cr>
 nmap <leader>pfn :!echo %:p<cr>
 nmap <silent> <leader>ev :e $MY_VIMRC<cr>:lcd %:h<cr>
@@ -219,6 +219,7 @@ map <c-p> :FZF<cr>
 "}}}
 
 "performance {{{
+set ttyfast "Improves smoothness of redrawing when there are multiple windows
 autocmd BufEnter * :syn sync maxlines=500
 set lazyredraw "don't redraw screend when running macros
 syntax sync minlines=256
@@ -244,7 +245,7 @@ set backupdir=/home/jean/.vim/backup
 set swapfile
 set directory=/home/jean/.vim/swap
 "don't show alert message when the swap already exists
-set shortmess+=A
+set shortmess+=A "don't give the "ATTENTION" message when an existing swap file is found
 "}}}
 
 "indenting {{{
@@ -630,20 +631,8 @@ call MapAction('XmlBeautifier', '<leader>xb')
 
 "}}}
 
-"syntatic checker{{{
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_loc_list_height=5
-let g:syntastic_php_checkers = ['phpcs', 'phpmd']
-let g:syntastic_sh_checkers = ['shellcheck']
-"}}}
-
-"Markdown configs {{{
+"Markdown{{{
 let g:vim_markdown_no_extensions_in_markdown = 1
-"autocmd BufNewFile * if &filetype == "" | call MarkdownDefaultConfigs() | endif
-"autocmd BufNewFile * if &filetype == "txt" | call MarkdownDefaultConfigs() | endif
 autocmd Filetype markdown call MarkdownDefaultConfigs()
 highlight Folded ctermfg=DarkYellow
 
@@ -1088,6 +1077,7 @@ set statusline +=U%04B\           "character under cursor
 "}}}
 
 "theme, colors, highlights {{{
+syntax enable
 set background=dark
 augroup VimrcColors
 au!
@@ -1117,3 +1107,7 @@ set exrc "enable vimrc per project
 set secure "disable unsecure options
 "}}}
 
+if exists("relativenumberformat")
+    set relativenumber
+    set relativenumberformat=%-*ld\ 
+endif

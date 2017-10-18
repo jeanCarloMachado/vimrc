@@ -1,6 +1,6 @@
-Abolish 3d 3D
-Abolish 3d 3D
-Abolish 4this $this Abolish COnfiguration Configuration Abolish Cleint Client
+Abolish 4this $this
+Abolish COnfiguration Configuration
+Abolish Cleint Client
 Abolish Datetime DateTime
 Abolish THe The
 Abolish THe The
@@ -17,7 +17,6 @@ Abolish adn and
 Abolish adn and
 Abolish adqSql addSql
 Abolish ahve have
-Abolish algorítmos algoritmos
 Abolish apis api's
 Abolish arent aren't
 Abolish asmjs asm.js
@@ -76,8 +75,6 @@ Abolish nwe new
 Abolish offline off-line
 Abolish ones one's
 Abolish opengl OpenGL
-Abolish ow OWP
-Abolish owp OWP
 Abolish paly play
 Abolish parametros parâmetros
 Abolish paramter parameter
@@ -117,6 +114,5 @@ Abolish youre you're
 Abolish youre you're
 Abolish youve you've
 Abolish hes he's
-Abolish Email E-mail
 Abolish cleint client
 Abolish sevice service

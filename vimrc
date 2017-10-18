@@ -580,6 +580,13 @@ fun! s:Interpret(str)
 endfunction
 call MapAction('Interpret', '<leader>r')
 
+fun! s:Lisp(str)
+    let out = system('sbcl_snippet', a:str)
+    return out
+endfunction
+call MapAction('Lisp', '<leader>li')
+
+
 fun! s:JsonBeautifier(str)
   let out = system('run_function json_beautifier ', a:str)
   return out
@@ -647,7 +654,7 @@ autocmd FileType markdown setl tw=66
 "latex reference to know how to use it
 let g:vim_markdown_math = 1
 "syntax highlight for markdown
-let g:vim_markdown_fenced_languages = ['html', 'py=python', 'bash=sh', 'c', 'php', 'hs=haskell', 'elm']
+let g:vim_markdown_fenced_languages = ['html', 'py=python', 'bash=sh', 'c', 'php', 'hs=haskell', 'elm', 'li=lisp']
 fun! UnderlineHeading(level)
     if a:level == 1
         normal! I# 

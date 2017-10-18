@@ -2,6 +2,7 @@
 "Its better to organize the configs by semantic. Better to put wiki
 "mappings on the wiki section then on the mappings section
 
+
 "Plugins Load {{{
 filetype on
 filetype plugin on
@@ -375,6 +376,7 @@ fun! CurrentDocumentI()
 endfunction
 inoremap ;<cr> <end>;<cr>
 "}}}
+"
 
 "actions over text blocks{{{
 fun! s:DoAction(algorithm,type)
@@ -450,7 +452,7 @@ function! Chomp(string)
     return substitute(a:string, '\n\+$', '', '')
 endfunction
 
-function! ChompedSystem( ... )
+function! ChompedSystemCall( ... )
     return substitute(call('system', a:000), '\n\+$', '', '')
 endfunction
 
@@ -586,6 +588,17 @@ fun! s:Lisp(str)
 endfunction
 call MapAction('Lisp', '<leader>li')
 
+fun! s:ToCamelCase(str)
+    let out = ChompedSystemCall('run_function toCamelCase', a:str)
+    return out
+endfunction
+call MapAction('ToCamelCase', '<leader>tc')
+
+fun! s:ToSnakeCase(str)
+    let out = ChompedSystemCall('run_function toSnakeCase', a:str)
+    return out
+endfunction
+call MapAction('ToSnakeCase', '<leader>ts')
 
 fun! s:JsonBeautifier(str)
   let out = system('run_function json_beautifier ', a:str)
@@ -896,13 +909,6 @@ let g:limelight_conceal_ctermfg = 240
 " Color name (:help gui-colors) or RGB color
 let g:limelight_conceal_guifg = 'DarkGray'
 let g:limelight_conceal_guifg = '#777777'
-
-
-" Beginning/end of paragraph
-"   When there's no empty line between the paragraphs
-"   and each paragraph starts with indentation
-" let g:limelight_bop = '^\s'
-" let g:limelight_eop = '\ze\n^\s'
 
 " Highlighting priority (default: 10)
 "   Set it to -1 not to overrule hlsearch

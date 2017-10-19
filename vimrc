@@ -26,6 +26,7 @@ Plug 'junegunn/goyo.vim' | Plug 'junegunn/limelight.vim' "writer mode
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'wakatime/vim-wakatime'
 Plug 'lervag/vimtex', { 'for': [ 'latex' ] }
+Plug 'kovisoft/slimv', { 'for': [ 'lisp' ] }
 Plug 'ElmCast/elm-vim', { 'for': [ 'elm' ] }
 Plug 'fatih/vim-go', { 'for': [ 'go'] }
 Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
@@ -1124,3 +1125,6 @@ if exists("relativenumberformat")
     set relativenumber
     set relativenumberformat=%-*ld\ 
 endif
+
+let g:slimv_impl = 'sbcl'
+

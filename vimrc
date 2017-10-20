@@ -2,7 +2,6 @@
 "Its better to organize the configs by semantic. Better to put wiki
 "mappings on the wiki section then on the mappings section
 
-
 "Plugins Load {{{
 filetype on
 filetype plugin on
@@ -40,12 +39,12 @@ set nocompatible
 let mapleader = "\<space>"
 runtime macros/matchit.vim "Enable extended % matching
 set tags+=/usr/include/tags,./tags,./.git/tags,../.git/tags
-set mouse=a
+set mouse=a "enable mouse on normal,visual,inter,command-line modes
 set splitbelow "When on, splitting a window will put the new window below the current
 set backspace=indent,eol,start "make the backspace work like in most other programs
 set cot+=menuone "Use the popup menu also when there is only one match
 set number "show numbers
-set shell=zsh
+set shell=$SHELL
 set encoding=utf-8
 set showmode "If in Insert, Replace or Visual mode put a message on the last line
 set showcmd "Show (partial) command in the last line of the screen
@@ -59,7 +58,7 @@ set history=5000 "the quantity of normal commands recorded
 set title "When on, the title of the window will be set to the value of 'titlestring'
 vnoremap . :normal .<CR> "Allow using the repeat operator with a visual selection
 setlocal formatoptions=1
-set formatprg=par
+set formatprg=par "The name of an external program that will be used to format the lines selected with the |gq| operator.
 setlocal linebreak "wrap long lines at a character in 'breakat'
 set clipboard=unnamedplus
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
@@ -144,12 +143,10 @@ fun! Glossary()
 endfunction
 command! -nargs=* Glossary call Glossary()
 
-
 fun! Remember()
     :e /home/jean/.remember
 endfunction
 command! -nargs=* Remember call Remember()
-
 
 fun! Functions()
     :e /home/jean/projects/dotfiles/functions.sh
@@ -179,7 +176,6 @@ endfunction
 command! -nargs=* ReloadVim call ReloadVim()
 nmap <silent> <leader>sv :ReloadVim<cr>
 endif
-
 "}}}
 
 "Generic mappings{{{
@@ -560,16 +556,21 @@ endfunction
 call MapAction('Trim', '<leader>tr')
 
 fun! s:googleIt(str)
-    let out = system('google_it &', a:str)
+    let out = system('google_it', a:str)
 endfunction
 call MapAction('googleIt', '<leader>gi')
+
+fun! s:getHelp(str)
+    let my_filetype = &filetype
+    let out = system('getHelp.sh '.my_filetype, a:str)
+endfunction
+call MapAction('getHelp', '<leader>h')
 
 "render a html chunk on the browser
 fun! s:BCat(str)
     let out = system('browser-cat ', a:str)
 endfunction
 call MapAction('BCat', '<leader>vi')
-
 
 fun! s:Decode(str)
   let out = system('url-decode ', a:str)
@@ -1123,6 +1124,7 @@ set secure "disable unsecure options
 
 if exists("relativenumberformat")
     set relativenumber
+    "the final space is proposital
     set relativenumberformat=%-*ld\ 
 endif
 

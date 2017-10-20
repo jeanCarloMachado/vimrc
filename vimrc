@@ -62,6 +62,7 @@ set formatprg=par "The name of an external program that will be used to format t
 setlocal linebreak "wrap long lines at a character in 'breakat'
 set clipboard=unnamedplus
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
+set tw=80 "80 columsn are more than enough
 "set scrolloff=3 "alway 3 lines instead of reaching bottom uppper screen
 "}}}
 
@@ -221,7 +222,7 @@ set ttyfast "Improves smoothness of redrawing when there are multiple windows
 autocmd BufEnter * :syn sync maxlines=500
 set lazyredraw "don't redraw screend when running macros
 syntax sync minlines=256
-set nocursorcolumn
+set nocursorcolumn "disable the highlight of the screen column of the cursor
 "disables syntax for files going over a certain size
 autocmd BufReadPre * if getfsize(expand("%")) > 10000000 | syntax off | endif
 "}}}
@@ -664,7 +665,6 @@ fun! MarkdownDefaultConfigs()
     set spell spelllang=en_us
 endfunction
 
-autocmd FileType markdown setl tw=66
 "this feature is from vim and it supports the latex syntax so look at the
 "latex reference to know how to use it
 let g:vim_markdown_math = 1

@@ -104,7 +104,7 @@ set grepprg=rg\ --vimgrep
 set grepformat=%f:%l:%c:%m
 fun! Grepr( arg )
     execute "grep " . a:arg . " %:p:h/*"
-endfunction
+endfun
 command! -nargs=* Grepr call Grepr( '<args>' )
 "}}}
 
@@ -118,7 +118,7 @@ let g:netrw_altv=1 "open vertical splits on the right
 "spelling {{{
 fun! FixLastSpellingError()
     normal! mm[s1z=`m
-endfunction
+endfun
 
 nnoremap <leader>fs :call FixLastSpellingError()<cr>
 map <leader>spt :set spell spelllang=pt_br<cr>
@@ -129,7 +129,7 @@ map <leader>sen :set spell spelllang=en_us<cr>
 fun! WritingMode()
     :Goyo
     "execute "!notify-send 'test'"
-endfunction
+endfun
 command! -nargs=* WritingMode call WritingMode()
 map <Leader>wm :call WritingMode()<cr>
 let writer_mode=$WRITER_MODE
@@ -137,49 +137,49 @@ let writer_mode=$WRITER_MODE
 fun! LatestPost()
     let out =  system("run_function latestPost")
     execute 'edit' out
-endfunction
+endfun
 command! -nargs=* LatestPost call LatestPost()
 
 fun! Talk()
     :e $WIKI_PATH/talks.md
-endfunction
+endfun
 command! -nargs=* Talk call Talk()
 
 fun! Glossary()
     :e $WIKI_PATH/glossary.md
-endfunction
+endfun
 command! -nargs=* Glossary call Glossary()
 
 fun! Remember()
     :e /home/jean/.remember
-endfunction
+endfun
 command! -nargs=* Remember call Remember()
 
 fun! Functions()
     :e /home/jean/projects/dotfiles/functions.sh
-endfunction
+endfun
 command! -nargs=* Functions call Functions()
 
 fun! Quotes()
     :e /home/jean/Dropbox/wiki/src/quotes.md
-endfunction
+endfun
 command! -nargs=* Quotes call Quotes()
 
 fun! Meditation()
 :e $WIKI_PATH/meditation/meditation.md
-endfunction
+endfun
 command! -nargs=* Meditation call Meditation()
 
 fun! Date()
 :e $WIKI_PATH/pua/personal_history.md
-endfunction
+endfun
 command! -nargs=* Date call Date()
 
 if !exists('*ReloadVim')
 fun! ReloadVim()
      silent source $MY_VIMRC
      execute "edit %"
-endfunction
+ endfun
 command! -nargs=* ReloadVim call ReloadVim()
 nmap <silent> <leader>sv :ReloadVim<cr>
 endif
@@ -281,7 +281,7 @@ fun! CurrentLineA()
   normal! $
   let tail_pos = getpos('.')
   return ['v', head_pos, tail_pos]
-endfunction
+endfun
 
 fun! CurrentLineI()
   normal! ^
@@ -293,7 +293,7 @@ fun! CurrentLineI()
   \ non_blank_char_exists_p
   \ ? ['v', head_pos, tail_pos]
   \ : 0
-endfunction
+endfun
 
 
 call textobj#user#plugin('bar', {
@@ -311,7 +311,7 @@ fun! CurrentBarA()
   normal! f/
   let tail_pos = getpos('.')
   return ['v', head_pos, tail_pos]
-endfunction
+endfun
 
 fun! CurrentBarI()
   normal! T/
@@ -319,7 +319,7 @@ fun! CurrentBarI()
   normal! f/
   let tail_pos = getpos('.')
   return ['v', head_pos, tail_pos]
-endfunction
+endfun
 
 
 call textobj#user#plugin('pipe', {
@@ -337,7 +337,7 @@ fun! CurrentPipeA()
   normal! f|
   let tail_pos = getpos('.')
   return ['v', head_pos, tail_pos]
-endfunction
+endfun
 
 fun! CurrentPipeI()
   normal! T|
@@ -345,7 +345,7 @@ fun! CurrentPipeI()
   normal! f|
   let tail_pos = getpos('.')
   return ['v', head_pos, tail_pos]
-endfunction
+endfun
 
 call textobj#user#plugin('datetime', {
 \   'date': {
@@ -369,7 +369,7 @@ fun! CurrentDocumentA()
   normal! G$
   let tail_pos = getpos('.')
   return ['v', head_pos, tail_pos]
-endfunction
+endfun
 
 fun! CurrentDocumentI()
   normal! ggj
@@ -377,7 +377,7 @@ fun! CurrentDocumentI()
   normal! G$k
   let tail_pos = getpos('.')
   return ['v', head_pos, tail_pos]
-endfunction
+endfun
 inoremap ;<cr> <end>;<cr>
 "}}}
 "
@@ -424,16 +424,16 @@ fun! s:DoAction(algorithm,type)
   let @@ = reg_save
   let &selection = sel_save
   let &clipboard = cb_save
-endfunction
+endfun
 
 fun! s:ActionOpfunc(type)
   return s:DoAction(s:encode_algorithm, a:type)
-endfunction
+endfun
 
 fun! s:ActionSetup(algorithm)
   let s:encode_algorithm = a:algorithm
   let &opfunc = matchstr(expand('<sfile>'), '<SNR>\d\+_').'ActionOpfunc'
-endfunction
+endfun
 
 fun! MapAction(algorithm, key)
   exe 'nnoremap <silent> <Plug>actions'    .a:algorithm.' :<C-U>call <SID>ActionSetup("'.a:algorithm.'")<CR>g@'
@@ -442,220 +442,219 @@ fun! MapAction(algorithm, key)
   exe 'nmap '.a:key.'  <Plug>actions'.a:algorithm
   exe 'xmap '.a:key.'  <Plug>actions'.a:algorithm
   exe 'nmap '.a:key.a:key[strlen(a:key)-1].' <Plug>actionsLine'.a:algorithm
-endfunction
+endfun
 
 fun! s:ComputeMD5(str)
   let out = system('md5sum |cut -b 1-32', a:str)
   " Remove trailing newline.
   let out = substitute(out, '\n$', '', '')
   return out
-endfunction
+endfun
 call MapAction('ComputeMD5','<leader>M')
 
 function! Chomp(string)
     return substitute(a:string, '\n\+$', '', '')
-endfunction
+endfun
 
 function! ChompedSystemCall( ... )
     return substitute(call('system', a:000), '\n\+$', '', '')
-endfunction
+endfun
 
 fun! s:ReverseString(str)
   let out = join(reverse(split(a:str, '\zs')), '')
   " Remove a trailing newline that reverse() moved to the front.
   let out = substitute(out, '^\n', '', '')
   return out
-endfunction
+endfun
 call MapAction('ReverseString', '<leader>i')
 
 fun! s:MathBlock(str)
     return '$ '.a:str.' $'
-endfunction
+endfun
 call MapAction('MathBlock', '<leader>mb')
 
 fun! s:Backtick(str)
     return "`".a:str."`"
-endfunction
+endfun
 call MapAction('Backtick', "<leader>`")
 
 fun! s:Quote(str)
     return "'".a:str."'"
-endfunction
+endfun
 call MapAction('Quote', "<leader>'")
 
 fun! s:DoubleQuote(str)
     return '"'.a:str.'"'
-endfunction
+endfun
 call MapAction('DoubleQuote', '<leader>"')
 
 fun! s:Tag(str)
     return '<'.a:str.'>'
-endfunction
+endfun
 call MapAction('Tag', '<leader><')
 
 fun! s:MakeList(str)
       let out = system('run_function prepend " - " ', a:str)
       return out
-endfunction
+  endfun
 call MapAction('MakeList', '<leader>ml')
 
 fun! s:Translate(str)
       let out = system('translate ', a:str)
       return out
-endfunction
+  endfun
 call MapAction('Translate', '<leader>ti')
 
 fun! s:MakeNumberedList(str)
       let out = system('echo "'.a:str.'" | nl -s". " -w1')
       return out
-endfunction
+  endfun
 call MapAction('MakeNumberedList', '<leader>mnl')
-
 
 fun! s:MakeGraph(str)
       let out = system('graph-easy', a:str)
       return a:str . "\n" . out
-endfunction
+  endfun
 call MapAction('MakeGraph', '<leader>mg')
 
 fun! s:Parenthesis(str)
     return '('.a:str.')'
-endfunction
+endfun
 call MapAction('Parenthesis', '<leader>(')
 
 fun! s:Braces(str)
     return '{'.a:str.'}'
-endfunction
+endfun
 call MapAction('Braces', '<leader>{')
 
 
 fun! s:Dollars(str)
     return '$'.a:str.'$'
-endfunction
+endfun
 call MapAction('Dollars', '<leader>$')
 
 fun! s:Brackets(str)
     return '['.a:str.']'
-endfunction
+endfun
 call MapAction('Brackets', '<leader>[')
 
 fun! s:Filefy(str)
   let out = system('filefy ', a:str)
   return out
-endfunction
+endfun
 call MapAction('Filefy', '<leader>fly')
 
 fun! s:BreakCommand(str)
   let out = system('run_alias break_command ', a:str)
   return out
-endfunction
+endfun
 call MapAction('BreakCommand', '<leader>bc')
 
 fun! s:foldSomething(str)
     return "{{{".a:str."}}}"
-endfunction
+endfun
 call MapAction('foldSomething', '<leader>fo')
 
 fun! s:Trim(str)
   let out = system('run_function trim ', a:str)
   return out
-endfunction
+endfun
 call MapAction('Trim', '<leader>tr')
 
 fun! s:googleIt(str)
     let out = system('google_it', a:str)
-endfunction
+endfunc
 call MapAction('googleIt', '<leader>gi')
 
 fun! s:getHelp(str)
     let my_filetype = &filetype
     let out = system('getHelp.sh '.my_filetype, a:str)
-endfunction
+endfunc
 call MapAction('getHelp', '<leader>h')
 
 "render a html chunk on the browser
 fun! s:BCat(str)
     let out = system('browser-cat ', a:str)
-endfunction
+endfunc
 call MapAction('BCat', '<leader>vi')
 
 fun! s:Decode(str)
   let out = system('url-decode ', a:str)
   return out
-endfunction
+endfunc
 call MapAction('Decode', '<leader>d')
 
 fun! s:Interpret(str)
     let out = system('ruby-interpreter ', a:str)
     return out
-endfunction
+endfunc
 call MapAction('Interpret', '<leader>r')
 
 fun! s:Lisp(str)
     let out = system('sbcl_snippet', a:str)
     return out
-endfunction
+endfunc
 call MapAction('Lisp', '<leader>li')
 
 fun! s:ToCamelCase(str)
     let out = ChompedSystemCall('run_function toCamelCase', a:str)
     return out
-endfunction
+endfunc
 call MapAction('ToCamelCase', '<leader>tc')
 
 fun! s:ToSnakeCase(str)
     let out = ChompedSystemCall('run_function toSnakeCase', a:str)
     return out
-endfunction
+endfunc
 call MapAction('ToSnakeCase', '<leader>ts')
 
 fun! s:JsonBeautifier(str)
   let out = system('run_function json_beautifier ', a:str)
   return out
-endfunction
+endfunc
 call MapAction('JsonBeautifier', '<leader>jb')
 
 fun! s:JsonEncode(str)
   let out = system('json_encode_from_php', a:str)
   return out
-endfunction
+endfunc
 call MapAction('JsonEncode', '<leader>pj')
 
 fun! s:UrlToJson(str)
   let out = system('url-to-json ', a:str)
   return out
-endfunction
+endfunc
 call MapAction('UrlToJson', '<leader>ju')
 
 fun! s:OpenSelectedUrl(str)
   silent call OpenUrl(a:str)
-endfunction
+endfunc
 call MapAction('OpenSelectedUrl', '<leader>ol')
 call MapAction('OpenSelectedUrl', '<leader>ou')
 
 fun! s:Alnum(str)
   let out = system('run_function alnum ', a:str)
   return out
-endfunction
+endfunc
 call MapAction('Alnum', '<leader>a')
 
 fun! s:Unescape(str)
   let out = system('sed "s/\\\//g" ', a:str)
   return out
-endfunction
+endfunc
 call MapAction('Unescape', '<leader>us')
 
 fun! s:SqlBeautifier(str)
   let out = system('run_function sql_format', a:str)
   return out
-endfunction
+endfunc
 call MapAction('SqlBeautifier', '<leader>sb')
 
 call MapAction('XmlBeautifier', '<leader>x')
 fun! s:XmlBeautifier(str)
   let out = system('run_function xml_beautifier ', a:str)
   return out
-endfunction
+endfunc
 call MapAction('XmlBeautifier', '<leader>xb')
 
 "}}}
@@ -669,7 +668,7 @@ fun! MarkdownDefaultConfigs()
     "set filetype=markdown
     set syntax=markdown
     set spell spelllang=en_us
-endfunction
+endfunc
 
 "this feature is from vim and it supports the latex syntax so look at the
 "latex reference to know how to use it
@@ -688,7 +687,7 @@ fun! UnderlineHeading(level)
     elseif a:level == 5
         normal! I##### 
     endif
-endfunction
+endfunc
 
 nnoremap <leader>h1 :call UnderlineHeading(1)<cr>
 nnoremap <leader>h2 :call UnderlineHeading(2)<cr>
@@ -716,36 +715,36 @@ function! MarkdownLevel()
         return ">6"
     endif
     return "="
-endfunction
+endfunc
 au BufEnter *.md setlocal foldexpr=MarkdownLevel()
 au BufEnter *.md setlocal foldmethod=expr
 
 fun! s:Italic(str)
     return '*'.a:str.'*'
-endfunction
+endfunc
 call MapAction('Italic', '<leader>i')
 
 fun! s:Bold(str)
     return '**'.a:str.'**'
-endfunction
+endfunc
 call MapAction('Bold', '<leader>bo')
 
 fun! s:Highlight(str)
     return '***'.a:str.'***'
-endfunction
+endfunc
 call MapAction('Highlight', '<leader>hl')
 
 
 fun! s:CodeBlock(str)
     return "```sh\n".a:str."\n```"
-endfunction
+endfunc
 call MapAction('CodeBlock', '<leader>c')
 
 fun! s:MarkdownToHtml(str)
     let file_name_without_extension = system('md5sum  | run_function alnum ', expand("%:r"))
     let out = system('pandoc -o /tmp/'.file_name_without_extension.'.html ',a:str)
     silent execute '! browser /tmp/'.file_name_without_extension.'.html 1>/dev/null & '
-endfunction
+endfunc
 call MapAction('MarkdownToHtml', '<leader>mh')
 
 "}}}
@@ -756,7 +755,7 @@ nnoremap <Leader>to :Today<cr>
 fun! Diary( arg )
     let out = system('run_function diary_file "' . a:arg . '"')
     execute "edit " . out
-endfunction
+endfunc
 
 command! -nargs=* Tomorrow call Diary( 'tomorrow' )
 command! -nargs=* Yesterday call Diary( 'yesterday' )
@@ -768,7 +767,7 @@ command! -nargs=* NextRetrospective call Diary( 'next monday' )
 fun! WeekSummary()
     let out = system('run_function weekly_summary_file')
     execute "edit " . out
-endfunction
+endfunc
 command! -nargs=* WeekSummary call WeekSummary()
 map <Leader>ws :call WeekSummary()<cr>
 
@@ -777,7 +776,7 @@ fun! GrepDiary( arg )
     exec "cd " . $DIARY_PATH
     execute "grep " . a:arg . "  "
     exec "cd ". old_path
-endfunction
+endfunc
 command! -nargs=* GrepDiary call GrepDiary( '<args>' )
 command! -nargs=* DiaryGrep call GrepDiary( '<args>' )
 
@@ -786,7 +785,7 @@ fun! BottomDiary( arg )
     let out = system("run_function diary_file " . a:arg )
     execute "split" . out
     res 10
-endfunction
+endfunc
 command! -nargs=* BottomDiary call BottomDiary( '<args>' )
 "}}}
 
@@ -794,25 +793,25 @@ command! -nargs=* BottomDiary call BottomDiary( '<args>' )
 fun! s:MarkDone(str)
   let out = system('sed -r "s/(○ |◎ )//g; s/(.*)/● \1/g" ', a:str)
   return out
-endfunction
+endfunc
 call MapAction('MarkDone', '<leader>md')
 
 fun! s:MakeTask(str)
   let out = system('sed -r "s/(◐ |◎ )//g; s/(.*)/○ \1/g" ', a:str)
   return out
-endfunction
+endfunc
 call MapAction('MakeTask', '<leader>mt')
 
 fun! s:MakeApointment(str)
   let out = system('sed -r "s/(.*)/◐ \1/g" ', a:str)
   return out
-endfunction
+endfunc
 call MapAction('MakeApointment', '<leader>ma')
 
 fun! s:MakeSomeday(str)
   let out = system('sed -r "s/(◐ |○ )//g; s/(.*)/◎ \1/g" ', a:str)
   return out
-endfunction
+endfunc
 call MapAction('MakeSomeday', '<leader>ms')
 "}}}
 
@@ -828,7 +827,7 @@ fun! Wiki(arg)
     "sets the current directory of the window localy to enable file searches
     execute "lcd " . wiki_path
     execute "edit " . wiki_path . "/index.md"
-endfunction
+endfunc
 command! -nargs=* Wiki call Wiki( '<args>' )
 command! -nargs=* WikiCompufacil call Wiki( 'compufacil' )
 command! -nargs=* CompufacilWiki call Wiki( 'compufacil' )
@@ -841,17 +840,17 @@ nnoremap <Leader>cw :WikiCompufacil<cr>
 fun! GetUrl()
     normal! $F(vi(y
     return @"
-endfunction
+endfunc
 fun! GetLine()
     normal! yy
     return @"
-endfunction
+endfunc
 
 fun! OpenMarkdown()
     let url = GetUrl()
     let path = expand('%:p:h')
     execute 'edit ' . path . '/' . url . '.md'
-endfunction
+endfunc
 
 fun! OpenFile()
     let line = GetLine()
@@ -870,7 +869,7 @@ autocmd BufReadPost quickfix nnoremap <CR> <CR>
 
 fun! OpenUrl(url)
     silent execute '! $BROWSER "' . a:url . '" 1>/dev/null  &'
-endfunction
+endfunc
 nnoremap gx :call OpenUrl()<cr>
 
 fun! GrepWiki( arg )
@@ -878,7 +877,7 @@ fun! GrepWiki( arg )
     exec "cd " . $WIKI_PATH
     execute "grep " . a:arg . "  "
     exec "cd ". old_path
-endfunction
+endfunc
 command! -nargs=* GrepWiki call GrepWiki( '<args>' )
 command! -nargs=* WikiGrep call GrepWiki( '<args>' )
 "}}}
@@ -905,7 +904,7 @@ nmap <leader>cpn :!copy %:p<cr>
 nmap <leader>cfn :!copy %:p<cr>
 fun! SaveForcing()
      execute "w !sudo tee > /dev/null %"
-endfunction
+ endfunc
 command! -nargs=* ForceSave call SaveForcing()
 command! -nargs=* SaveForce call SaveForcing()
 autocmd! User GoyoEnter Limelight
@@ -923,28 +922,42 @@ let g:limelight_conceal_guifg = '#777777'
 let g:limelight_priority = -1
 
 fun! OpenTest()
-  let original_file = expand('%')
+  let original_file = fnamemodify(expand("%"), ":~:.")
 
   "mark position as service
   normal! mS
-  let out = system('echo "'.original_file.'" | run_function test_from_file')
+  let out = system('echo "'.original_file.'" | run_function testFromService')
   execute 'edit '.out
 
   "mark position as test
   normal! mT
-endfunction
+endfunc
 map <Leader>ot :call OpenTest()<cr>
+
+fun! OpenService()
+  let original_file = expand('%')
+
+  "mark position as service
+  normal! mS
+  let out = system('echo "'.original_file.'" | run_function serviceFromTest')
+  execute 'edit '.out
+
+  "mark position as service
+  normal! mT
+endfunc
+map <Leader>os :call OpenService()<cr>
+
 
 nmap <leader>crn :call CopyCurrentRelativePath()<cr>
 fun! CopyCurrentRelativePath()
   let path = RelativePath(expand("%:p"))
 let result = system('mycopy ', path)
-endfunction
+endfunc
 fun! RelativePath(filename)
     let cwd = getcwd()
     let s = substitute(a:filename, l:cwd . "/" , "", "")
     return s
-endfunction
+endfunc
 
 fun! RenameFile()
   let old_name = expand('%')
@@ -954,7 +967,7 @@ fun! RenameFile()
     exec ':silent !rm ' . old_name
     redraw!
   endif
-endfunction
+endfunc
 map <Leader>rn :call RenameFile()<cr>
 
 fun! CopyFile()
@@ -964,14 +977,14 @@ fun! CopyFile()
     exec ':saveas ' . new_name
     redraw!
   endif
-endfunction
+endfunc
 map <Leader>cp :call CopyFile()<cr>
 "}}}
 
 "git {{{
 fun! GitLog()
     execute '!run_function terminal_run "cd $(dirname %:p) ; git log -p --follow %:p" &'
-endfunction
+endfunc
 nmap <leader>gk :call GitLog()<cr>
 
 fun! FzfContent()
@@ -979,7 +992,7 @@ fun! FzfContent()
     redraw!
     let out = system('cat /tmp/fzf_current')
     execute 'edit '.out
-endfunction
+endfunc
 map <c-s> :call FzfContent()<cr>
 
 map <leader>ck :!git checkout %<cr>
@@ -988,7 +1001,7 @@ fun! Blame(arg)
     let file_name = expand('%')
     let out = system('git blame '.file_name.' > /tmp/blame')
     execute "vsplit +".current_line." /tmp/blame"
-endfunction
+endfunc
 command! -nargs=* Blame call Blame( '<args>' )
 
 
@@ -996,7 +1009,7 @@ fun! CheckoutFile(arg)
     let file_name = expand('%')
     execute '!git checkout ' . file_name
     execute 'edit!'
-endfunction
+endfunc
 command! -nargs=* CheckoutFile call CheckoutFile( '<args>' )
 
 
@@ -1005,19 +1018,33 @@ fun! OpenRepoOnGithub(arg)
     let repo = system('git remote -v | cut -d ":" -f2 | cut -d "." -f1 | head -n 1')
     let url = "https://github.com/" . repo . ".git"
     let result = system("$BROWSER " . url . " & ")
-endfunction
+endfunc
 command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
 "}}}
 
 "php{{{
+fun! ShowStringOutput(content)
+    split _output_
+    normal! ggdG
+    setlocal buftype=nofile
+    call append(0, split(a:content, '\v\n'))
+endfun
+fun! RunCurrentPHPFile()
+  let linterOut = system('php -l ' . expand("%:p"))
+  let executionOut = system('php ' . expand("%:p"))
+  call ShowStringOutput(linterOut."\n\n".executionOut)
+endfunc
+noremap <Leader>pr :call RunCurrentPHPFile()<cr>
+
 fun! s:JsonToPhp(str)
   let out = system('json-to-php ', a:str)
   return out
-endfunction
+endfun
 call MapAction('JsonToPhp', '<leader>jp')
 
 command Phpcsfixer : ! php-code-check `pwd`/%
     \ || print "Error on code check" && sleep 10
+
 
 fun! RunPHPUnitTest(filter)
     cd %:p:h
@@ -1041,12 +1068,9 @@ fun! RunPHPUnitTest(filter)
     endif
 
     let result = system(test_command)
+    let output = test_command  . "\n\n" . result
 
-    split __PHPUnit_Result__
-    normal! ggdG
-    setlocal buftype=nofile
-    call append(0, myCommand)
-    call append(0, split(result, '\v\n'))
+    call ShowStringOutput(output)
     cd -
 endfun
 nnoremap <leader>u :call RunPHPUnitTest(0)<cr>
@@ -1066,7 +1090,7 @@ autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
 fun! RepeatAndMove()
     let @q ="n."
     normal! @q
-endfunction
+endfun
 nnoremap <leader>rm :RepeatAndMove(<cr>
 command! -nargs=* RepeatAndMove call RepeatAndMove()
 " }}}
@@ -1136,3 +1160,19 @@ endif
 
 let g:slimv_impl = 'sbcl'
 
+function! ToggleWindowHorizontalVerticalSplit()
+  if !exists('t:splitType')
+    let t:splitType = 'vertical'
+  endif
+
+  if t:splitType == 'vertical' " is vertical switch to horizontal
+    windo wincmd K
+    let t:splitType = 'horizontal'
+
+  else " is horizontal switch to vertical
+    windo wincmd H
+    let t:splitType = 'vertical'
+  endif
+endfun
+
+nnoremap <silent> <leader>wt :call ToggleWindowHorizontalVerticalSplit()<cr>

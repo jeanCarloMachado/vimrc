@@ -134,6 +134,12 @@ command! -nargs=* WritingMode call WritingMode()
 map <Leader>wm :call WritingMode()<cr>
 let writer_mode=$WRITER_MODE
 
+fun! LatestPost()
+    let out =  system("run_function latestPost")
+    execute 'edit' out
+endfunction
+command! -nargs=* LatestPost call LatestPost()
+
 fun! Talk()
     :e $WIKI_PATH/talks.md
 endfunction

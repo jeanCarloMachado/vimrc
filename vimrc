@@ -381,7 +381,6 @@ endfun
 inoremap ;<cr> <end>;<cr>
 "}}}
 "
-
 "actions over text blocks{{{
 fun! s:DoAction(algorithm,type)
   " backup settings that we will change
@@ -921,32 +920,6 @@ let g:limelight_conceal_guifg = '#777777'
 "   Set it to -1 not to overrule hlsearch
 let g:limelight_priority = -1
 
-fun! OpenTest()
-  let original_file = fnamemodify(expand("%"), ":~:.")
-
-  "mark position as service
-  normal! mS
-  let out = system('echo "'.original_file.'" | run_function testFromService')
-  execute 'edit '.out
-
-  "mark position as test
-  normal! mT
-endfunc
-map <Leader>ot :call OpenTest()<cr>
-
-fun! OpenService()
-  let original_file = expand('%')
-
-  "mark position as service
-  normal! mS
-  let out = system('echo "'.original_file.'" | run_function serviceFromTest')
-  execute 'edit '.out
-
-  "mark position as service
-  normal! mT
-endfunc
-map <Leader>os :call OpenService()<cr>
-
 
 nmap <leader>crn :call CopyCurrentRelativePath()<cr>
 fun! CopyCurrentRelativePath()
@@ -1022,7 +995,7 @@ endfunc
 command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
 "}}}
 
-"php{{{
+"PHP{{{
 fun! ShowStringOutput(content)
     split _output_
     normal! ggdG
@@ -1152,19 +1125,11 @@ set exrc "enable vimrc per project
 set secure "disable unsecure options
 "}}}
 
-if exists("relativenumberformat")
-    set relativenumber
-    "the final space is proposital
-    set relativenumberformat=%-*ld\ 
-endif
-
-let g:slimv_impl = 'sbcl'
-
+" windows {{{
 function! ToggleWindowHorizontalVerticalSplit()
   if !exists('t:splitType')
     let t:splitType = 'vertical'
   endif
-
   if t:splitType == 'vertical' " is vertical switch to horizontal
     windo wincmd K
     let t:splitType = 'horizontal'
@@ -1174,5 +1139,41 @@ function! ToggleWindowHorizontalVerticalSplit()
     let t:splitType = 'vertical'
   endif
 endfun
-
 nnoremap <silent> <leader>wt :call ToggleWindowHorizontalVerticalSplit()<cr>
+" }}}
+
+"compufacil settings {{{
+fun! OpenTest()
+  let original_file = fnamemodify(expand("%"), ":~:.")
+
+  "mark position as service
+  normal! mS
+  let out = system('echo "'.original_file.'" | run_function testFromService')
+  execute 'edit '.out
+
+  "mark position as test
+  normal! mT
+endfunc
+map <Leader>ot :call OpenTest()<cr>
+
+fun! OpenService()
+  let original_file = expand('%')
+
+  "mark position as service
+  normal! mS
+  let out = system('echo "'.original_file.'" | run_function serviceFromTest')
+  execute 'edit '.out
+
+  "mark position as service
+  normal! mT
+endfunc
+map <Leader>os :call OpenService()<cr>
+"}}}
+
+let g:slimv_impl = 'sbcl'
+"if exists("relativenumberformat")
+"    set relativenumber
+"    "the final space is proposital
+"    set relativenumberformat=%-*ld\ 
+"endif
+

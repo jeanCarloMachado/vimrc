@@ -62,7 +62,6 @@ set formatprg=par "The name of an external program that will be used to format t
 setlocal linebreak "wrap long lines at a character in 'breakat'
 set clipboard=unnamedplus
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
-set tw=80 "80 columsn are more than enough
 "set scrolloff=3 "alway 3 lines instead of reaching bottom uppper screen
 "}}}
 
@@ -655,7 +654,6 @@ fun! s:XmlBeautifier(str)
   return out
 endfunc
 call MapAction('XmlBeautifier', '<leader>xb')
-
 "}}}
 
 "Markdown{{{
@@ -664,7 +662,7 @@ autocmd Filetype markdown call MarkdownDefaultConfigs()
 highlight Folded ctermfg=DarkYellow
 
 fun! MarkdownDefaultConfigs()
-    "set filetype=markdown
+    set tw=80 "80 columsn are more than enough
     set syntax=markdown
     set spell spelllang=en_us
 endfunc

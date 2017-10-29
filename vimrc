@@ -24,10 +24,10 @@ Plug 'tpope/vim-commentary'
 Plug 'junegunn/goyo.vim' | Plug 'junegunn/limelight.vim' "writer mode
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'wakatime/vim-wakatime'
-Plug 'lervag/vimtex', { 'for': [ 'latex' ] }
-Plug 'kovisoft/slimv', { 'for': [ 'lisp' ] }
-Plug 'ElmCast/elm-vim', { 'for': [ 'elm' ] }
-Plug 'fatih/vim-go', { 'for': [ 'go'] }
+Plug 'lervag/vimtex', { 'for': ['latex'] }
+Plug 'kovisoft/slimv', { 'for': ['lisp'] }
+Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
+Plug 'fatih/vim-go', { 'for': ['go'] }
 Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
 Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
@@ -1175,3 +1175,6 @@ let g:slimv_impl = 'sbcl'
 "    set relativenumberformat=%-*ld\ 
 "endif
 
+autocmd filetype rst set spell spelllang=en_us
+autocmd filetype txt set spell spelllang=en_us
+autocmd filetype markdown set spell spelllang=en_us

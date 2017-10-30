@@ -1169,11 +1169,6 @@ map <Leader>os :call OpenService()<cr>
 "}}}
 
 let g:slimv_impl = 'sbcl'
-"if exists("relativenumberformat")
-"    set relativenumber
-"    "the final space is proposital
-"    set relativenumberformat=%-*ld\ 
-"endif
 
 autocmd filetype rst set spell spelllang=en_us
 autocmd filetype txt set spell spelllang=en_us

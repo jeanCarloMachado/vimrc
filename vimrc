@@ -612,11 +612,6 @@ fun! s:JsonBeautifier(str)
 endfunc
 call MapAction('JsonBeautifier', '<leader>jb')
 
-fun! s:JsonEncode(str)
-  let out = system('json_encode_from_php', a:str)
-  return out
-endfunc
-call MapAction('JsonEncode', '<leader>pj')
 
 fun! s:UrlToJson(str)
   let out = system('url-to-json ', a:str)
@@ -994,6 +989,11 @@ command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
 "}}}
 
 "PHP{{{
+fun! s:JsonEncode(str)
+  let out = system('json_encode_from_php', a:str)
+  return out
+endfunc
+call MapAction('JsonEncode', '<leader>pj')
 fun! ShowStringOutput(content)
     split _output_
     normal! ggdG

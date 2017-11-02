@@ -1,1 +1,0 @@
-/home/jean/.vim/vimrc

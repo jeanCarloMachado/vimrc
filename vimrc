@@ -17,9 +17,13 @@ Plug 'michaeljsmith/vim-indent-object' "same identation text object
 Plug 'vim-scripts/argtextobj.vim'
 Plug 'dyng/ctrlsf.vim' "grep like sublime one
 Plug 'nelstrom/vim-visual-star-search'
+"search for, substitute, and abbreviate multiple variants of a word
 Plug 'tpope/vim-abolish'
+"quoting/parenthesizing
 Plug 'tpope/vim-surround'
+"shows a git diff in the gutter (sign column) and stages/undoes hunks.
 Plug 'airblade/vim-gitgutter'
+Plug 'zweifisch/pipe2eval' "repl plugin
 Plug 'tpope/vim-commentary'
 Plug 'junegunn/goyo.vim' | Plug 'junegunn/limelight.vim' "writer mode
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -51,19 +55,25 @@ set showcmd "Show (partial) command in the last line of the screen
 set hidden "hides buffers instead of closing them
 set laststatus=2 "when the last window will have a status line: 2: always
 set gdefault "When on, the :substitute flag 'g' is default on
-set showmatch "show matching parenthesis
+" Show matching brackets when text indicator is over them
+set showmatch
 set scrolloff=0 " Minimum lines to keep above and below cursor"
 set autoread "automaically read a file again when it's changed outside vim
 set history=5000 "the quantity of normal commands recorded
 set title "When on, the title of the window will be set to the value of 'titlestring'
-vnoremap . :normal .<CR> "Allow using the repeat operator with a visual selection
+" For regular expressions turn magic on
+set magic
 setlocal formatoptions=1
 set formatprg=par "The name of an external program that will be used to format the lines selected with the |gq| operator.
 setlocal linebreak "wrap long lines at a character in 'breakat'
 set clipboard=unnamedplus
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
-"set scrolloff=3 "alway 3 lines instead of reaching bottom uppper screen
 "}}}
+
+" visual mode {{{
+"Allow using the repeat operator with a visual selection
+vnoremap . :normal .<CR>
+" }}}
 
 " search{{{
 set hlsearch " match while typing the search
@@ -116,7 +126,6 @@ let g:netrw_altv=1 "open vertical splits on the right
 fun! FixLastSpellingError()
     normal! mm[s1z=`m
 endfun
-
 nnoremap <leader>fs :call FixLastSpellingError()<cr>
 map <leader>spt :set spell spelllang=pt_br<cr>
 map <leader>sen :set spell spelllang=en_us<cr>
@@ -156,13 +165,14 @@ fun! Quotes()
     :e /home/jean/Dropbox/wiki/src/quotes.md
 endfun
 command! -nargs=* Quotes call Quotes()
+command! -nargs=* Quotes call Quotes()
+nnoremap <leader>qo  :call Quotes()<cr>
 
 fun! Meditation()
 :e $WIKI_PATH/meditation/meditation.md
 endfun
 command! -nargs=* Meditation call Meditation()
 "}}}
-
 
 "Generic mappings{{{
 nnoremap <leader>ls  :ls<cr>
@@ -224,8 +234,7 @@ autocmd BufReadPre * if getfsize(expand("%")) > 10000000 | syntax off | endif
 "}}}
 
 "undo {{{
-"enable undoing
-set undofile
+set undofile "enable undoing
 set undodir=/home/jean/.vim/undo/
 set undolevels=1000
 set undoreload=10000
@@ -567,12 +576,6 @@ fun! s:Decode(str)
   return out
 endfunc
 call MapAction('Decode', '<leader>d')
-
-fun! s:Interpret(str)
-    let out = system('ruby-interpreter ', a:str)
-    return out
-endfunc
-call MapAction('Interpret', '<leader>r')
 
 fun! s:Lisp(str)
     let out = system('sbcl_snippet', a:str)
@@ -1117,4 +1120,4 @@ let g:limelight_conceal_guifg = '#777777'
 " Highlighting priority (default: 10)
 "   Set it to -1 not to overrule hlsearch
 let g:limelight_priority = -1
-" }}}
+"}}}

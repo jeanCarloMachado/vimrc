@@ -83,8 +83,6 @@ set foldenable
 set foldcolumn=1
 set foldlevel=1 "control the level to be opened by default (this opens just the first h1, levels)
 set foldmethod=marker
-"autocmd BufRead * setlocal foldmethod=marker
-" autocmd BufRead * normal zM
 "}}}
 
 "Concealing {{{
@@ -122,17 +120,12 @@ endfun
 nnoremap <leader>fs :call FixLastSpellingError()<cr>
 map <leader>spt :set spell spelllang=pt_br<cr>
 map <leader>sen :set spell spelllang=en_us<cr>
+autocmd filetype rst set spell spelllang=en_us
+autocmd filetype txt set spell spelllang=en_us
+autocmd filetype markdown set spell spelllang=en_us
 "}}}
 
-"Generic functions{{{
-fun! WritingMode()
-    :Goyo
-    "execute "!notify-send 'test'"
-endfun
-command! -nargs=* WritingMode call WritingMode()
-map <Leader>wm :call WritingMode()<cr>
-let writer_mode=$WRITER_MODE
-
+"Open files quickly {{{
 fun! LatestPost()
     let out =  system("run_function latestPost")
     execute 'edit' out
@@ -168,21 +161,8 @@ fun! Meditation()
 :e $WIKI_PATH/meditation/meditation.md
 endfun
 command! -nargs=* Meditation call Meditation()
-
-fun! Date()
-:e $WIKI_PATH/pua/personal_history.md
-endfun
-command! -nargs=* Date call Date()
-
-if !exists('*ReloadVim')
-fun! ReloadVim()
-     silent source $MY_VIMRC
-     execute "edit %"
- endfun
-command! -nargs=* ReloadVim call ReloadVim()
-nmap <silent> <leader>sv :ReloadVim<cr>
-endif
 "}}}
+
 
 "Generic mappings{{{
 nnoremap <leader>ls  :ls<cr>
@@ -221,6 +201,17 @@ nnoremap <leader>cf :!filefy-clippboard<cr>
 " Default fzf layout
 map <c-p> :FZF<cr>
 "}}}
+"
+"Generic functions{{{
+if !exists('*ReloadVim')
+fun! ReloadVim()
+     silent source $MY_VIMRC
+     execute "edit %"
+ endfun
+command! -nargs=* ReloadVim call ReloadVim()
+nmap <silent> <leader>sv :ReloadVim<cr>
+endif
+"}}}
 
 "performance {{{
 set ttyfast "Improves smoothness of redrawing when there are multiple windows
@@ -245,7 +236,6 @@ set backup
 set writebackup
 set backupdir=/home/jean/.vim/backup
 "don't clutter dirs with swp and tmpfiles
-
 set swapfile
 set directory=/home/jean/.vim/swap
 "don't show alert message when the swap already exists
@@ -264,7 +254,6 @@ autocmd filetype javascript set shiftwidth=2
 "}}}
 
 "custom text objects{{{
-
 call textobj#user#plugin('line', {
 \   '-': {
 \     'select-a-function': 'CurrentLineA',
@@ -294,7 +283,6 @@ fun! CurrentLineI()
   \ : 0
 endfun
 
-
 call textobj#user#plugin('bar', {
 \   '-': {
 \     'select-a-function': 'CurrentBarA',
@@ -319,7 +307,6 @@ fun! CurrentBarI()
   let tail_pos = getpos('.')
   return ['v', head_pos, tail_pos]
 endfun
-
 
 call textobj#user#plugin('pipe', {
 \   '-': {
@@ -379,7 +366,7 @@ fun! CurrentDocumentI()
 endfun
 inoremap ;<cr> <end>;<cr>
 "}}}
-"
+
 "actions over text blocks{{{
 fun! s:DoAction(algorithm,type)
   " backup settings that we will change
@@ -525,7 +512,6 @@ fun! s:Braces(str)
 endfun
 call MapAction('Braces', '<leader>{')
 
-
 fun! s:Dollars(str)
     return '$'.a:str.'$'
 endfun
@@ -611,7 +597,6 @@ fun! s:JsonBeautifier(str)
   return out
 endfunc
 call MapAction('JsonBeautifier', '<leader>jb')
-
 
 fun! s:UrlToJson(str)
   let out = system('url-to-json ', a:str)
@@ -726,7 +711,6 @@ fun! s:Highlight(str)
 endfunc
 call MapAction('Highlight', '<leader>hl')
 
-
 fun! s:CodeBlock(str)
     return "```sh\n".a:str."\n```"
 endfunc
@@ -738,7 +722,6 @@ fun! s:MarkdownToHtml(str)
     silent execute '! browser /tmp/'.file_name_without_extension.'.html 1>/dev/null & '
 endfunc
 call MapAction('MarkdownToHtml', '<leader>mh')
-
 "}}}
 
 "diary{{{
@@ -772,7 +755,6 @@ endfunc
 command! -nargs=* GrepDiary call GrepDiary( '<args>' )
 command! -nargs=* DiaryGrep call GrepDiary( '<args>' )
 
-
 fun! BottomDiary( arg )
     let out = system("run_function diary_file " . a:arg )
     execute "split" . out
@@ -781,34 +763,7 @@ endfunc
 command! -nargs=* BottomDiary call BottomDiary( '<args>' )
 "}}}
 
-"task manager {{{
-fun! s:MarkDone(str)
-  let out = system('sed -r "s/(○ |◎ )//g; s/(.*)/● \1/g" ', a:str)
-  return out
-endfunc
-call MapAction('MarkDone', '<leader>md')
-
-fun! s:MakeTask(str)
-  let out = system('sed -r "s/(◐ |◎ )//g; s/(.*)/○ \1/g" ', a:str)
-  return out
-endfunc
-call MapAction('MakeTask', '<leader>mt')
-
-fun! s:MakeApointment(str)
-  let out = system('sed -r "s/(.*)/◐ \1/g" ', a:str)
-  return out
-endfunc
-call MapAction('MakeApointment', '<leader>ma')
-
-fun! s:MakeSomeday(str)
-  let out = system('sed -r "s/(◐ |○ )//g; s/(.*)/◎ \1/g" ', a:str)
-  return out
-endfunc
-call MapAction('MakeSomeday', '<leader>ms')
-"}}}
-
 "wiki{{{
-"map <ci> :FZF $CLIPP_PATH <cr>
 map <c-i> :FZF $WIKI_PATH<cr>
 let g:vim_markdown_no_default_key_mappings = 1
 fun! Wiki(arg)
@@ -874,7 +829,7 @@ command! -nargs=* GrepWiki call GrepWiki( '<args>' )
 command! -nargs=* WikiGrep call GrepWiki( '<args>' )
 "}}}
 
-"files templates matching {{{
+" templates for filetypes {{{
 autocmd BufNewFile *Test.php 0r $TEMPLATES_DIR/php_test.php
 autocmd BufNewFile *.php 0r $TEMPLATES_DIR/php.php
 autocmd BufNewFile *.sh 0r $TEMPLATES_DIR/shell.sh
@@ -887,7 +842,7 @@ autocmd BufNewFile */diary/*.md 0r $TEMPLATES_DIR/diary.md
 autocmd BufNewFile */posts/*.md 0r $TEMPLATES_DIR/post.md
 "}}}
 
-"info relative to projects file, metadata{{{
+" generic actions relative to current file{{{
 nmap <leader>xo :!xdg-open % &<cr>
 nmap <leader>od :!run_alias file_manager %:h<cr>
 "copy path name
@@ -899,20 +854,6 @@ fun! SaveForcing()
  endfunc
 command! -nargs=* ForceSave call SaveForcing()
 command! -nargs=* SaveForce call SaveForcing()
-autocmd! User GoyoEnter Limelight
-autocmd! User GoyoLeave Limelight!
-" Color name (:help cterm-colors) or ANSI code
-let g:limelight_conceal_ctermfg = 'gray'
-let g:limelight_conceal_ctermfg = 240
-
-" Color name (:help gui-colors) or RGB color
-let g:limelight_conceal_guifg = 'DarkGray'
-let g:limelight_conceal_guifg = '#777777'
-
-" Highlighting priority (default: 10)
-"   Set it to -1 not to overrule hlsearch
-let g:limelight_priority = -1
-
 
 nmap <leader>crn :call CopyCurrentRelativePath()<cr>
 fun! CopyCurrentRelativePath()
@@ -953,14 +894,6 @@ fun! GitLog()
 endfunc
 nmap <leader>gk :call GitLog()<cr>
 
-fun! FzfContent()
-    execute ':!cd  '.$PWD.' ;  fzf_content > /tmp/fzf_current '
-    redraw!
-    let out = system('cat /tmp/fzf_current')
-    execute 'edit '.out
-endfunc
-map <c-s> :call FzfContent()<cr>
-
 map <leader>ck :!git checkout %<cr>
 fun! Blame(arg)
     let current_line = line(".") + 1
@@ -970,15 +903,12 @@ fun! Blame(arg)
 endfunc
 command! -nargs=* Blame call Blame( '<args>' )
 
-
 fun! CheckoutFile(arg)
     let file_name = expand('%')
     execute '!git checkout ' . file_name
     execute 'edit!'
 endfunc
 command! -nargs=* CheckoutFile call CheckoutFile( '<args>' )
-
-
 
 fun! OpenRepoOnGithub(arg)
     let repo = system('git remote -v | cut -d ":" -f2 | cut -d "." -f1 | head -n 1')
@@ -1015,7 +945,6 @@ call MapAction('JsonToPhp', '<leader>jp')
 
 command Phpcsfixer : ! php-code-check `pwd`/%
     \ || print "Error on code check" && sleep 10
-
 
 fun! RunPHPUnitTest(filter)
     cd %:p:h
@@ -1064,7 +993,7 @@ fun! RepeatAndMove()
 endfun
 nnoremap <leader>rm :RepeatAndMove(<cr>
 command! -nargs=* RepeatAndMove call RepeatAndMove()
-" }}}
+"}}}
 
 " C lang {{{
 fun! CFiletypeConfigs()
@@ -1085,11 +1014,6 @@ set statusline +=%=%5l             "current line
 set statusline +=/%L               "total lines
 set statusline +=%4v\              "virtual column number
 set statusline +=U%04B\           "character under cursor
-"}}}
-
-"cursorline{{{
-"set cursorline "show the cursor line
-"autocmd ColorScheme * highlight CursorLine ctermbg=0 "cursorline theme
 "}}}
 
 "theme, colors, highlights {{{
@@ -1168,8 +1092,29 @@ endfunc
 map <Leader>os :call OpenService()<cr>
 "}}}
 
+" lisp {{{
 let g:slimv_impl = 'sbcl'
+"}}}
 
-autocmd filetype rst set spell spelllang=en_us
-autocmd filetype txt set spell spelllang=en_us
-autocmd filetype markdown set spell spelllang=en_us
+" writer mode {{{
+let writer_mode=$WRITER_MODE
+fun! WritingMode()
+    :Goyo
+    "execute "!notify-send 'test'"
+endfun
+command! -nargs=* WritingMode call WritingMode()
+map <Leader>wm :call WritingMode()<cr>
+autocmd! User GoyoEnter Limelight
+autocmd! User GoyoLeave Limelight!
+" Color name (:help cterm-colors) or ANSI code
+let g:limelight_conceal_ctermfg = 'gray'
+let g:limelight_conceal_ctermfg = 240
+
+" Color name (:help gui-colors) or RGB color
+let g:limelight_conceal_guifg = 'DarkGray'
+let g:limelight_conceal_guifg = '#777777'
+
+" Highlighting priority (default: 10)
+"   Set it to -1 not to overrule hlsearch
+let g:limelight_priority = -1
+" }}}

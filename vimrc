@@ -134,6 +134,15 @@ autocmd filetype txt set spell spelllang=en_us
 autocmd filetype markdown set spell spelllang=en_us
 "}}}
 
+"Generic functions{{{
+fun! ShowStringOutput(content)
+    split _output_
+    normal! ggdG
+    setlocal buftype=nofile
+    call append(0, split(a:content, '\v\n'))
+endfun
+"}}}
+
 "Open files quickly {{{
 fun! LatestPost()
     let out =  system("run_function latestPost")
@@ -212,7 +221,7 @@ nnoremap <leader>cf :!filefy-clippboard<cr>
 map <c-p> :FZF<cr>
 "}}}
 "
-"Generic functions{{{
+"reload vim{{{
 if !exists('*ReloadVim')
 fun! ReloadVim()
      silent source $MY_VIMRC
@@ -222,6 +231,7 @@ command! -nargs=* ReloadVim call ReloadVim()
 nmap <silent> <leader>sv :ReloadVim<cr>
 endif
 "}}}
+
 
 "performance {{{
 set ttyfast "Improves smoothness of redrawing when there are multiple windows
@@ -927,12 +937,6 @@ fun! s:JsonEncode(str)
   return out
 endfunc
 call MapAction('JsonEncode', '<leader>pj')
-fun! ShowStringOutput(content)
-    split _output_
-    normal! ggdG
-    setlocal buftype=nofile
-    call append(0, split(a:content, '\v\n'))
-endfun
 fun! RunCurrentPHPFile()
   let linterOut = system('php -l ' . expand("%:p"))
   let executionOut = system('php ' . expand("%:p"))

@@ -2,6 +2,15 @@
 "Its better to organize the configs by semantic. Better to put wiki
 "mappings on the wiki section then on the mappings section
 
+"Generic functions{{{
+fun! ShowStringOutput(content)
+    split _output_
+    normal! ggdG
+    setlocal buftype=nofile
+    call append(0, split(a:content, '\v\n'))
+endfun
+"}}}
+
 "Plugins Load {{{
 filetype on
 filetype plugin on
@@ -23,7 +32,6 @@ Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-surround'
 "shows a git diff in the gutter (sign column) and stages/undoes hunks.
 Plug 'airblade/vim-gitgutter'
-Plug 'zweifisch/pipe2eval' "repl plugin
 Plug 'tpope/vim-commentary'
 Plug 'junegunn/goyo.vim' | Plug 'junegunn/limelight.vim' "writer mode
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -39,6 +47,7 @@ call plug#end()
 "}}}
 
 "generic configs{{{
+let g:pipe2eval_map_key = '<Leader>e'
 set nocompatible
 let mapleader = "\<space>"
 runtime macros/matchit.vim "Enable extended % matching
@@ -194,7 +203,6 @@ nnoremap + ddp
 nnoremap _ dd2kp
 nnoremap <Leader>le :noh<cr>
 nnoremap <Leader>dt :r ! date<cr>
-nnoremap <Leader>e :edit!<cr>
 nnoremap <Leader>o :only<cr>
 nnoremap cwi ciw
 map <leader>i mmgg=G`m
@@ -728,6 +736,13 @@ fun! s:CodeBlock(str)
     return "```sh\n".a:str."\n```"
 endfunc
 call MapAction('CodeBlock', '<leader>c')
+
+fun! s:Eval(str)
+  let my_filetype = &filetype
+  let out = ChompedSystemCall('pipe2eval.sh '.my_filetype.' '.expand("%:p"), a:str."\n")
+  return out
+endfunc
+call MapAction('Eval', '<leader>e')
 
 fun! s:MarkdownToHtml(str)
     let file_name_without_extension = system('md5sum  | run_function alnum ', expand("%:r"))

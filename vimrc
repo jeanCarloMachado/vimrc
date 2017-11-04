@@ -276,6 +276,8 @@ set autoindent
 set tabstop=4
 set shiftwidth=4
 set expandtab
+autocmd filetype php set tabstop=4
+autocmd filetype php set shiftwidth=4
 autocmd filetype javascript set tabstop=2
 autocmd filetype javascript set shiftwidth=2
 "}}}
@@ -728,7 +730,7 @@ endfunc
 call MapAction('Bold', '<leader>bo')
 
 fun! s:Highlight(str)
-    return '***'.a:str.'***'
+    return '***'."\n".a:str.'***'
 endfunc
 call MapAction('Highlight', '<leader>hl')
 

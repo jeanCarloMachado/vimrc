@@ -197,13 +197,20 @@ nnoremap <leader>ls  :ls<cr>
 nnoremap <leader>gv  :! gvim %:p<cr>
 nnoremap <leader>; :normal!mtA;<esc>`t
 nnoremap <leader>, :normal!mtA,<esc>`t
+" CTRL-A is Select all
+noremap <C-A> gggH<C-O>G
+inoremap <C-A> <C-O>gg<C-O>gH<C-O>G
+cnoremap <C-A> <C-C>gggH<C-O>G
+onoremap <C-A> <C-C>gggH<C-O>G
+snoremap <C-A> <C-C>gggH<C-O>G
+xnoremap <C-A> <C-C>ggVG
 nnoremap <BS> :Rex<cr>
 nnoremap <leader>fi :CtrlSF 
 nnoremap + ddp
 nnoremap _ dd2kp
 nnoremap <Leader>le :noh<cr>
 nnoremap <Leader>dt :r ! date<cr>
-nnoremap <Leader>o :only<cr>
+nnoremap <Leader>ob :only<cr>
 nnoremap cwi ciw
 map <leader>i mmgg=G`m
 map <leader>x :w<','> !bash<cr>
@@ -236,7 +243,7 @@ fun! ReloadVim()
      execute "edit %"
  endfun
 command! -nargs=* ReloadVim call ReloadVim()
-nmap <silent> <leader>sv :ReloadVim<cr>
+nmap <silent> <leader>so :ReloadVim<cr>
 endif
 "}}}
 
@@ -458,6 +465,13 @@ fun! MapAction(algorithm, key)
   exe 'nmap '.a:key.a:key[strlen(a:key)-1].' <Plug>actionsLine'.a:algorithm
 endfun
 
+fun! s:OnlyTextSelection(str)
+  normal! ggVGx
+  set noreadonly
+  call append(0, split(Chomp(a:str), '\v\n'))
+endfun
+call MapAction('OnlyTextSelection','<leader>ts')
+
 fun! s:ComputeMD5(str)
   let out = system('md5sum |cut -b 1-32', a:str)
   " Remove trailing newline.
@@ -607,13 +621,13 @@ fun! s:ToCamelCase(str)
     let out = ChompedSystemCall('run_function toCamelCase', a:str)
     return out
 endfunc
-call MapAction('ToCamelCase', '<leader>tc')
+call MapAction('ToCamelCase', '<leader>tcc')
 
 fun! s:ToSnakeCase(str)
     let out = ChompedSystemCall('run_function toSnakeCase', a:str)
     return out
 endfunc
-call MapAction('ToSnakeCase', '<leader>ts')
+call MapAction('ToSnakeCase', '<leader>tcs')
 
 fun! s:JsonBeautifier(str)
   let out = system('run_function json_beautifier ', a:str)
@@ -722,7 +736,7 @@ au BufEnter *.md setlocal foldmethod=expr
 fun! s:Italic(str)
     return '*'.a:str.'*'
 endfunc
-call MapAction('Italic', '<leader>i')
+call MapAction('Italic', '<leader>it')
 
 fun! s:Bold(str)
     return '**'.a:str.'**'
@@ -1015,8 +1029,9 @@ fun! RepeatAndMove()
     let @q ="n."
     normal! @q
 endfun
-nnoremap <leader>rm :RepeatAndMove(<cr>
+nnoremap <leader>rm :RepeatAndMove()<cr>
 command! -nargs=* RepeatAndMove call RepeatAndMove()
+
 "}}}
 
 " C lang {{{

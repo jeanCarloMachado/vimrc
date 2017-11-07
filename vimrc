@@ -1,7 +1,6 @@
 "It's a good practise to use folding to hide details of
 "Its better to organize the configs by semantic. Better to put wiki
 "mappings on the wiki section then on the mappings section
-
 "Generic functions{{{
 fun! ShowStringOutput(content)
     split _output_
@@ -94,6 +93,7 @@ set smartcase "Override the 'ignorecase' option if the search pattern contains u
 set wildmenu
 inoremap <S-Tab> <C-X><C-F>
 set wildmode=longest,list
+set completeopt=longest,menuone,preview
 "}}}
 
 "Fold {{{
@@ -536,6 +536,11 @@ fun! s:MakeGraph(str)
       return a:str . "\n" . out
   endfun
 call MapAction('MakeGraph', '<leader>mg')
+
+fun! s:Star(str)
+    return '*'.a:str.'*'
+endfun
+call MapAction('Star', '<leader>*')
 
 fun! s:Parenthesis(str)
     return '('.a:str.')'

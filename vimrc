@@ -13,7 +13,7 @@ endfun
 
 "Plugins Load {{{
 filetype on
-filetype plugin on
+filetype plugin on "loading the plugin files for specific file types 
 call plug#begin()
 "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
 Plug 'altercation/vim-colors-solarized'
@@ -25,7 +25,6 @@ Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim' "gist support
 Plug 'michaeljsmith/vim-indent-object' "same identation text object
 Plug 'vim-scripts/argtextobj.vim'
 Plug 'dyng/ctrlsf.vim' "grep like sublime one
-Plug 'nelstrom/vim-visual-star-search'
 "search for, substitute, and abbreviate multiple variants of a word
 Plug 'tpope/vim-abolish'
 "quoting/parenthesizing
@@ -197,13 +196,6 @@ nnoremap <leader>ls  :ls<cr>
 nnoremap <leader>gv  :! gvim %:p<cr>
 nnoremap <leader>; :normal!mtA;<esc>`t
 nnoremap <leader>, :normal!mtA,<esc>`t
-" CTRL-A is Select all
-noremap <C-A> gggH<C-O>G
-inoremap <C-A> <C-O>gg<C-O>gH<C-O>G
-cnoremap <C-A> <C-C>gggH<C-O>G
-onoremap <C-A> <C-C>gggH<C-O>G
-snoremap <C-A> <C-C>gggH<C-O>G
-xnoremap <C-A> <C-C>ggVG
 nnoremap <BS> :Rex<cr>
 nnoremap <leader>fi :CtrlSF 
 nnoremap + ddp
@@ -578,7 +570,11 @@ endfun
 call MapAction('BreakCommand', '<leader>bc')
 
 fun! s:foldSomething(str)
-    return "{{{".a:str."}}}"
+    let comment=split(&commentstring, '%s')
+    if len(l:comment)==1
+         call add(comment, l:comment[0])
+    endif
+    return l:comment[0]." {{{\n".a:str."\n".l:comment[1]."}}}"
 endfun
 call MapAction('foldSomething', '<leader>fo')
 
@@ -589,7 +585,7 @@ endfun
 call MapAction('Trim', '<leader>tr')
 
 fun! s:googleIt(str)
-    let out = system('google_it', a:str)
+    let out = system('run_function googleIt', a:str)
 endfunc
 call MapAction('googleIt', '<leader>gi')
 
@@ -674,6 +670,9 @@ call MapAction('XmlBeautifier', '<leader>xb')
 "}}}
 
 "Markdown{{{
+" au BufEnter *.md setlocal foldexpr=MarkdownLevel()
+" au BufEnter *.md setlocal foldmethod=expr
+
 let g:vim_markdown_no_extensions_in_markdown = 1
 autocmd Filetype markdown call MarkdownDefaultConfigs()
 highlight Folded ctermfg=DarkYellow
@@ -730,9 +729,6 @@ function! MarkdownLevel()
     endif
     return "="
 endfunc
-au BufEnter *.md setlocal foldexpr=MarkdownLevel()
-au BufEnter *.md setlocal foldmethod=expr
-
 fun! s:Italic(str)
     return '*'.a:str.'*'
 endfunc
@@ -891,6 +887,8 @@ nmap <leader>xo :!xdg-open % &<cr>
 nmap <leader>od :!run_alias file_manager %:h<cr>
 "copy path name
 nmap <leader>cpn :!copy %:p<cr>
+"copy only name
+nmap <leader>con :!copy %:t<cr>
 "copy full name
 nmap <leader>cfn :!copy %:p<cr>
 fun! SaveForcing()

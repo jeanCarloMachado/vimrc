@@ -30,6 +30,7 @@ Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-surround'
 "shows a git diff in the gutter (sign column) and stages/undoes hunks.
 Plug 'airblade/vim-gitgutter'
+Plug 'Valloric/YouCompleteMe'
 Plug 'tpope/vim-commentary'
 Plug 'junegunn/goyo.vim' | Plug 'junegunn/limelight.vim' "writer mode
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -896,6 +897,8 @@ nmap <leader>cpn :!copy %:p<cr>
 nmap <leader>con :!copy %:t<cr>
 "copy full name
 nmap <leader>cfn :!copy %:p<cr>
+"copy the current directoy
+nmap <leader>ccd :!copy %:p:h<cr>
 fun! SaveForcing()
      execute "w !sudo tee > /dev/null %"
  endfunc

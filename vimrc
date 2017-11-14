@@ -32,7 +32,7 @@ Plug 'tpope/vim-surround'
 Plug 'airblade/vim-gitgutter'
 Plug 'Valloric/YouCompleteMe'
 Plug 'tpope/vim-commentary'
-Plug 'junegunn/goyo.vim' 
+Plug 'junegunn/goyo.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'wakatime/vim-wakatime'
 Plug 'lervag/vimtex', { 'for': ['latex'] }

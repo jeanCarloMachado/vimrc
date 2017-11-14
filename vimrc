@@ -32,7 +32,7 @@ Plug 'tpope/vim-surround'
 Plug 'airblade/vim-gitgutter'
 Plug 'Valloric/YouCompleteMe'
 Plug 'tpope/vim-commentary'
-Plug 'junegunn/goyo.vim' | Plug 'junegunn/limelight.vim' "writer mode
+Plug 'junegunn/goyo.vim' 
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'wakatime/vim-wakatime'
 Plug 'lervag/vimtex', { 'for': ['latex'] }
@@ -899,6 +899,7 @@ nmap <leader>con :!copy %:t<cr>
 nmap <leader>cfn :!copy %:p<cr>
 "copy the current directoy
 nmap <leader>ccd :!copy %:p:h<cr>
+nmap <leader>ccp :!copy %:p:h<cr>
 fun! SaveForcing()
      execute "w !sudo tee > /dev/null %"
  endfunc
@@ -940,7 +941,8 @@ map <Leader>cp :call CopyFile()<cr>
 
 "git {{{
 fun! GitLog()
-    execute '!run_function terminal_run "cd $(dirname %:p) ; git log -p --follow %:p" &'
+    let path = resolve(expand('%:p'))
+    execute '!run_function terminal_run "cd '.path.' ; git log -p --follow %:p" &'
 endfunc
 nmap <leader>gk :call GitLog()<cr>
 
@@ -1063,7 +1065,11 @@ set statusline +=U%04B\           "character under cursor
 
 "theme, colors, highlights {{{
 syntax enable
-set background=dark
+if !empty($SOLARIZED_THEME)
+    set background=light
+else
+    set background=dark
+endif
 augroup VimrcColors
 au!
   autocmd ColorScheme * highlight WordsToAvoid ctermfg=DarkBlue cterm=underline
@@ -1081,6 +1087,7 @@ autocmd Syntax * call matchadd('Whitespace', '\s\+$')
 autocmd Syntax * call matchadd('Overlength', '\%81v')
 
 colorscheme solarized
+" color 0 is the dark background and 15 is the light one
 hi StatusLine ctermfg=12 ctermbg=0 cterm=NONE
 set term=screen-256color
 let g:solarized_bold=1
@@ -1141,6 +1148,16 @@ map <Leader>os :call OpenService()<cr>
 let g:slimv_impl = 'sbcl'
 "}}}
 
+" shell {{{
+fun! ShellCheckIt()
+      let file_name = expand('%')
+      let out = system('shellcheck '.file_name)
+      call ShowStringOutput(out)
+endfun
+command! -nargs=* ShellCheckIt call ShellCheckIt()
+map <Leader>sci :call ShellCheckIt()<cr>
+"}}}
+
 " writer mode {{{
 let writer_mode=$WRITER_MODE
 fun! WritingMode()
@@ -1149,17 +1166,12 @@ fun! WritingMode()
 endfun
 command! -nargs=* WritingMode call WritingMode()
 map <Leader>wm :call WritingMode()<cr>
-autocmd! User GoyoEnter Limelight
-autocmd! User GoyoLeave Limelight!
-" Color name (:help cterm-colors) or ANSI code
-let g:limelight_conceal_ctermfg = 'gray'
-let g:limelight_conceal_ctermfg = 240
+"}}}
 
-" Color name (:help gui-colors) or RGB color
-let g:limelight_conceal_guifg = 'DarkGray'
-let g:limelight_conceal_guifg = '#777777'
-
-" Highlighting priority (default: 10)
-"   Set it to -1 not to overrule hlsearch
-let g:limelight_priority = -1
+" Repl {{{
+fun! ResetRepl()
+    execute "!rm -rf /dev/shm/repl.php"
+endfun
+command! -nargs=* ResetRepl call ResetRepl()
+map <Leader>rr :call ResetRepl()<cr>
 "}}}

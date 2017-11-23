@@ -8,6 +8,10 @@ fun! ShowStringOutput(content)
     setlocal buftype=nofile
     call append(0, split(a:content, '\v\n'))
 endfun
+
+fun! NotifySend(content)
+    execute "!notify-send '".a:content."'"
+endfun
 "}}}
 
 "Plugins Load {{{
@@ -60,7 +64,6 @@ set shell=$SHELL
 set encoding=utf-8
 set showmode "If in Insert, Replace or Visual mode put a message on the last line
 set showcmd "Show (partial) command in the last line of the screen
-set hidden "hides buffers instead of closing them
 set laststatus=2 "when the last window will have a status line: 2: always
 set gdefault "When on, the :substitute flag 'g' is default on
 " Show matching brackets when text indicator is over them
@@ -193,7 +196,6 @@ command! -nargs=* Meditation call Meditation()
 "}}}
 
 "Generic mappings{{{
-nnoremap <leader>ls  :ls<cr>
 nnoremap <leader>gv  :! gvim %:p<cr>
 nnoremap <leader>; :normal!mtA;<esc>`t
 nnoremap <leader>, :normal!mtA,<esc>`t
@@ -204,6 +206,7 @@ nnoremap _ dd2kp
 nnoremap <Leader>le :noh<cr>
 nnoremap <Leader>dt :r ! date<cr>
 nnoremap <Leader>ob :only<cr>
+nnoremap <Leader>o :only<cr>
 nnoremap cwi ciw
 map <leader>i mmgg=G`m
 map <leader>x :w<','> !bash<cr>
@@ -693,7 +696,7 @@ endfunc
 "latex reference to know how to use it
 let g:vim_markdown_math = 1
 "syntax highlight for markdown
-let g:vim_markdown_fenced_languages = ['html', 'py=python', 'bash=sh', 'c', 'php', 'hs=haskell', 'elm', 'li=lisp']
+let g:vim_markdown_fenced_languages = ['html', 'py=python', 'bash=sh', 'c', 'php=PHP', 'hs=haskell', 'elm', 'li=lisp']
 fun! UnderlineHeading(level)
     if a:level == 1
         normal! I# 
@@ -899,7 +902,10 @@ nmap <leader>con :!copy %:t<cr>
 nmap <leader>cfn :!copy %:p<cr>
 "copy the current directoy
 nmap <leader>ccd :!copy %:p:h<cr>
+nmap <leader>cdn :!copy %:p:h<cr>
 nmap <leader>ccp :!copy %:p:h<cr>
+nmap <leader>cdcd :cd %:p:h<cr>
+
 fun! SaveForcing()
      execute "w !sudo tee > /dev/null %"
  endfunc
@@ -946,7 +952,10 @@ fun! GitLog()
 endfunc
 nmap <leader>gk :call GitLog()<cr>
 
+map <leader>rl :edit!<cr>
+map <leader>ed :edit!<cr>
 map <leader>ck :!git checkout %<cr>
+map <leader>gck :!git checkout %<cr>
 fun! Blame(arg)
     let current_line = line(".") + 1
     let file_name = expand('%')
@@ -1039,7 +1048,6 @@ fun! RepeatAndMove()
 endfun
 nnoremap <leader>rm :RepeatAndMove()<cr>
 command! -nargs=* RepeatAndMove call RepeatAndMove()
-
 "}}}
 
 " C lang {{{
@@ -1162,7 +1170,6 @@ map <Leader>sci :call ShellCheckIt()<cr>
 let writer_mode=$WRITER_MODE
 fun! WritingMode()
     :Goyo
-    "execute "!notify-send 'test'"
 endfun
 command! -nargs=* WritingMode call WritingMode()
 map <Leader>wm :call WritingMode()<cr>
@@ -1174,4 +1181,25 @@ fun! ResetRepl()
 endfun
 command! -nargs=* ResetRepl call ResetRepl()
 map <Leader>rr :call ResetRepl()<cr>
+"}}}
+
+" unsorted {{{
+nnoremap <leader>ls :buffers<CR>:buffer<Space>
+" Returns the directory of the first file in `argv` or `cwd` if it's empty
+"}}}
+set hidden "hides buffers instead of closing them
+
+
+" {{{
+" star search over any kind of text
+vnoremap <silent> * :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy/<C-R><C-R>=substitute(
+  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+vnoremap <silent> # :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy?<C-R><C-R>=substitute(
+  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
 "}}}

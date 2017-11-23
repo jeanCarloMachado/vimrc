@@ -117,3 +117,5 @@ Abolish hes he's
 Abolish cleint client
 Abolish sevice service
 Abolish Modle Model
+Abolish retunr return
+Abolish lsit list

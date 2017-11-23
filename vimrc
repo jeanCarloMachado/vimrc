@@ -40,7 +40,6 @@ Plug 'junegunn/goyo.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'wakatime/vim-wakatime'
 Plug 'lervag/vimtex', { 'for': ['latex'] }
-Plug 'kovisoft/slimv', { 'for': ['lisp'] }
 Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
 Plug 'fatih/vim-go', { 'for': ['go'] }
 Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
@@ -228,10 +227,9 @@ cnoremap <C-n> <Down>
 " use %% to expand to the current buffer directory
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 nnoremap <leader>cf :!filefy-clippboard<cr>
-" Default fzf layout
 map <c-p> :FZF<cr>
 "}}}
-"
+
 "reload vim{{{
 if !exists('*ReloadVim')
 fun! ReloadVim()
@@ -1152,9 +1150,6 @@ endfunc
 map <Leader>os :call OpenService()<cr>
 "}}}
 
-" lisp {{{
-let g:slimv_impl = 'sbcl'
-"}}}
 
 " shell {{{
 fun! ShellCheckIt()
@@ -1183,15 +1178,30 @@ command! -nargs=* ResetRepl call ResetRepl()
 map <Leader>rr :call ResetRepl()<cr>
 "}}}
 
-" unsorted {{{
-nnoremap <leader>ls :buffers<CR>:buffer<Space>
-" Returns the directory of the first file in `argv` or `cwd` if it's empty
+" listing buffers and enteing them {{{
+" nnoremap <leader>ls :buffers<CR>:buffer<Space>
+function! s:listBuffer()
+    :redir @a
+        :ls
+    :redir END
+    return split(@a, '\n')
+endfun
+function! s:bufferLineHandler(l)
+  let keys = split(a:l, ' ')
+  exec 'buf' keys[0]
+endfunction
+
+command! ZFZBuffers call fzf#run({
+\   'source':  <sid>listBuffer(),
+\   'sink':    function('<sid>bufferLineHandler'),
+\   'options': '--extended --nth=..3',
+\   'down':    '60%'
+\})
+map <Leader>ls :ZFZBuffers<cr>
 "}}}
-set hidden "hides buffers instead of closing them
 
 
-" {{{
-" star search over any kind of text
+" star search over any kind of text {{{
 vnoremap <silent> * :<C-U>
   \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
   \gvy/<C-R><C-R>=substitute(
@@ -1203,3 +1213,30 @@ vnoremap <silent> # :<C-U>
   \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
   \gV:call setreg('"', old_reg, old_regtype)<CR>
 "}}}
+"
+
+"search on open files lines {{{
+function! s:buffer_lines()
+  let res = []
+  for b in filter(range(1, bufnr('$')), 'buflisted(v:val)')
+    call extend(res, map(getbufline(b,0,"$"), 'b . ":\t" . (v:key + 1) . ":\t" . v:val '))
+  endfor
+  return res
+endfunction
+
+function! s:searchLineHandler(l)
+  let keys = split(a:l, ':\t')
+  exec 'buf' keys[0]
+  exec keys[1]
+  normal! ^zz
+endfunction
+
+command! FZFLines call fzf#run({
+\   'source':  <sid>buffer_lines(),
+\   'sink':    function('<sid>searchLineHandler'),
+\   'options': '--extended --nth=3..',
+\   'down':    '60%'
+\})
+map <Leader>sfl :FZFLines<cr>
+"}}}
+set hidden "hides buffers instead of closing them

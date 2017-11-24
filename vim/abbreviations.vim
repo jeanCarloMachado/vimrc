@@ -72,7 +72,6 @@ Abolish maek make
 Abolish mozilla Mozilla
 Abolish neeed need
 Abolish nwe new
-Abolish offline off-line
 Abolish ones one's
 Abolish opengl OpenGL
 Abolish paly play

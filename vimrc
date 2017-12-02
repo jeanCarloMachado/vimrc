@@ -34,7 +34,6 @@ Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-surround'
 "shows a git diff in the gutter (sign column) and stages/undoes hunks.
 Plug 'airblade/vim-gitgutter'
-Plug 'Valloric/YouCompleteMe'
 Plug 'tpope/vim-commentary'
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -49,7 +48,7 @@ call plug#end()
 "}}}
 
 "generic configs{{{
-let g:pipe2eval_map_key = '<Leader>e'
+let g:pipe2eval_map_key = '<Leader>ev'
 set nocompatible
 let mapleader = "\<space>"
 runtime macros/matchit.vim "Enable extended % matching
@@ -170,6 +169,7 @@ fun! Glossary()
     :e $WIKI_PATH/glossary.md
 endfun
 command! -nargs=* Glossary call Glossary()
+map <Leader>go :call Glossary()<cr>
 
 fun! Remember()
     :e /home/jean/.remember
@@ -281,6 +281,8 @@ autocmd filetype php set tabstop=4
 autocmd filetype php set shiftwidth=4
 autocmd filetype javascript set tabstop=2
 autocmd filetype javascript set shiftwidth=2
+autocmd filetype html set tabstop=2
+autocmd filetype html set shiftwidth=2
 "}}}
 
 "custom text objects{{{
@@ -677,8 +679,6 @@ call MapAction('XmlBeautifier', '<leader>xb')
 "}}}
 
 "Markdown{{{
-" au BufEnter *.md setlocal foldexpr=MarkdownLevel()
-" au BufEnter *.md setlocal foldmethod=expr
 
 let g:vim_markdown_no_extensions_in_markdown = 1
 autocmd Filetype markdown call MarkdownDefaultConfigs()
@@ -1036,7 +1036,9 @@ autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
 :set guioptions-=T  "remove toolbar
 :set guioptions-=r  "remove right-hand scroll bar
 :set guioptions-=L  "remove left-hand scroll bar
-:set guifont=DejaVu\ Sans\ Mono\ 14
+if has('gui_running')
+  set guifont=DejaVu\ Sans\ Mono\ Book\ 13
+endif
 " }}}
 
 " macros {{{
@@ -1150,7 +1152,6 @@ endfunc
 map <Leader>os :call OpenService()<cr>
 "}}}
 
-
 " shell {{{
 fun! ShellCheckIt()
       let file_name = expand('%')
@@ -1213,7 +1214,6 @@ vnoremap <silent> # :<C-U>
   \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
   \gV:call setreg('"', old_reg, old_regtype)<CR>
 "}}}
-"
 
 "search on open files lines {{{
 function! s:buffer_lines()
@@ -1240,3 +1240,5 @@ command! FZFLines call fzf#run({
 map <Leader>sfl :FZFLines<cr>
 "}}}
 set hidden "hides buffers instead of closing them
+
+au BufRead,BufNewFile *.jar,*.war,*.ear,*.sar,*.rar set filetype=zip

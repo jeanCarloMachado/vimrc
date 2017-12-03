@@ -171,6 +171,12 @@ endfun
 command! -nargs=* Glossary call Glossary()
 map <Leader>go :call Glossary()<cr>
 
+fun! Sql()
+    :e /home/jean/.sql
+endfun
+command! -nargs=* Sql call Sql()
+nnoremap <leader>sql  :call Sql()<cr>
+
 fun! Remember()
     :e /home/jean/.remember
 endfun

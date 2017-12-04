@@ -778,12 +778,16 @@ call MapAction('MarkdownToHtml', '<leader>mh')
 "}}}
 
 "diary{{{
-nnoremap <Leader>di :Today<cr>
-nnoremap <Leader>to :Today<cr>
 fun! Diary( arg )
     let out = system('run_function diary_file "' . a:arg . '"')
     execute "edit " . out
 endfunc
+command! -nargs=* Today call Diary( 'today' )
+command! -nargs=* Someday call Diary( 'someday' )
+command! -nargs=* Diary call Diary( '<args>' )
+command! -nargs=* Diary call Diary( '<args>' )
+nnoremap <Leader>di :Today<cr>
+nnoremap <Leader>to :Today<cr>
 
 command! -nargs=* Tomorrow call Diary( 'tomorrow' )
 command! -nargs=* Yesterday call Diary( 'yesterday' )

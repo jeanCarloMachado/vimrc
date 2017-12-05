@@ -182,6 +182,11 @@ fun! Remember()
 endfun
 command! -nargs=* Remember call Remember()
 
+fun! Translations()
+    :e /home/jean/Dropbox/wiki/src/translate_hist.md
+endfun
+command! -nargs=* Translations call Translations()
+
 fun! Functions()
     :e /home/jean/projects/dotfiles/functions.sh
 endfun
@@ -1249,6 +1254,8 @@ command! FZFLines call fzf#run({
 \})
 map <Leader>sfl :FZFLines<cr>
 "}}}
+
 set hidden "hides buffers instead of closing them
 
 au BufRead,BufNewFile *.jar,*.war,*.ear,*.sar,*.rar set filetype=zip
+

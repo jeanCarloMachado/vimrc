@@ -1256,6 +1256,5 @@ map <Leader>sfl :FZFLines<cr>
 "}}}
 
 set hidden "hides buffers instead of closing them
-
 au BufRead,BufNewFile *.jar,*.war,*.ear,*.sar,*.rar set filetype=zip
 

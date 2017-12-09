@@ -21,6 +21,7 @@ call plug#begin()
 "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
 Plug 'altercation/vim-colors-solarized'
 Plug 'christoomey/vim-tmux-navigator'
+Plug 'benmills/vimux'
 Plug 'vim-utils/vim-man' "view manuals inside vim
 Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
 Plug 'kana/vim-textobj-function' "text object for a function: enables af and if
@@ -30,6 +31,8 @@ Plug 'vim-scripts/argtextobj.vim'
 Plug 'dyng/ctrlsf.vim' "grep like sublime one
 "search for, substitute, and abbreviate multiple variants of a word
 Plug 'tpope/vim-abolish'
+"expand html tags
+Plug 'mattn/emmet-vim', { 'for': ['html'] }
 "quoting/parenthesizing
 Plug 'tpope/vim-surround'
 "shows a git diff in the gutter (sign column) and stages/undoes hunks.
@@ -48,6 +51,7 @@ call plug#end()
 "}}}
 
 "generic configs{{{
+let g:user_emmet_leader_key='<C-E>'
 let g:pipe2eval_map_key = '<Leader>ev'
 set nocompatible
 let mapleader = "\<space>"
@@ -993,6 +997,7 @@ command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
 "}}}
 
 "PHP{{{
+map <Leader>rat :call VimuxRunCommand("clear; \$CLIPP_PATH/Backend ; cpf-phpunit.sh ")<CR>
 fun! s:JsonEncode(str)
   let out = system('json_encode_from_php', a:str)
   return out
@@ -1035,10 +1040,7 @@ fun! RunPHPUnitTest(filter)
         normal! `A
     endif
 
-    let result = system(test_command)
-    let output = test_command  . "\n\n" . result
-
-    call ShowStringOutput(output)
+    call VimuxRunCommand("clear; ".test_command)<CR>
     cd -
 endfun
 nnoremap <leader>u :call RunPHPUnitTest(0)<cr>

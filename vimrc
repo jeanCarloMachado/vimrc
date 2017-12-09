@@ -21,7 +21,7 @@ call plug#begin()
 "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
 Plug 'altercation/vim-colors-solarized'
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'benmills/vimux'
+Plug 'benmills/vimux' "open a terminal to output some commands
 Plug 'vim-utils/vim-man' "view manuals inside vim
 Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
 Plug 'kana/vim-textobj-function' "text object for a function: enables af and if
@@ -1016,12 +1016,19 @@ fun! s:JsonToPhp(str)
 endfun
 call MapAction('JsonToPhp', '<leader>jp')
 
+fun! GitProjectRoot()
+  let out = Chomp(system('git rev-parse --show-toplevel'))
+  return out
+endfun
+
 command Phpcsfixer : ! php-code-check `pwd`/%
     \ || print "Error on code check" && sleep 10
 
 fun! RunPHPUnitTest(filter)
+
+    let root = GitProjectRoot()
     cd %:p:h
-    let test_command = "phpunit -c ". $CLIPP_PATH . "/Backend/phpunit.xml.dist " . expand("%:p")
+    let test_command = 'cd "'.root.'" && phpunit  ' . expand('%:p'). ' '
 
     if a:filter
         normal! T yw
@@ -1031,7 +1038,7 @@ fun! RunPHPUnitTest(filter)
 
         normal! `T
         normal! T yw
-        let test_command="phpunit -c ". $CLIPP_PATH ."/Backend/phpunit.xml.dist " . expand("%:p") . " --filter " . @" . " "
+        let test_command = 'cd "'.root.'" && phpunit  --filter '.@".' '
     else
         let @n = expand('%:t')
         if @n =~ "Test"
@@ -1040,11 +1047,11 @@ fun! RunPHPUnitTest(filter)
         normal! `A
     endif
 
-    call VimuxRunCommand("clear; ".test_command)<CR>
+    silent call VimuxRunCommand("clear; ".test_command)<CR>
     cd -
 endfun
-nnoremap <leader>u :call RunPHPUnitTest(0)<cr>
-nnoremap <leader>f :call RunPHPUnitTest(1)<cr>
+nnoremap <leader>u :silent call RunPHPUnitTest(0)<cr>
+nnoremap <leader>f :silent call RunPHPUnitTest(1)<cr>
 autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
 "}}}
 
@@ -1260,3 +1267,4 @@ map <Leader>sfl :FZFLines<cr>
 set hidden "hides buffers instead of closing them
 au BufRead,BufNewFile *.jar,*.war,*.ear,*.sar,*.rar set filetype=zip
 
+let g:VimuxHeight = "40"

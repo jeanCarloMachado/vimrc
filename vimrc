@@ -867,7 +867,7 @@ endfunc
 
 fun! OpenFile()
     let line = GetLine()
-    if ( line =~ "http" )
+    if ( line =~ "^http" )
         let url = GetUrl()
         :call OpenUrl(url)
     endif

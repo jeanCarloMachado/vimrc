@@ -544,6 +544,12 @@ fun! s:Translate(str)
   endfun
 call MapAction('Translate', '<leader>ti')
 
+fun! s:TranslateGerman(str)
+      let out = system('run_function translateGerman ', a:str)
+      return out
+  endfun
+call MapAction('TranslateGerman', '<leader>tg')
+
 fun! s:MakeNumberedList(str)
       let out = system('echo "'.a:str.'" | nl -s". " -w1')
       return out
@@ -870,6 +876,11 @@ fun! OpenFile()
     if ( line =~ "^http" )
         let url = GetUrl()
         :call OpenUrl(url)
+        return
+    elseif ( line =~ ".png" )
+        let url = GetUrl()
+        execute "!run_alias image ".url. " & "
+        return
     endif
 
     if ( line != "\n" )

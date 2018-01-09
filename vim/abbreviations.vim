@@ -29,7 +29,6 @@ Abolish celar clear
 Abolish childrens children's
 Abolish coderockr Coderockr
 Abolish contemporaneos contemporâneos
-Abolish dei die
 Abolish didnt didn't
 Abolish doctr doctrine
 Abolish doesnt doesn't

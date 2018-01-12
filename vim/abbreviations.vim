@@ -2,6 +2,7 @@ Abolish 4this $this
 Abolish COnfiguration Configuration
 Abolish Cleint Client
 Abolish Datetime DateTime
+Abolish dei die
 Abolish THe The
 Abolish THe The
 Abolish TYpe Type

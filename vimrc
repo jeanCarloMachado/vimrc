@@ -38,7 +38,7 @@ Plug 'tpope/vim-surround'
 "shows a git diff in the gutter (sign column) and stages/undoes hunks.
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-commentary'
-Plug 'junegunn/goyo.vim'
+Plug 'junegunn/goyo.vim' "Distraction-free writing in Vim.
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'wakatime/vim-wakatime'
 Plug 'lervag/vimtex', { 'for': ['latex'] }
@@ -214,7 +214,6 @@ nnoremap <leader>gv  :! gvim %:p<cr>
 nnoremap <leader>; :normal!mtA;<esc>`t
 nnoremap <leader>, :normal!mtA,<esc>`t
 nnoremap <BS> :Rex<cr>
-nnoremap <leader>fi :CtrlSF 
 nnoremap + ddp
 nnoremap _ dd2kp
 nnoremap <Leader>le :noh<cr>
@@ -1032,14 +1031,21 @@ fun! GitProjectRoot()
   return out
 endfun
 
+function SessionDirectory() abort
+  if len(argv()) > 0
+    return fnamemodify(argv()[0], ':p:h')
+  endif
+  return getcwd()
+endfunction!
+
 command Phpcsfixer : ! php-code-check `pwd`/%
     \ || print "Error on code check" && sleep 10
 
 fun! RunPHPUnitTest(filter)
 
-    let root = GitProjectRoot()
+    let root = SessionDirectory()
     cd %:p:h
-    let test_command = 'cd "'.root.'" && phpunit  ' . expand('%:p'). ' '
+    let test_command = 'cd "'.root.'" ; ./vendor/bin/phpunit ' . expand('%:p'). ' '
 
     if a:filter
         normal! T yw
@@ -1230,12 +1236,11 @@ endfunction
 command! ZFZBuffers call fzf#run({
 \   'source':  <sid>listBuffer(),
 \   'sink':    function('<sid>bufferLineHandler'),
-\   'options': '--extended --nth=..3',
+\   'options': '--extended --nth=..3  --height 40%',
 \   'down':    '60%'
 \})
 map <Leader>ls :ZFZBuffers<cr>
 "}}}
-
 
 " star search over any kind of text {{{
 vnoremap <silent> * :<C-U>
@@ -1249,6 +1254,20 @@ vnoremap <silent> # :<C-U>
   \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
   \gV:call setreg('"', old_reg, old_regtype)<CR>
 "}}}
+
+" search{{{
+
+nnoremap <leader>fi :CtrlSF 
+nnoremap <leader>fw :call FindStringWiki()<cr>
+
+function! FindStringWiki()
+  let curline = getline('.')
+  call inputsave()
+  let name = input('Find on wiki: ')
+  call inputrestore()
+  execute ":CtrlSF ".name." ".$WIKI_PATH
+endfunction
+
 
 "search on open files lines {{{
 function! s:buffer_lines()
@@ -1273,6 +1292,7 @@ command! FZFLines call fzf#run({
 \   'down':    '60%'
 \})
 map <Leader>sfl :FZFLines<cr>
+"}}}
 "}}}
 
 set hidden "hides buffers instead of closing them

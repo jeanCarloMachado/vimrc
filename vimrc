@@ -8,7 +8,6 @@ fun! ShowStringOutput(content)
     setlocal buftype=nofile
     call append(0, split(a:content, '\v\n'))
 endfun
-
 fun! NotifySend(content)
     execute "!notify-send '".a:content."'"
 endfun
@@ -20,6 +19,7 @@ filetype plugin on "loading the plugin files for specific file types
 call plug#begin()
 "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
 Plug 'altercation/vim-colors-solarized'
+Plug 'w0rp/ale' "async  linters
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'benmills/vimux' "open a terminal to output some commands
 Plug 'vim-utils/vim-man' "view manuals inside vim
@@ -29,6 +29,7 @@ Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim' "gist support
 Plug 'michaeljsmith/vim-indent-object' "same identation text object
 Plug 'vim-scripts/argtextobj.vim'
 Plug 'dyng/ctrlsf.vim' "grep like sublime one
+Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
 "search for, substitute, and abbreviate multiple variants of a word
 Plug 'tpope/vim-abolish'
 "expand html tags
@@ -47,6 +48,7 @@ Plug 'fatih/vim-go', { 'for': ['go'] }
 Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
 Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
+Plug 'kovisoft/slimv', { 'for': ['common-lisp', 'lisp'] }
 call plug#end()
 "}}}
 
@@ -83,6 +85,13 @@ set clipboard=unnamedplus
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
 "}}}
 
+
+"linter config {{{
+let g:airline#extensions#ale#enabled = 1
+let g:ale_set_highlights = 0
+let g:ale_php_phpcs_standard = $CLIPP_PATH."/Backend/ruleset.xml"
+"}}}
+
 " visual mode {{{
 "Allow using the repeat operator with a visual selection
 vnoremap . :normal .<CR>
@@ -96,10 +105,10 @@ set smartcase "Override the 'ignorecase' option if the search pattern contains u
 "}}}
 
 " autocomplete {{{
-set wildmenu
-inoremap <S-Tab> <C-X><C-F>
-set wildmode=longest,list
-set completeopt=longest,menuone,preview
+" inoremap <S-Tab> <C-X><C-F>
+" set wildmenu
+" set wildmode=longest,list
+" set completeopt=longest,menuone,preview
 "}}}
 
 "Fold {{{
@@ -148,14 +157,6 @@ autocmd filetype txt set spell spelllang=en_us
 autocmd filetype markdown set spell spelllang=en_us
 "}}}
 
-"Generic functions{{{
-fun! ShowStringOutput(content)
-    split _output_
-    normal! ggdG
-    setlocal buftype=nofile
-    call append(0, split(a:content, '\v\n'))
-endfun
-"}}}
 
 "Open files quickly {{{
 fun! LatestPost()
@@ -1045,7 +1046,9 @@ fun! RunPHPUnitTest(filter)
 
     let root = SessionDirectory()
     cd %:p:h
-    let test_command = 'cd "'.root.'" ; ./vendor/bin/phpunit ' . expand('%:p'). ' '
+    let phpunitFile = system('find "'.root.'" -maxdepth 2 -name "phpunit.xml*" | head -n1 | tr -d "\n"')
+    let dirName = system('realpath $(dirname '.phpunitFile.') | tr -d "\n"')
+    let test_command = 'cd "'.dirName.'" ; ./vendor/bin/phpunit ' . expand('%:p'). ' '
 
     if a:filter
         normal! T yw
@@ -1073,7 +1076,7 @@ autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
 "}}}
 
 " gvim {{{
-:set guioptions-=m  "remove menu bar
+:set guioptions+=m  "remove menu bar
 :set guioptions-=T  "remove toolbar
 :set guioptions-=r  "remove right-hand scroll bar
 :set guioptions-=L  "remove left-hand scroll bar
@@ -1101,19 +1104,10 @@ endfun
 autocmd filetype c call CFiletypeConfigs()
 "}}}
 
-"statusline{{{
-set statusline=
-set statusline +=\ %n\             "buffer number
-set statusline +=\ %<%F            "full path
-set statusline +=%m                "modified flag
-set statusline +=%=%5l             "current line
-set statusline +=/%L               "total lines
-set statusline +=%4v\              "virtual column number
-set statusline +=U%04B\           "character under cursor
-"}}}
 
 "theme, colors, highlights {{{
 syntax enable
+let g:airline_theme='solarized'
 if !empty($SOLARIZED_THEME)
     set background=light
 else
@@ -1256,7 +1250,6 @@ vnoremap <silent> # :<C-U>
 "}}}
 
 " search{{{
-
 nnoremap <leader>fi :CtrlSF 
 nnoremap <leader>fw :call FindStringWiki()<cr>
 
@@ -1267,7 +1260,6 @@ function! FindStringWiki()
   call inputrestore()
   execute ":CtrlSF ".name." ".$WIKI_PATH
 endfunction
-
 
 "search on open files lines {{{
 function! s:buffer_lines()
@@ -1293,6 +1285,7 @@ command! FZFLines call fzf#run({
 \})
 map <Leader>sfl :FZFLines<cr>
 "}}}
+
 "}}}
 
 set hidden "hides buffers instead of closing them

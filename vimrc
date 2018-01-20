@@ -1,6 +1,8 @@
 "It's a good practise to use folding to hide details of
 "Its better to organize the configs by semantic. Better to put wiki
 "mappings on the wiki section then on the mappings section
+
+
 "Generic functions{{{
 fun! ShowStringOutput(content)
     split _output_
@@ -8,6 +10,7 @@ fun! ShowStringOutput(content)
     setlocal buftype=nofile
     call append(0, split(a:content, '\v\n'))
 endfun
+
 fun! NotifySend(content)
     execute "!notify-send '".a:content."'"
 endfun
@@ -49,6 +52,7 @@ Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
 Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'kovisoft/slimv', { 'for': ['common-lisp', 'lisp'] }
+Plug 'maralla/completor.vim' "async autocomplete
 call plug#end()
 "}}}
 
@@ -109,6 +113,10 @@ set smartcase "Override the 'ignorecase' option if the search pattern contains u
 " set wildmenu
 " set wildmode=longest,list
 " set completeopt=longest,menuone,preview
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
+
 "}}}
 
 "Fold {{{
@@ -481,7 +489,13 @@ fun! s:OnlyTextSelection(str)
   set noreadonly
   call append(0, split(Chomp(a:str), '\v\n'))
 endfun
-call MapAction('OnlyTextSelection','<leader>ts')
+call MapAction('OnlyTextSelection','<leader>otx')
+
+fun! s:ToSingleQuote(str)
+      let out = system("tr '\"' \"'\"", a:str)
+    return out
+endfun
+call MapAction('ToSingleQuote','<leader>ts')
 
 fun! s:ComputeMD5(str)
   let out = system('md5sum |cut -b 1-32', a:str)
@@ -1043,12 +1057,11 @@ command Phpcsfixer : ! php-code-check `pwd`/%
     \ || print "Error on code check" && sleep 10
 
 fun! RunPHPUnitTest(filter)
-
     let root = SessionDirectory()
     cd %:p:h
     let phpunitFile = system('find "'.root.'" -maxdepth 2 -name "phpunit.xml*" | head -n1 | tr -d "\n"')
     let dirName = system('realpath $(dirname '.phpunitFile.') | tr -d "\n"')
-    let test_command = 'cd "'.dirName.'" ; ./vendor/bin/phpunit ' . expand('%:p'). ' '
+    let test_command = 'cd "'.dirName.'" ; ./vendor/bin/phpunit ' . expand('%:p'). ' --color=always | less -r'
 
     if a:filter
         normal! T yw
@@ -1058,7 +1071,7 @@ fun! RunPHPUnitTest(filter)
 
         normal! `T
         normal! T yw
-        let test_command = 'cd "'.root.'" && phpunit  --filter '.@".' '
+        let test_command = 'cd "'.dirName.'" ; ./vendor/bin/phpunit --filter '.@".' --color=always | less -r'
     else
         let @n = expand('%:t')
         if @n =~ "Test"
@@ -1285,10 +1298,9 @@ command! FZFLines call fzf#run({
 \})
 map <Leader>sfl :FZFLines<cr>
 "}}}
-
 "}}}
 
 set hidden "hides buffers instead of closing them
 au BufRead,BufNewFile *.jar,*.war,*.ear,*.sar,*.rar set filetype=zip
 
-let g:VimuxHeight = "40"
+let g:VimuxHeight = "20"

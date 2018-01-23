@@ -2,7 +2,6 @@
 "Its better to organize the configs by semantic. Better to put wiki
 "mappings on the wiki section then on the mappings section
 
-
 "Generic functions{{{
 fun! ShowStringOutput(content)
     split _output_
@@ -871,12 +870,12 @@ nnoremap <Leader>wc :WikiCompufacil<cr>
 nnoremap <Leader>cw :WikiCompufacil<cr>
 
 fun! GetUrl()
-    normal! $F(vi(y
-    return @"
+    normal! $F(vi("cy
+    return @c
 endfunc
 fun! GetLine()
-    normal! yy
-    return @"
+    normal! "cyy
+    return @c
 endfunc
 
 fun! OpenMarkdown()

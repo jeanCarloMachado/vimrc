@@ -563,6 +563,12 @@ fun! s:TranslateGerman(str)
   endfun
 call MapAction('TranslateGerman', '<leader>tg')
 
+fun! s:EnglishToGerman(str)
+      let out = system('translate en de', a:str)
+      return out
+  endfun
+call MapAction('EnglishToGerman', '<leader>eg')
+
 fun! s:MakeNumberedList(str)
       let out = system('echo "'.a:str.'" | nl -s". " -w1')
       return out
@@ -853,21 +859,14 @@ map <c-i> :FZF $WIKI_PATH<cr>
 let g:vim_markdown_no_default_key_mappings = 1
 fun! Wiki(arg)
     let wiki_path = $WIKI_PATH
-    if a:arg == 'compufacil'
-        let wiki_path = "/home/jean/projects/compufacil/Docs/src"
-    endif
     "sets the current directory of the window localy to enable file searches
     execute "lcd " . wiki_path
     execute "edit " . wiki_path . "/index.md"
 endfunc
 command! -nargs=* Wiki call Wiki( '<args>' )
-command! -nargs=* WikiCompufacil call Wiki( 'compufacil' )
-command! -nargs=* CompufacilWiki call Wiki( 'compufacil' )
 command! -nargs=* Quote :e $WIKI_PATH/quotes.md
 
 nnoremap <Leader>ww :Wiki<cr>
-nnoremap <Leader>wc :WikiCompufacil<cr>
-nnoremap <Leader>cw :WikiCompufacil<cr>
 
 fun! GetUrl()
     normal! $F(vi("cy
@@ -1170,34 +1169,6 @@ function! ToggleWindowHorizontalVerticalSplit()
 endfun
 nnoremap <silent> <leader>wt :call ToggleWindowHorizontalVerticalSplit()<cr>
 " }}}
-
-"compufacil settings {{{
-fun! OpenTest()
-  let original_file = fnamemodify(expand("%"), ":~:.")
-
-  "mark position as service
-  normal! mS
-  let out = system('echo "'.original_file.'" | run_function testFromService')
-  execute 'edit '.out
-
-  "mark position as test
-  normal! mT
-endfunc
-map <Leader>ot :call OpenTest()<cr>
-
-fun! OpenService()
-  let original_file = expand('%')
-
-  "mark position as service
-  normal! mS
-  let out = system('echo "'.original_file.'" | run_function serviceFromTest')
-  execute 'edit '.out
-
-  "mark position as service
-  normal! mT
-endfunc
-map <Leader>os :call OpenService()<cr>
-"}}}
 
 " shell {{{
 fun! ShellCheckIt()

@@ -16,7 +16,7 @@ setlocal keymap=
 setlocal noarabic
 setlocal autoindent
 setlocal backupcopy=
-setlocal balloonexpr=
+setlocal balloonexpr=netrw#BalloonHelp()
 setlocal nobinary
 setlocal nobreakindent
 setlocal breakindentopt=
@@ -33,7 +33,7 @@ setlocal commentstring=--\ %s
 setlocal complete=.,w,b,u,t,i
 setlocal concealcursor=
 setlocal conceallevel=2
-setlocal completefunc=completor#action#completefunc
+setlocal completefunc=
 setlocal copyindent
 setlocal cryptmethod=
 setlocal nocursorbind
@@ -104,7 +104,7 @@ setlocal nospell
 setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
 setlocal spellfile=
 setlocal spelllang=en
-setlocal statusline=%!airline#statusline(3)
+setlocal statusline=%!airline#statusline(2)
 setlocal suffixesadd=.elm
 setlocal swapfile
 setlocal synmaxcol=3000
@@ -124,13 +124,13 @@ setlocal nowinfixheight
 setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
-let s:l = 25 - ((11 * winheight(0) + 9) / 18)
+let s:l = 10 - ((9 * winheight(0) + 18) / 37)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-25
-normal! 09|
-lcd ~/projects/whatnext/src/web
+10
+normal! 0
+lcd ~/projects/whatnext
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost
 " vim: set ft=vim :

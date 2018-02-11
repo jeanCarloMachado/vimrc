@@ -95,7 +95,7 @@ setlocal norelativenumber
 setlocal norightleft
 setlocal rightleftcmd=search
 setlocal noscrollbind
-setlocal shiftwidth=4
+setlocal shiftwidth=2
 setlocal noshortname
 setlocal signcolumn=auto
 setlocal nosmartindent
@@ -103,7 +103,7 @@ setlocal softtabstop=0
 setlocal nospell
 setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
 setlocal spellfile=
-setlocal spelllang=en
+setlocal spelllang=en_us
 setlocal statusline=%!airline#statusline(1)
 setlocal suffixesadd=.elm
 setlocal swapfile
@@ -111,12 +111,12 @@ setlocal synmaxcol=3000
 if &syntax != 'elm'
 setlocal syntax=elm
 endif
-setlocal tabstop=4
+setlocal tabstop=2
 setlocal tagcase=
 setlocal tags=
 setlocal termkey=
 setlocal termsize=
-setlocal textwidth=0
+setlocal textwidth=80
 setlocal thesaurus=
 setlocal undofile
 setlocal undolevels=-123456
@@ -124,12 +124,12 @@ setlocal nowinfixheight
 setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
-let s:l = 11 - ((10 * winheight(0) + 18) / 37)
+let s:l = 26 - ((7 * winheight(0) + 18) / 37)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-11
-normal! 036|
+26
+normal! 0
 lcd ~/projects/whatnext
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost

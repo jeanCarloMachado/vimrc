@@ -16,7 +16,7 @@ setlocal keymap=
 setlocal noarabic
 setlocal autoindent
 setlocal backupcopy=
-setlocal balloonexpr=netrw#BalloonHelp()
+setlocal balloonexpr=
 setlocal nobinary
 setlocal nobreakindent
 setlocal breakindentopt=
@@ -124,13 +124,12 @@ setlocal nowinfixheight
 setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
-let s:l = 276 - ((16 * winheight(0) + 9) / 18)
+let s:l = 128 - ((14 * winheight(0) + 18) / 37)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-276
-normal! 021|
-lcd ~/projects/whatnext/src/web
+128
+normal! 0
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost
 " vim: set ft=vim :

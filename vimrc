@@ -86,6 +86,7 @@ set formatprg=par "The name of an external program that will be used to format t
 setlocal linebreak "wrap long lines at a character in 'breakat'
 set clipboard=unnamedplus
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
+set wildignore+=*\\dist\\**
 "}}}
 
 
@@ -108,14 +109,9 @@ set smartcase "Override the 'ignorecase' option if the search pattern contains u
 "}}}
 
 " autocomplete {{{
-" inoremap <S-Tab> <C-X><C-F>
-" set wildmenu
-" set wildmode=longest,list
-" set completeopt=longest,menuone,preview
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 inoremap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
-
 "}}}
 
 "Fold {{{
@@ -226,6 +222,7 @@ nnoremap + ddp
 nnoremap _ dd2kp
 nnoremap <Leader>le :noh<cr>
 nnoremap <Leader>dt :r ! date<cr>
+nnoremap <Leader>dc :ElmShowDocs<cr>
 nnoremap <Leader>ob :only<cr>
 nnoremap <Leader>o :only<cr>
 nnoremap cwi ciw
@@ -735,6 +732,7 @@ endfunc
 let g:vim_markdown_math = 1
 "syntax highlight for markdown
 let g:vim_markdown_fenced_languages = ['html', 'py=python', 'bash=sh', 'c', 'php=PHP', 'hs=haskell', 'elm', 'li=lisp']
+
 fun! UnderlineHeading(level)
     if a:level == 1
         normal! I# 
@@ -933,7 +931,7 @@ autocmd BufNewFile */posts/*.md 0r $TEMPLATES_DIR/post.md
 
 " generic actions relative to current file{{{
 nmap <leader>xo :!xdg-open % &<cr>
-nmap <leader>od :!run_alias file_manager %:h<cr>
+nmap <leader>od :!runFunction fileManager %:h<cr>
 "copy path name
 nmap <leader>cpn :!copy %:p<cr>
 "copy only name
@@ -1039,11 +1037,6 @@ fun! s:JsonToPhp(str)
 endfun
 call MapAction('JsonToPhp', '<leader>jp')
 
-fun! GitProjectRoot()
-  let out = Chomp(system('git rev-parse --show-toplevel'))
-  return out
-endfun
-
 function SessionDirectory() abort
   if len(argv()) > 0
     return fnamemodify(argv()[0], ':p:h')
@@ -1094,7 +1087,7 @@ autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
 if has('gui_running')
   set guifont=DejaVu\ Sans\ Mono\ Book\ 13
 endif
-" }}}
+"}}}
 
 " macros {{{
 fun! RepeatAndMove()
@@ -1124,6 +1117,7 @@ if !empty($SOLARIZED_THEME)
 else
     set background=dark
 endif
+
 augroup VimrcColors
 au!
   autocmd ColorScheme * highlight WordsToAvoid ctermfg=DarkBlue cterm=underline
@@ -1168,17 +1162,8 @@ function! ToggleWindowHorizontalVerticalSplit()
   endif
 endfun
 nnoremap <silent> <leader>wt :call ToggleWindowHorizontalVerticalSplit()<cr>
-" }}}
-
-" shell {{{
-fun! ShellCheckIt()
-      let file_name = expand('%')
-      let out = system('shellcheck '.file_name)
-      call ShowStringOutput(out)
-endfun
-command! -nargs=* ShellCheckIt call ShellCheckIt()
-map <Leader>sci :call ShellCheckIt()<cr>
 "}}}
+
 
 " writer mode {{{
 let writer_mode=$WRITER_MODE
@@ -1198,7 +1183,6 @@ map <Leader>rr :call ResetRepl()<cr>
 "}}}
 
 " listing buffers and enteing them {{{
-" nnoremap <leader>ls :buffers<CR>:buffer<Space>
 function! s:listBuffer()
     :redir @a
         :ls
@@ -1232,7 +1216,7 @@ vnoremap <silent> # :<C-U>
   \gV:call setreg('"', old_reg, old_regtype)<CR>
 "}}}
 
-" search{{{
+" search {{{
 nnoremap <leader>fi :CtrlSF 
 nnoremap <leader>fw :call FindStringWiki()<cr>
 
@@ -1268,6 +1252,7 @@ command! FZFLines call fzf#run({
 \})
 map <Leader>sfl :FZFLines<cr>
 "}}}
+
 "}}}
 
 set hidden "hides buffers instead of closing them

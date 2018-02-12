@@ -33,7 +33,7 @@ setlocal commentstring=--\ %s
 setlocal complete=.,w,b,u,t,i
 setlocal concealcursor=
 setlocal conceallevel=2
-setlocal completefunc=
+setlocal completefunc=completor#action#completefunc
 setlocal copyindent
 setlocal cryptmethod=
 setlocal nocursorbind
@@ -103,8 +103,8 @@ setlocal softtabstop=0
 setlocal nospell
 setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
 setlocal spellfile=
-setlocal spelllang=en_us
-setlocal statusline=%!airline#statusline(1)
+setlocal spelllang=en
+setlocal statusline=%!airline#statusline(2)
 setlocal suffixesadd=.elm
 setlocal swapfile
 setlocal synmaxcol=3000
@@ -116,7 +116,7 @@ setlocal tagcase=
 setlocal tags=
 setlocal termkey=
 setlocal termsize=
-setlocal textwidth=80
+setlocal textwidth=0
 setlocal thesaurus=
 setlocal undofile
 setlocal undolevels=-123456
@@ -124,12 +124,13 @@ setlocal nowinfixheight
 setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
-let s:l = 14 - ((13 * winheight(0) + 18) / 36)
+let s:l = 215 - ((34 * winheight(0) + 18) / 37)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-14
-normal! 0
+215
+normal! 013|
+lcd ~/projects/whatnext
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost
 " vim: set ft=vim :

@@ -124,12 +124,13 @@ setlocal nowinfixheight
 setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
-let s:l = 352 - ((2 * winheight(0) + 18) / 37)
+let s:l = 55 - ((7 * winheight(0) + 18) / 37)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-352
-normal! 027|
+55
+normal! 066|
+lcd ~/projects/whatnext
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost
 " vim: set ft=vim :

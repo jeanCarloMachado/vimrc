@@ -35,7 +35,7 @@ Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
 "search for, substitute, and abbreviate multiple variants of a word
 Plug 'tpope/vim-abolish'
 "expand html tags
-Plug 'mattn/emmet-vim', { 'for': ['html'] }
+Plug 'mattn/emmet-vim', { 'for': ['html', 'css'] }
 "quoting/parenthesizing
 Plug 'tpope/vim-surround'
 "shows a git diff in the gutter (sign column) and stages/undoes hunks.
@@ -56,7 +56,7 @@ call plug#end()
 "}}}
 
 "generic configs{{{
-let g:user_emmet_leader_key='<C-E>'
+let g:user_emmet_leader_key='<C-y>'
 let g:pipe2eval_map_key = '<Leader>ev'
 set nocompatible
 let mapleader = "\<space>"
@@ -109,9 +109,9 @@ set smartcase "Override the 'ignorecase' option if the search pattern contains u
 "}}}
 
 " autocomplete {{{
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-inoremap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
+" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+" inoremap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
 "}}}
 
 "Fold {{{
@@ -216,6 +216,7 @@ command! -nargs=* Meditation call Meditation()
 "Generic mappings{{{
 nnoremap <leader>gv  :! gvim %:p<cr>
 nnoremap <leader>; :normal!mtA;<esc>`t
+nnoremap <leader>: :normal!mtA:<esc>`t
 nnoremap <leader>, :normal!mtA,<esc>`t
 nnoremap <BS> :Rex<cr>
 nnoremap + ddp
@@ -609,12 +610,6 @@ fun! s:Filefy(str)
 endfun
 call MapAction('Filefy', '<leader>fly')
 
-fun! s:BreakCommand(str)
-  let out = system('run_alias break_command ', a:str)
-  return out
-endfun
-call MapAction('BreakCommand', '<leader>bc')
-
 fun! s:foldSomething(str)
     let comment=split(&commentstring, '%s')
     if len(l:comment)==1
@@ -645,7 +640,7 @@ call MapAction('getHelp', '<leader>h')
 fun! s:BCat(str)
     let out = system('browser-cat ', a:str)
 endfunc
-call MapAction('BCat', '<leader>vi')
+call MapAction('BCat', '<leader>bc')
 
 fun! s:Decode(str)
   let out = system('url-decode ', a:str)
@@ -801,12 +796,6 @@ fun! s:Eval(str)
 endfunc
 call MapAction('Eval', '<leader>e')
 
-fun! s:MarkdownToHtml(str)
-    let file_name_without_extension = system('md5sum  | run_function alnum ', expand("%:r"))
-    let out = system('pandoc -o /tmp/'.file_name_without_extension.'.html ',a:str)
-    silent execute '! browser /tmp/'.file_name_without_extension.'.html 1>/dev/null & '
-endfunc
-call MapAction('MarkdownToHtml', '<leader>mh')
 "}}}
 
 "diary{{{
@@ -1252,10 +1241,35 @@ command! FZFLines call fzf#run({
 \})
 map <Leader>sfl :FZFLines<cr>
 "}}}
-
 "}}}
 
 set hidden "hides buffers instead of closing them
 au BufRead,BufNewFile *.jar,*.war,*.ear,*.sar,*.rar set filetype=zip
 
 let g:VimuxHeight = "20"
+
+
+" to PDF {{{
+fun! s:PdfFile(str)
+    echom "Starting to create pdf"
+    let fileName = expand("%:p")
+    let out = system('md2pdf.sh '.fileName)
+    if v:shell_error
+        call ShowStringOutput(out)
+    endif
+endfunc
+call MapAction('PdfFile', '<leader>pdf')
+
+
+
+fun! WeekReport()
+    echom "Generating report"
+    let out = system('journalReport.sh & ')
+    if v:shell_error
+        call ShowStringOutput(out)
+    endif
+endfun
+command! -nargs=* WeekReport call WeekReport()
+map <Leader>wr :call WeekReport()<cr>
+
+" }}}

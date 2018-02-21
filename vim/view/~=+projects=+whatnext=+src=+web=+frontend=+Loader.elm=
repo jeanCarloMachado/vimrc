@@ -33,7 +33,7 @@ setlocal commentstring=--\ %s
 setlocal complete=.,w,b,u,t,i
 setlocal concealcursor=
 setlocal conceallevel=2
-setlocal completefunc=completor#action#completefunc
+setlocal completefunc=
 setlocal copyindent
 setlocal cryptmethod=
 setlocal nocursorbind
@@ -95,7 +95,7 @@ setlocal norelativenumber
 setlocal norightleft
 setlocal rightleftcmd=search
 setlocal noscrollbind
-setlocal shiftwidth=4
+setlocal shiftwidth=2
 setlocal noshortname
 setlocal signcolumn=auto
 setlocal nosmartindent
@@ -111,7 +111,7 @@ setlocal synmaxcol=3000
 if &syntax != 'elm'
 setlocal syntax=elm
 endif
-setlocal tabstop=4
+setlocal tabstop=2
 setlocal tagcase=
 setlocal tags=
 setlocal termkey=
@@ -124,11 +124,11 @@ setlocal nowinfixheight
 setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
-let s:l = 37 - ((30 * winheight(0) + 18) / 37)
+let s:l = 15 - ((14 * winheight(0) + 18) / 37)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-37
+15
 normal! 0
 lcd ~/projects/whatnext
 let &so = s:so_save | let &siso = s:siso_save

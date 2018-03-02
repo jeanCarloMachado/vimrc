@@ -1107,6 +1107,7 @@ else
     set background=dark
 endif
 
+
 augroup VimrcColors
 au!
   autocmd ColorScheme * highlight WordsToAvoid ctermfg=DarkBlue cterm=underline
@@ -1260,8 +1261,6 @@ fun! s:PdfFile(str)
 endfunc
 call MapAction('PdfFile', '<leader>pdf')
 
-
-
 fun! WeekReport()
     echom "Generating report"
     let out = system('journalReport.sh & ')
@@ -1273,3 +1272,10 @@ command! -nargs=* WeekReport call WeekReport()
 map <Leader>wr :call WeekReport()<cr>
 
 " }}}
+
+let g:elm_format_autosave = 0
+let g:elm_make_show_warnings = 0
+let g:elm_detailed_complete = 0
+
+map <Leader>ef :ElmFormat<cr>
+

@@ -33,7 +33,7 @@ setlocal commentstring=--\ %s
 setlocal complete=.,w,b,u,t,i
 setlocal concealcursor=
 setlocal conceallevel=2
-setlocal completefunc=
+setlocal completefunc=completor#action#completefunc
 setlocal copyindent
 setlocal cryptmethod=
 setlocal nocursorbind
@@ -73,7 +73,7 @@ setlocal indentkeys=0{,0},:,0#,!^F,o,O,e,0=else,0=if,0=of,0=import,0=then,0=type
 setlocal noinfercase
 setlocal iskeyword=@,48-57,_,192-255
 setlocal keywordprg=
-setlocal linebreak
+setlocal nolinebreak
 setlocal nolisp
 setlocal lispwords=
 setlocal nolist
@@ -124,12 +124,12 @@ setlocal nowinfixheight
 setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
-let s:l = 453 - ((32 * winheight(0) + 18) / 37)
+let s:l = 381 - ((18 * winheight(0) + 18) / 37)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-453
-normal! 028|
+381
+normal! 020|
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost
 " vim: set ft=vim :

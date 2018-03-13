@@ -35,7 +35,7 @@ Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
 "search for, substitute, and abbreviate multiple variants of a word
 Plug 'tpope/vim-abolish'
 "expand html tags
-Plug 'mattn/emmet-vim', { 'for': ['html', 'css'] }
+Plug 'mattn/emmet-vim', { 'for': ['xhtml', 'html', 'css'] }
 "quoting/parenthesizing
 Plug 'tpope/vim-surround'
 "shows a git diff in the gutter (sign column) and stages/undoes hunks.
@@ -169,12 +169,12 @@ endfun
 command! -nargs=* LatestPost call LatestPost()
 
 fun! Talk()
-    :e $WIKI_PATH/talks.md
+    :e $WIKI_PATH/src/talks.md
 endfun
 command! -nargs=* Talk call Talk()
 
 fun! Glossary()
-    :e $WIKI_PATH/glossary.md
+    :e $WIKI_PATH/src/glossary.md
 endfun
 command! -nargs=* Glossary call Glossary()
 map <Leader>go :call Glossary()<cr>
@@ -208,7 +208,7 @@ command! -nargs=* Quotes call Quotes()
 nnoremap <leader>qo  :call Quotes()<cr>
 
 fun! Meditation()
-:e $WIKI_PATH/meditation/meditation.md
+:e $WIKI_PATH/src/meditation/meditation.md
 endfun
 command! -nargs=* Meditation call Meditation()
 "}}}
@@ -845,13 +845,13 @@ command! -nargs=* BottomDiary call BottomDiary( '<args>' )
 map <c-i> :FZF $WIKI_PATH<cr>
 let g:vim_markdown_no_default_key_mappings = 1
 fun! Wiki(arg)
-    let wiki_path = $WIKI_PATH
+    let wiki_path = "$WIKI_PATH/src"
     "sets the current directory of the window localy to enable file searches
     execute "lcd " . wiki_path
     execute "edit " . wiki_path . "/index.md"
 endfunc
 command! -nargs=* Wiki call Wiki( '<args>' )
-command! -nargs=* Quote :e $WIKI_PATH/quotes.md
+command! -nargs=* Quote :e $WIKI_PATH/src/quotes.md
 
 nnoremap <Leader>ww :Wiki<cr>
 
@@ -1106,6 +1106,7 @@ if !empty($SOLARIZED_THEME)
 else
     set background=dark
 endif
+    set background=light
 
 
 augroup VimrcColors
@@ -1277,5 +1278,6 @@ let g:elm_format_autosave = 0
 let g:elm_make_show_warnings = 0
 let g:elm_detailed_complete = 0
 
-map <Leader>ef :ElmFormat<cr>
+autocmd FileType elm map <Leader>fmt :ElmFormat<cr>
+autocmd FileType haskell map <Leader>fmt :!hfmt -w %:p<cr>
 

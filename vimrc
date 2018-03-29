@@ -35,7 +35,7 @@ Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
 "search for, substitute, and abbreviate multiple variants of a word
 Plug 'tpope/vim-abolish'
 "expand html tags
-Plug 'mattn/emmet-vim', { 'for': ['xhtml', 'html', 'css'] }
+Plug 'mattn/emmet-vim', { 'for': ['xhtml', 'html', 'css', 'php'] }
 "quoting/parenthesizing
 Plug 'tpope/vim-surround'
 "shows a git diff in the gutter (sign column) and stages/undoes hunks.
@@ -57,6 +57,7 @@ call plug#end()
 
 "generic configs{{{
 let g:user_emmet_leader_key='<C-y>'
+let g:user_emmet_settings = webapi#json#decode(join(readfile(expand('/home/jean/projects/dotfiles/snippets_custom.json')), "\n"))
 let g:pipe2eval_map_key = '<Leader>ev'
 set nocompatible
 let mapleader = "\<space>"
@@ -909,6 +910,7 @@ command! -nargs=* WikiGrep call GrepWiki( '<args>' )
 autocmd BufNewFile *Test.php 0r $TEMPLATES_DIR/php_test.php
 autocmd BufNewFile *.php 0r $TEMPLATES_DIR/php.php
 autocmd BufNewFile *.sh 0r $TEMPLATES_DIR/shell.sh
+autocmd BufNewFile *.hs 0r $TEMPLATES_DIR/haskell.hs
 autocmd BufNewFile *.html 0r $TEMPLATES_DIR/html.html
 autocmd BufNewFile *.c 0r $TEMPLATES_DIR/c.c
 autocmd BufNewFile **/papers/*.md 0r $TEMPLATES_DIR/science-review.md
@@ -1106,7 +1108,6 @@ if !empty($SOLARIZED_THEME)
 else
     set background=dark
 endif
-    set background=light
 
 
 augroup VimrcColors

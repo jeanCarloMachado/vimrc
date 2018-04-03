@@ -27,6 +27,7 @@ Plug 'benmills/vimux' "open a terminal to output some commands
 Plug 'vim-utils/vim-man' "view manuals inside vim
 Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
 Plug 'kana/vim-textobj-function' "text object for a function: enables af and if
+Plug 'mattn/webapi-vim' | Plug 'mattn/emmet-vim'
 Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim' "gist support
 Plug 'michaeljsmith/vim-indent-object' "same identation text object
 Plug 'vim-scripts/argtextobj.vim'
@@ -34,8 +35,6 @@ Plug 'dyng/ctrlsf.vim' "grep like sublime one
 Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
 "search for, substitute, and abbreviate multiple variants of a word
 Plug 'tpope/vim-abolish'
-"expand html tags
-Plug 'mattn/emmet-vim', { 'for': ['xhtml', 'html', 'css', 'php'] }
 "quoting/parenthesizing
 Plug 'tpope/vim-surround'
 "shows a git diff in the gutter (sign column) and stages/undoes hunks.

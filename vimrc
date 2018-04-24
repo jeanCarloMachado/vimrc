@@ -2,8 +2,9 @@
 "Its better to organize the configs by semantic. Better to put wiki
 "mappings on the wiki section then on the mappings section
 
+
 "Generic functions{{{
-fun! ShowStringOutput(content)
+fun! ShowStringOnNewWindow(content)
     split _output_
     normal! ggdG
     setlocal buftype=nofile
@@ -40,7 +41,6 @@ Plug 'tpope/vim-surround'
 "shows a git diff in the gutter (sign column) and stages/undoes hunks.
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-commentary'
-Plug 'junegunn/goyo.vim' "Distraction-free writing in Vim.
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'wakatime/vim-wakatime'
 Plug 'lervag/vimtex', { 'for': ['latex'] }
@@ -51,13 +51,13 @@ Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'kovisoft/slimv', { 'for': ['common-lisp', 'lisp'] }
 Plug 'maralla/completor.vim' "async autocomplete
+Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
 call plug#end()
 "}}}
 
 "generic configs{{{
 let g:user_emmet_leader_key='<C-y>'
 let g:user_emmet_settings = webapi#json#decode(join(readfile(expand('/home/jean/projects/dotfiles/snippets_custom.json')), "\n"))
-let g:pipe2eval_map_key = '<Leader>ev'
 set nocompatible
 let mapleader = "\<space>"
 runtime macros/matchit.vim "Enable extended % matching
@@ -180,7 +180,7 @@ command! -nargs=* Glossary call Glossary()
 map <Leader>go :call Glossary()<cr>
 
 fun! Sql()
-    :e /home/jean/.sql
+    :e /home/jean/.getyourguide.sql
 endfun
 command! -nargs=* Sql call Sql()
 nnoremap <leader>sql  :call Sql()<cr>
@@ -233,7 +233,6 @@ map <leader>me :!chmod +x %<cr>
 nnoremap <leader>tn :tabnew<cr>
 "open director (file manager)
 nmap <leader>sh :!cd %:h && zsh <cr>
-nmap <leader>rmrf :!rm -rf %:p <cr> "remove current  file
 nmap <leader>pn :!echo %<cr>
 nmap <leader>pfn :!echo %:p<cr>
 nmap <silent> <leader>ev :e $MY_VIMRC<cr>:lcd %:h<cr>
@@ -243,6 +242,7 @@ nnoremap <leader><space> :w<cr>
 "use C-p and C-n to browser normal mode commands history
 cnoremap <C-p> <Up>
 nnoremap <C-c> :q!<cr>
+nmap <leader>q :q!<cr>
 cnoremap <C-n> <Down>
 " use %% to expand to the current buffer directory
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
@@ -259,6 +259,14 @@ fun! ReloadVim()
 command! -nargs=* ReloadVim call ReloadVim()
 nmap <silent> <leader>so :ReloadVim<cr>
 endif
+
+
+fun! RemoveFile()
+    execute "!rm -rf %:p"
+ endfun
+command! -nargs=* RemoveFile call RemoveFile()
+nmap <silent> <leader>rmrf :RemoveFile<cr>
+
 "}}}
 
 
@@ -297,12 +305,18 @@ set autoindent
 set tabstop=4
 set shiftwidth=4
 set expandtab
-autocmd filetype php set tabstop=4
-autocmd filetype php set shiftwidth=4
-autocmd filetype javascript set tabstop=2
-autocmd filetype javascript set shiftwidth=2
-autocmd filetype html set tabstop=2
-autocmd filetype html set shiftwidth=2
+
+
+" 2 spaces for html/js
+autocmd filetype javascript set tabstop=2 shiftwidth=2
+autocmd filetype html set tabstop=2 shiftwidth=2
+
+
+" for php use tabs
+autocmd filetype php set autoindent noexpandtab tabstop=4 shiftwidth=4
+
+
+
 "}}}
 
 "custom text objects{{{
@@ -791,7 +805,7 @@ call MapAction('CodeBlock', '<leader>c')
 
 fun! s:Eval(str)
   let my_filetype = &filetype
-  let out = ChompedSystemCall('pipe2eval.sh '.my_filetype.' '.expand("%:p"), a:str."\n")
+  let out = ChompedSystemCall('repl.sh '.my_filetype.' '.expand("%:p"), a:str."\n")
   return out
 endfunc
 call MapAction('Eval', '<leader>e')
@@ -923,15 +937,15 @@ autocmd BufNewFile */posts/*.md 0r $TEMPLATES_DIR/post.md
 nmap <leader>xo :!xdg-open % &<cr>
 nmap <leader>od :!runFunction fileManager %:h<cr>
 "copy path name
-nmap <leader>cpn :!copy %:p<cr>
+nmap <leader>cpn :!mycopy %:p<cr>
 "copy only name
-nmap <leader>con :!copy %:t<cr>
+nmap <leader>con :!mycopy %:t<cr>
 "copy full name
-nmap <leader>cfn :!copy %:p<cr>
+nmap <leader>cfn :!mycopy %:p<cr>
 "copy the current directoy
-nmap <leader>ccd :!copy %:p:h<cr>
-nmap <leader>cdn :!copy %:p:h<cr>
-nmap <leader>ccp :!copy %:p:h<cr>
+nmap <leader>ccd :!mycopy %:p:h<cr>
+nmap <leader>cdn :!mycopy %:p:h<cr>
+nmap <leader>ccp :!mycopy %:p:h<cr>
 nmap <leader>cdcd :cd %:p:h<cr>
 
 fun! SaveForcing()
@@ -976,7 +990,9 @@ map <Leader>cp :call CopyFile()<cr>
 "git {{{
 fun! GitLog()
     let path = resolve(expand('%:p'))
-    execute '!run_function terminal_run "cd '.path.' ; git log -p --follow %:p" &'
+
+    call ShowStringOnNewWindow(path)
+    execute '!run_function terminal_run "git log -p --follow '.path.'" &'
 endfunc
 nmap <leader>gk :call GitLog()<cr>
 
@@ -1017,7 +1033,7 @@ call MapAction('JsonEncode', '<leader>pj')
 fun! RunCurrentPHPFile()
   let linterOut = system('php -l ' . expand("%:p"))
   let executionOut = system('php ' . expand("%:p"))
-  call ShowStringOutput(linterOut."\n\n".executionOut)
+  call ShowStringOnNewWindow(linterOut."\n\n".executionOut)
 endfunc
 noremap <Leader>pr :call RunCurrentPHPFile()<cr>
 
@@ -1034,8 +1050,6 @@ function SessionDirectory() abort
   return getcwd()
 endfunction!
 
-command Phpcsfixer : ! php-code-check `pwd`/%
-    \ || print "Error on code check" && sleep 10
 
 fun! RunPHPUnitTest(filter)
     let root = SessionDirectory()
@@ -1066,7 +1080,6 @@ fun! RunPHPUnitTest(filter)
 endfun
 nnoremap <leader>u :silent call RunPHPUnitTest(0)<cr>
 nnoremap <leader>f :silent call RunPHPUnitTest(1)<cr>
-autocmd filetype php nnoremap <leader>s :Phpcsfixer<cr>
 "}}}
 
 " gvim {{{
@@ -1101,6 +1114,7 @@ autocmd filetype c call CFiletypeConfigs()
 
 "theme, colors, highlights {{{
 syntax enable
+
 let g:airline_theme='solarized'
 if !empty($SOLARIZED_THEME)
     set background=light
@@ -1126,11 +1140,11 @@ autocmd Syntax * call matchadd('Whitespace', '\s\+$')
 autocmd Syntax * call matchadd('Overlength', '\%81v')
 
 colorscheme solarized
-" color 0 is the dark background and 15 is the light one
-hi StatusLine ctermfg=12 ctermbg=0 cterm=NONE
 set term=screen-256color
 let g:solarized_bold=1
 set t_Co=256
+" color 0 is the dark background and 15 is the light one
+hi StatusLine ctermfg=12 ctermbg=0 cterm=NONE
 "}}}
 
 " vimrc per project {{{
@@ -1257,7 +1271,7 @@ fun! s:PdfFile(str)
     let fileName = expand("%:p")
     let out = system('md2pdf.sh '.fileName)
     if v:shell_error
-        call ShowStringOutput(out)
+        call ShowStringOnNewWindow(out)
     endif
 endfunc
 call MapAction('PdfFile', '<leader>pdf')
@@ -1266,7 +1280,7 @@ fun! WeekReport()
     echom "Generating report"
     let out = system('journalReport.sh & ')
     if v:shell_error
-        call ShowStringOutput(out)
+        call ShowStringOnNewWindow(out)
     endif
 endfun
 command! -nargs=* WeekReport call WeekReport()
@@ -1280,4 +1294,6 @@ let g:elm_detailed_complete = 0
 
 autocmd FileType elm map <Leader>fmt :ElmFormat<cr>
 autocmd FileType haskell map <Leader>fmt :!hfmt -w %:p<cr>
+autocmd FileType php map <Leader>fmt :!php-code-check %:p<cr>
 
+nnoremap <leader>pd :call PhpDoc()<cr>

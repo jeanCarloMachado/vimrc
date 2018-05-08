@@ -1,1 +1,0 @@
-/home/jean/projects/wiki/src/index.md

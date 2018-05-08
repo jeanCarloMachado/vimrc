@@ -16,9 +16,10 @@ fun! NotifySend(content)
 endfun
 "}}}
 
+
 "Plugins Load {{{
 filetype on
-filetype plugin on "loading the plugin files for specific file types 
+filetype plugin on "loading the plugin files for specific file types
 call plug#begin()
 "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
 Plug 'altercation/vim-colors-solarized'
@@ -28,7 +29,6 @@ Plug 'benmills/vimux' "open a terminal to output some commands
 Plug 'vim-utils/vim-man' "view manuals inside vim
 Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
 Plug 'kana/vim-textobj-function' "text object for a function: enables af and if
-Plug 'mattn/webapi-vim' | Plug 'mattn/emmet-vim'
 Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim' "gist support
 Plug 'michaeljsmith/vim-indent-object' "same identation text object
 Plug 'vim-scripts/argtextobj.vim'
@@ -52,12 +52,14 @@ Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'kovisoft/slimv', { 'for': ['common-lisp', 'lisp'] }
 Plug 'maralla/completor.vim' "async autocomplete
 Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
+Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
+Plug 'kshenoy/vim-signature'
+Plug 'xolox/vim-misc' | Plug 'xolox/vim-easytags' 
+Plug 'yegappan/mru'
 call plug#end()
 "}}}
 
 "generic configs{{{
-let g:user_emmet_leader_key='<C-y>'
-let g:user_emmet_settings = webapi#json#decode(join(readfile(expand('/home/jean/projects/dotfiles/snippets_custom.json')), "\n"))
 set nocompatible
 let mapleader = "\<space>"
 runtime macros/matchit.vim "Enable extended % matching
@@ -88,6 +90,7 @@ set clipboard=unnamedplus
 let g:abolish_save_file = '/home/jean/.vim/abbreviations.vim'
 set wildignore+=*\\dist\\**
 "}}}
+nmap <leader>fim :!runFunction fileManager %:h<cr>
 
 
 "linter config {{{
@@ -115,10 +118,8 @@ set smartcase "Override the 'ignorecase' option if the search pattern contains u
 "}}}
 
 "Fold {{{
-set foldenable
-set foldcolumn=1
-set foldlevel=1 "control the level to be opened by default (this opens just the first h1, levels)
-set foldmethod=marker
+autocmd FileType markdown set foldenable foldcolumn=1 foldlevel=1 foldmethod=marker
+autocmd FileType php set foldenable foldcolumn=1 foldlevel=1 foldmethod=indent
 "}}}
 
 "Concealing {{{
@@ -141,6 +142,7 @@ endfun
 command! -nargs=* Grepr call Grepr( '<args>' )
 "}}}
 
+nnoremap <leader>mru :MRU<cr>
 "netrw{{{
 nnoremap <leader>k :Vexplore<cr>
 let g:netrw_winsize = 25 "window width
@@ -204,8 +206,12 @@ fun! Quotes()
     :e /home/jean/Dropbox/wiki/src/quotes.md
 endfun
 command! -nargs=* Quotes call Quotes()
-command! -nargs=* Quotes call Quotes()
 nnoremap <leader>qo  :call Quotes()<cr>
+fun! Gyg()
+    :e /home/jean/Dropbox/wiki/src/gyg.md
+endfun
+command! -nargs=* Gyg call Gyg()
+nnoremap <leader>gyg  :call Gyg()<cr>
 
 fun! Meditation()
 :e $WIKI_PATH/src/meditation/meditation.md
@@ -224,8 +230,6 @@ nnoremap _ dd2kp
 nnoremap <Leader>le :noh<cr>
 nnoremap <Leader>dt :r ! date<cr>
 nnoremap <Leader>dc :ElmShowDocs<cr>
-nnoremap <Leader>ob :only<cr>
-nnoremap <Leader>o :only<cr>
 nnoremap cwi ciw
 map <leader>i mmgg=G`m
 map <leader>x :w<','> !bash<cr>
@@ -308,14 +312,12 @@ set expandtab
 
 
 " 2 spaces for html/js
-autocmd filetype javascript set tabstop=2 shiftwidth=2
-autocmd filetype html set tabstop=2 shiftwidth=2
+autocmd filetype javascript,html set tabstop=2 shiftwidth=2
 
 
 " for php use tabs
-autocmd filetype php set autoindent noexpandtab tabstop=4 shiftwidth=4
-
-
+autocmd filetype php,html,tpl,smarty set autoindent noexpandtab tabstop=4 shiftwidth=4
+autocmd filetype haskell set tabstop=2 shiftwidth=2
 
 "}}}
 
@@ -500,13 +502,22 @@ fun! s:OnlyTextSelection(str)
   set noreadonly
   call append(0, split(Chomp(a:str), '\v\n'))
 endfun
-call MapAction('OnlyTextSelection','<leader>otx')
+call MapAction('OnlyTextSelection','<leader>ts')
+
+
+nnoremap <leader>fi :CtrlSF 
+fun! s:FindIt(str)
+	exec ':CtrlSF "'.a:str.'"<cr>'
+    return a:str
+endfun
+call MapAction('FindIt','<leader>fit')
+
 
 fun! s:ToSingleQuote(str)
       let out = system("tr '\"' \"'\"", a:str)
     return out
 endfun
-call MapAction('ToSingleQuote','<leader>ts')
+call MapAction('ToSingleQuote','<leader>tsq')
 
 fun! s:ComputeMD5(str)
   let out = system('md5sum |cut -b 1-32', a:str)
@@ -708,7 +719,8 @@ fun! s:Unescape(str)
   let out = system('sed "s/\\\//g" ', a:str)
   return out
 endfunc
-call MapAction('Unescape', '<leader>us')
+call MapAction('Unescape', '<leader>u')
+
 
 fun! s:SqlBeautifier(str)
   let out = system('run_function sql_format', a:str)
@@ -810,6 +822,13 @@ fun! s:Eval(str)
 endfunc
 call MapAction('Eval', '<leader>e')
 
+fun! s:Subs(str)
+  let my_filetype = &filetype
+  let out = ChompedSystemCall('subs -p '.my_filetype, a:str."\n")
+  return out
+endfunc
+call MapAction('Subs', '<leader>o')
+
 "}}}
 
 "diary{{{
@@ -867,6 +886,7 @@ endfunc
 command! -nargs=* Wiki call Wiki( '<args>' )
 command! -nargs=* Quote :e $WIKI_PATH/src/quotes.md
 
+nnoremap <Leader>ww :Wiki<cr>
 nnoremap <Leader>ww :Wiki<cr>
 
 fun! GetUrl()
@@ -935,7 +955,6 @@ autocmd BufNewFile */posts/*.md 0r $TEMPLATES_DIR/post.md
 
 " generic actions relative to current file{{{
 nmap <leader>xo :!xdg-open % &<cr>
-nmap <leader>od :!runFunction fileManager %:h<cr>
 "copy path name
 nmap <leader>cpn :!mycopy %:p<cr>
 "copy only name
@@ -990,11 +1009,15 @@ map <Leader>cp :call CopyFile()<cr>
 "git {{{
 fun! GitLog()
     let path = resolve(expand('%:p'))
-
-    call ShowStringOnNewWindow(path)
-    execute '!run_function terminal_run "git log -p --follow '.path.'" &'
+    execute '!cd $(dirname '.path.') ; git log -p --follow $( basename '.path.') '
 endfunc
 nmap <leader>gk :call GitLog()<cr>
+
+fun! GitDiff()
+    let path = resolve(expand('%:p'))
+    execute '!cd $(dirname '.path.') ; git diff '.path.' '
+endfunc
+nmap <leader>gdf :call GitDiff()<cr>
 
 map <leader>rl :edit!<cr>
 map <leader>ed :edit!<cr>
@@ -1051,35 +1074,35 @@ function SessionDirectory() abort
 endfunction!
 
 
-fun! RunPHPUnitTest(filter)
-    let root = SessionDirectory()
-    cd %:p:h
-    let phpunitFile = system('find "'.root.'" -maxdepth 2 -name "phpunit.xml*" | head -n1 | tr -d "\n"')
-    let dirName = system('realpath $(dirname '.phpunitFile.') | tr -d "\n"')
-    let test_command = 'cd "'.dirName.'" ; ./vendor/bin/phpunit ' . expand('%:p'). ' --color=always | less -r'
+" fun! RunPHPUnitTest(filter)
+"     let root = SessionDirectory()
+"     cd %:p:h
+"     let phpunitFile = system('find "'.root.'" -maxdepth 2 -name "phpunit.xml*" | head -n1 | tr -d "\n"')
+"     let dirName = system('realpath $(dirname '.phpunitFile.') | tr -d "\n"')
+"     let test_command = 'cd "'.dirName.'" ; ./vendor/bin/phpunit ' . expand('%:p'). ' --color=always | less -r'
 
-    if a:filter
-        normal! T yw
-        if @" =~ "^test*"
-            normal! mT
-        endif
+"     if a:filter
+"         normal! T yw
+"         if @" =~ "^test*"
+"             normal! mT
+"         endif
 
-        normal! `T
-        normal! T yw
-        let test_command = 'cd "'.dirName.'" ; ./vendor/bin/phpunit --filter '.@".' --color=always | less -r'
-    else
-        let @n = expand('%:t')
-        if @n =~ "Test"
-            normal! mA
-        endif
-        normal! `A
-    endif
+"         normal! `T
+"         normal! T yw
+"         let test_command = 'cd "'.dirName.'" ; ./vendor/bin/phpunit --filter '.@".' --color=always | less -r'
+"     else
+"         let @n = expand('%:t')
+"         if @n =~ "Test"
+"             normal! mA
+"         endif
+"         normal! `A
+"     endif
 
-    silent call VimuxRunCommand("clear; ".test_command)<CR>
-    cd -
-endfun
-nnoremap <leader>u :silent call RunPHPUnitTest(0)<cr>
-nnoremap <leader>f :silent call RunPHPUnitTest(1)<cr>
+"     silent call VimuxRunCommand("clear; ".test_command)<CR>
+"     cd -
+" endfun
+" nnoremap <leader>u :silent call RunPHPUnitTest(0)<cr>
+" nnoremap <leader>f :silent call RunPHPUnitTest(1)<cr>
 "}}}
 
 " gvim {{{
@@ -1187,26 +1210,6 @@ command! -nargs=* ResetRepl call ResetRepl()
 map <Leader>rr :call ResetRepl()<cr>
 "}}}
 
-" listing buffers and enteing them {{{
-function! s:listBuffer()
-    :redir @a
-        :ls
-    :redir END
-    return split(@a, '\n')
-endfun
-function! s:bufferLineHandler(l)
-  let keys = split(a:l, ' ')
-  exec 'buf' keys[0]
-endfunction
-
-command! ZFZBuffers call fzf#run({
-\   'source':  <sid>listBuffer(),
-\   'sink':    function('<sid>bufferLineHandler'),
-\   'options': '--extended --nth=..3  --height 40%',
-\   'down':    '60%'
-\})
-map <Leader>ls :ZFZBuffers<cr>
-"}}}
 
 " star search over any kind of text {{{
 vnoremap <silent> * :<C-U>
@@ -1259,7 +1262,6 @@ map <Leader>sfl :FZFLines<cr>
 "}}}
 "}}}
 
-set hidden "hides buffers instead of closing them
 au BufRead,BufNewFile *.jar,*.war,*.ear,*.sar,*.rar set filetype=zip
 
 let g:VimuxHeight = "20"
@@ -1297,3 +1299,56 @@ autocmd FileType haskell map <Leader>fmt :!hfmt -w %:p<cr>
 autocmd FileType php map <Leader>fmt :!php-code-check %:p<cr>
 
 nnoremap <leader>pd :call PhpDoc()<cr>
+set hidden "hides buffers instead of closing them, don't give warnings on unsaved things
+
+" tags
+function! s:tags_sink(line)
+  let parts = split(a:line, '\t\zs')
+  "let excmd = matchstr(parts[2:], '^.*\ze;"\t')
+  execute 'silent e' parts[1][:-2]
+  let [magic, &magic] = [&magic, 0]
+  "execute excmd
+  let &magic = magic
+endfunction
+
+function! s:tags()
+  if empty(tagfiles())
+    echohl WarningMsg
+    echom 'Preparing tags'
+    echohl None
+    call system('ctags -R')
+  endif
+
+  call fzf#run({
+  \ 'source':  'cat '.join(map(tagfiles(), 'fnamemodify(v:val, ":S")')).
+  \            '| grep -v -a ^!',
+  \ 'options': '+m -d "\t" --with-nth 1,2.. -n 1 --tiebreak=index',
+  \ 'down':    '40%',
+  \ 'sink':    function('s:tags_sink')})
+endfunction
+
+command! Tags call s:tags()
+map <Leader>tg :Tags<cr>
+
+
+" listing buffers and enteing them {{{
+function! s:listBuffer()
+    :redir @a
+        :ls
+    :redir END
+    return split(@a, '\n')
+endfun
+function! s:bufferLineHandler(l)
+  let keys = split(a:l, ' ')
+  exec 'buf' keys[0]
+endfunction
+
+command! ZFZBuffers call fzf#run({
+\   'source':  <sid>listBuffer(),
+\   'sink':    function('<sid>bufferLineHandler'),
+\   'options': '--extended --nth=..3  --height 40%'
+\})
+map <Leader>ls :ZFZBuffers<cr>
+"}}}
+
+autocmd BufNewFile,BufRead *.es6 set filetype=javascript

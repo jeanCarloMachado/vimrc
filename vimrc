@@ -25,7 +25,7 @@ Plug 'altercation/vim-colors-solarized'
 Plug 'w0rp/ale', { 'for': [] }
 "disable ale for  markdown
 augroup plug_xtype
-  autocmd FileType * if expand('<amatch>') != 'markdown' | call plug#load('bar') | execute 'autocmd! plug_xtype' | endif
+    autocmd FileType * if expand('<amatch>') != 'markdown' | call plug#load('ale') | execute 'autocmd! plug_xtype' | endif
 augroup END
 Plug 'christoomey/vim-tmux-navigator'
 "Plug 'vim-utils/vim-man' "view manuals inside vim
@@ -35,7 +35,6 @@ Plug 'kana/vim-textobj-function' "text object for a function: enables af and if
 Plug 'michaeljsmith/vim-indent-object' "same identation text object
 Plug 'vim-scripts/argtextobj.vim'
 "}}}
-
 Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim' "gist support
 Plug 'dyng/ctrlsf.vim' "grep like sublime one
 Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
@@ -47,7 +46,6 @@ Plug 'tpope/vim-surround'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-commentary'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-"
 " Plug 'lervag/vimtex', { 'for': ['latex'] }
 Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
 " Plug 'fatih/vim-go', { 'for': ['go'] }
@@ -57,10 +55,11 @@ Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 " Plug 'kovisoft/slimv', { 'for': ['common-lisp', 'lisp'] }
 " Plug 'maralla/completor.vim' "async autocomplete
 Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
-" Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
+Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
+" visualizing marks
 Plug 'kshenoy/vim-signature'
 " this plugin is slow when the project is too big
-" Plug 'xolox/vim-misc' | Plug 'xolox/vim-easytags' 
+" Plug 'xolox/vim-misc' | Plug 'xolox/vim-easytags'
 "most recently used files list
 Plug 'yegappan/mru'
 Plug 'git@github.com:skywind3000/asyncrun.vim.git'
@@ -100,10 +99,10 @@ setlocal formatoptions=1
 set formatprg=par "The name of an external program that will be used to format the lines selected with the |gq| operator.
 " setlocal linebreak "wrap long lines at a character in 'breakat'
 if has("clipboard")
-   set clipboard=unnamed " copy to the system clipboard
-  if has("unnamedplus") " X11 support
-    set clipboard+=unnamedplus
-  endif
+    set clipboard=unnamed " copy to the system clipboard
+    if has("unnamedplus") " X11 support
+        set clipboard+=unnamedplus
+    endif
 endif
 let g:abolish_save_file = $HOME."/Dropbox/projects/vimrc/vim/abbreviations.vim"
 set wildignore+=*\\dist\\**
@@ -116,6 +115,8 @@ command! FileManager execute "!runFunction fileManager %:h"
 let g:airline#extensions#ale#enabled = 1
 let g:ale_set_highlights = 0
 let g:ale_php_phpcs_standard = $CLIPP_PATH."/Backend/ruleset.xml"
+let g:ale_lint_on_text_changed = 0
+let g:ale_lint_on_save = 1
 "}}}
 
 " visual mode {{{
@@ -236,7 +237,7 @@ command! -nargs=* Gyg call Gyg()
 nnoremap <leader>gyg  :call Gyg()<cr>
 
 fun! Meditation()
-:e $WIKI_PATH/src/meditation/meditation.md
+    :e $WIKI_PATH/src/meditation/meditation.md
 endfun
 command! -nargs=* Meditation call Meditation()
 "}}}
@@ -278,18 +279,18 @@ map <c-p> :FZF<cr>
 
 "reload vim{{{
 if !exists('*ReloadVim')
-fun! ReloadVim()
-     silent source $MY_VIMRC
-     execute "edit %"
- endfun
-command! -nargs=* ReloadVim call ReloadVim()
-nmap <silent> <leader>vs :ReloadVim<cr>
+    fun! ReloadVim()
+        silent source $MY_VIMRC
+        execute "edit %"
+    endfun
+    command! -nargs=* ReloadVim call ReloadVim()
+    nmap <silent> <leader>vs :ReloadVim<cr>
 endif
 
 
 fun! RemoveFile()
     execute "!rm -rf %:p"
- endfun
+endfun
 command! -nargs=* RemoveFile call RemoveFile()
 noremap <silent> <leader>rmrf :RemoveFile<cr>
 
@@ -348,213 +349,213 @@ autocmd filetype haskell set tabstop=2 shiftwidth=2
 
 "custom text objects{{{
 call textobj#user#plugin('line', {
-\   '-': {
-\     'select-a-function': 'CurrentLineA',
-\     'select-a': 'al',
-\     'select-i-function': 'CurrentLineI',
-\     'select-i': 'il',
-\   },
-\ })
+            \   '-': {
+            \     'select-a-function': 'CurrentLineA',
+            \     'select-a': 'al',
+            \     'select-i-function': 'CurrentLineI',
+            \     'select-i': 'il',
+            \   },
+            \ })
 
 fun! CurrentLineA()
-  normal! 0
-  let head_pos = getpos('.')
-  normal! $
-  let tail_pos = getpos('.')
-  return ['v', head_pos, tail_pos]
+    normal! 0
+    let head_pos = getpos('.')
+    normal! $
+    let tail_pos = getpos('.')
+    return ['v', head_pos, tail_pos]
 endfun
 
 fun! CurrentLineI()
-  normal! ^
-  let head_pos = getpos('.')
-  normal! g_
-  let tail_pos = getpos('.')
-  let non_blank_char_exists_p = getline('.')[head_pos[2] - 1] !~# '\s'
-  return
-  \ non_blank_char_exists_p
-  \ ? ['v', head_pos, tail_pos]
-  \ : 0
+    normal! ^
+    let head_pos = getpos('.')
+    normal! g_
+    let tail_pos = getpos('.')
+    let non_blank_char_exists_p = getline('.')[head_pos[2] - 1] !~# '\s'
+    return
+                \ non_blank_char_exists_p
+                \ ? ['v', head_pos, tail_pos]
+                \ : 0
 endfun
 
 call textobj#user#plugin('bar', {
-\   '-': {
-\     'select-a-function': 'CurrentBarA',
-\     'select-a': "a\/",
-\     'select-i-function': 'CurrentBarI',
-\     'select-i': "i\/",
-\   },
-\ })
+            \   '-': {
+            \     'select-a-function': 'CurrentBarA',
+            \     'select-a': "a\/",
+            \     'select-i-function': 'CurrentBarI',
+            \     'select-i': "i\/",
+            \   },
+            \ })
 
 fun! CurrentBarA()
-  normal! F/
-  let head_pos = getpos('.')
-  normal! f/
-  let tail_pos = getpos('.')
-  return ['v', head_pos, tail_pos]
+    normal! F/
+    let head_pos = getpos('.')
+    normal! f/
+    let tail_pos = getpos('.')
+    return ['v', head_pos, tail_pos]
 endfun
 
 fun! CurrentBarI()
-  normal! T/
-  let head_pos = getpos('.')
-  normal! f/
-  let tail_pos = getpos('.')
-  return ['v', head_pos, tail_pos]
+    normal! T/
+    let head_pos = getpos('.')
+    normal! f/
+    let tail_pos = getpos('.')
+    return ['v', head_pos, tail_pos]
 endfun
 
 call textobj#user#plugin('pipe', {
             \   '-': {
-\     'select-a-function': 'CurrentPipeA',
-\     'select-a': "a\\|",
-\     'select-i-function': 'CurrentPipeI',
-\     'select-i': "i\\|",
-\   },
-\ })
+            \     'select-a-function': 'CurrentPipeA',
+            \     'select-a': "a\\|",
+            \     'select-i-function': 'CurrentPipeI',
+            \     'select-i': "i\\|",
+            \   },
+            \ })
 
 fun! CurrentPipeA()
-  normal! F|
-  let head_pos = getpos('.')
-  normal! f|
-  let tail_pos = getpos('.')
-  return ['v', head_pos, tail_pos]
+    normal! F|
+    let head_pos = getpos('.')
+    normal! f|
+    let tail_pos = getpos('.')
+    return ['v', head_pos, tail_pos]
 endfun
 
 fun! CurrentPipeI()
-  normal! T|
-  let head_pos = getpos('.')
-  normal! f|
-  let tail_pos = getpos('.')
-  return ['v', head_pos, tail_pos]
+    normal! T|
+    let head_pos = getpos('.')
+    normal! f|
+    let tail_pos = getpos('.')
+    return ['v', head_pos, tail_pos]
 endfun
 
 call textobj#user#plugin('datetime', {
-\   'date': {
-\     'pattern': '\<\d\d\d\d-\d\d-\d\d\>',
-\     'select': ['ad', 'id'],
-\   },
-\ })
+            \   'date': {
+            \     'pattern': '\<\d\d\d\d-\d\d-\d\d\>',
+            \     'select': ['ad', 'id'],
+            \   },
+            \ })
 
 call textobj#user#plugin('document', {
-\   '-': {
-\     'select-a-function': 'CurrentDocumentA',
-\     'select-a': "a\*",
-\     'select-i-function': 'CurrentDocumentI',
-\     'select-i': "i\*",
-\   },
-\ })
+            \   '-': {
+            \     'select-a-function': 'CurrentDocumentA',
+            \     'select-a': "a\*",
+            \     'select-i-function': 'CurrentDocumentI',
+            \     'select-i': "i\*",
+            \   },
+            \ })
 
 fun! CurrentDocumentA()
-  normal! gg
-  let head_pos = getpos('.')
-  normal! G$
-  let tail_pos = getpos('.')
-  return ['v', head_pos, tail_pos]
+    normal! gg
+    let head_pos = getpos('.')
+    normal! G$
+    let tail_pos = getpos('.')
+    return ['v', head_pos, tail_pos]
 endfun
 
 fun! CurrentDocumentI()
-  normal! ggj
-  let head_pos = getpos('.')
-  normal! G$k
-  let tail_pos = getpos('.')
-  return ['v', head_pos, tail_pos]
+    normal! ggj
+    let head_pos = getpos('.')
+    normal! G$k
+    let tail_pos = getpos('.')
+    return ['v', head_pos, tail_pos]
 endfun
 inoremap ;<cr> <end>;<cr>
 "}}}
 
 "actions over text blocks{{{
 fun! s:DoAction(algorithm,type)
-  " backup settings that we will change
-  let sel_save = &selection
-  let cb_save = &clipboard
-  " make selection and clipboard work the way we need
-  set selection=inclusive clipboard-=unnamed clipboard-=unnamedplus
-  " backup the unnamed register, which we will be yanking into
-  let reg_save = @@
-  " yank the relevant text, and also set the visual selection (which will be reused if the text
-  " needs to be replaced)
-  if a:type =~ '^\d\+$'
-    " if type is a number, then select that many lines
-    silent exe 'normal! V'.a:type.'$y'
-  elseif a:type =~ '^.$'
-    " if type is 'v', 'V', or '<C-V>' (i.e. 0x16) then reselect the visual region
-    silent exe "normal! `<" . a:type . "`>y"
-  elseif a:type == 'line'
-    " line-based text motion
-    silent exe "normal! '[V']y"
-  elseif a:type == 'block'
-    " block-based text motion
-    silent exe "normal! `[\<C-V>`]y"
-  else
-    " char-based text motion
-    silent exe "normal! `[v`]y"
-  endif
-  " call the user-defined function, passing it the contents of the unnamed register
-  let repl = s:{a:algorithm}(Chomp(@@))
-  " if the function returned a value, then replace the text
-  if type(repl) == 1
-    " put the replacement text into the unnamed register, and also set it to be a
-    " characterwise, linewise, or blockwise selection, based upon the selection type of the
-    " yank we did above
-    call setreg('@', repl, getregtype('@'))
-    " relect the visual region and paste
-    normal! gvp
-  endif
-  " restore saved settings and register value
-  let @@ = reg_save
-  let &selection = sel_save
-  let &clipboard = cb_save
+    " backup settings that we will change
+    let sel_save = &selection
+    let cb_save = &clipboard
+    " make selection and clipboard work the way we need
+    set selection=inclusive clipboard-=unnamed clipboard-=unnamedplus
+    " backup the unnamed register, which we will be yanking into
+    let reg_save = @@
+    " yank the relevant text, and also set the visual selection (which will be reused if the text
+    " needs to be replaced)
+    if a:type =~ '^\d\+$'
+        " if type is a number, then select that many lines
+        silent exe 'normal! V'.a:type.'$y'
+    elseif a:type =~ '^.$'
+        " if type is 'v', 'V', or '<C-V>' (i.e. 0x16) then reselect the visual region
+        silent exe "normal! `<" . a:type . "`>y"
+    elseif a:type == 'line'
+        " line-based text motion
+        silent exe "normal! '[V']y"
+    elseif a:type == 'block'
+        " block-based text motion
+        silent exe "normal! `[\<C-V>`]y"
+    else
+        " char-based text motion
+        silent exe "normal! `[v`]y"
+    endif
+    " call the user-defined function, passing it the contents of the unnamed register
+    let repl = s:{a:algorithm}(Chomp(@@))
+    " if the function returned a value, then replace the text
+    if type(repl) == 1
+        " put the replacement text into the unnamed register, and also set it to be a
+        " characterwise, linewise, or blockwise selection, based upon the selection type of the
+        " yank we did above
+        call setreg('@', repl, getregtype('@'))
+        " relect the visual region and paste
+        normal! gvp
+    endif
+    " restore saved settings and register value
+    let @@ = reg_save
+    let &selection = sel_save
+    let &clipboard = cb_save
 endfun
 
 fun! s:ActionOpfunc(type)
-  return s:DoAction(s:encode_algorithm, a:type)
+    return s:DoAction(s:encode_algorithm, a:type)
 endfun
 
 fun! s:ActionSetup(algorithm)
-  let s:encode_algorithm = a:algorithm
-  let &opfunc = matchstr(expand('<sfile>'), '<SNR>\d\+_').'ActionOpfunc'
+    let s:encode_algorithm = a:algorithm
+    let &opfunc = matchstr(expand('<sfile>'), '<SNR>\d\+_').'ActionOpfunc'
 endfun
 
 fun! MapAction(algorithm, key)
-  exe 'nnoremap <silent> <Plug>actions'    .a:algorithm.' :<C-U>call <SID>ActionSetup("'.a:algorithm.'")<CR>g@'
-  exe 'xnoremap <silent> <Plug>actions'    .a:algorithm.' :<C-U>call <SID>DoAction("'.a:algorithm.'",visualmode())<CR>'
-  exe 'nnoremap <silent> <Plug>actionsLine'.a:algorithm.' :<C-U>call <SID>DoAction("'.a:algorithm.'",v:count1)<CR>'
-  exe 'nmap '.a:key.'  <Plug>actions'.a:algorithm
-  exe 'xmap '.a:key.'  <Plug>actions'.a:algorithm
-  exe 'nmap '.a:key.a:key[strlen(a:key)-1].' <Plug>actionsLine'.a:algorithm
+    exe 'nnoremap <silent> <Plug>actions'    .a:algorithm.' :<C-U>call <SID>ActionSetup("'.a:algorithm.'")<CR>g@'
+    exe 'xnoremap <silent> <Plug>actions'    .a:algorithm.' :<C-U>call <SID>DoAction("'.a:algorithm.'",visualmode())<CR>'
+    exe 'nnoremap <silent> <Plug>actionsLine'.a:algorithm.' :<C-U>call <SID>DoAction("'.a:algorithm.'",v:count1)<CR>'
+    exe 'nmap '.a:key.'  <Plug>actions'.a:algorithm
+    exe 'xmap '.a:key.'  <Plug>actions'.a:algorithm
+    exe 'nmap '.a:key.a:key[strlen(a:key)-1].' <Plug>actionsLine'.a:algorithm
 endfun
 
 fun! s:OnlyTextSelection(str)
-  normal! ggVGx
-  set noreadonly
-  call append(0, split(Chomp(a:str), '\v\n'))
+    normal! ggVGx
+    set noreadonly
+    call append(0, split(Chomp(a:str), '\v\n'))
 endfun
 call MapAction('OnlyTextSelection','<leader>ts')
 
 
 nnoremap <leader>fi :CtrlSF 
 fun! s:FindIt(str)
-	:AsyncRun ':CtrlSF "'.a:str.'"<cr>'
+    :AsyncRun ':CtrlSF "'.a:str.'"<cr>'
     return a:str
 endfun
 call MapAction('FindIt','<leader>fit')
 
 fun! s:FindLocal(str)
     let path = expand('%:p:h')
-	exec ':CtrlSF "'.a:str.'"  "'.path.'" <cr>'
+    exec ':CtrlSF "'.a:str.'"  "'.path.'" <cr>'
     return a:str
 endfun
 call MapAction('FindLocal','<leader>fl')
 
 fun! s:ToSingleQuote(str)
-      let out = system("tr '\"' \"'\"", a:str)
+    let out = system("tr '\"' \"'\"", a:str)
     return out
 endfun
 call MapAction('ToSingleQuote','<leader>tsq')
 
 fun! s:ComputeMD5(str)
-  let out = system('md5sum |cut -b 1-32', a:str)
-  " Remove trailing newline.
-  let out = substitute(out, '\n$', '', '')
-  return out
+    let out = system('md5sum |cut -b 1-32', a:str)
+    " Remove trailing newline.
+    let out = substitute(out, '\n$', '', '')
+    return out
 endfun
 call MapAction('ComputeMD5','<leader>M')
 
@@ -567,10 +568,10 @@ function! ChompedSystemCall( ... )
 endfun
 
 fun! s:ReverseString(str)
-  let out = join(reverse(split(a:str, '\zs')), '')
-  " Remove a trailing newline that reverse() moved to the front.
-  let out = substitute(out, '^\n', '', '')
-  return out
+    let out = join(reverse(split(a:str, '\zs')), '')
+    " Remove a trailing newline that reverse() moved to the front.
+    let out = substitute(out, '^\n', '', '')
+    return out
 endfun
 call MapAction('ReverseString', '<leader>i')
 
@@ -600,39 +601,39 @@ endfun
 call MapAction('Tag', '<leader><')
 
 fun! s:MakeList(str)
-      let out = system('run_function prepend " - " ', a:str)
-      return out
-  endfun
+    let out = system('run_function prepend " - " ', a:str)
+    return out
+endfun
 call MapAction('MakeList', '<leader>ml')
 
 fun! s:Translate(str)
-      let out = system('translate ', a:str)
-      return out
-  endfun
+    let out = system('translate ', a:str)
+    return out
+endfun
 call MapAction('Translate', '<leader>ti')
 
 fun! s:TranslateGerman(str)
-      let out = system('run_function translateGerman ', a:str)
-      return out
-  endfun
+    let out = system('run_function translateGerman ', a:str)
+    return out
+endfun
 call MapAction('TranslateGerman', '<leader>tg')
 
 fun! s:EnglishToGerman(str)
-      let out = system('translate en de', a:str)
-      return out
-  endfun
+    let out = system('translate en de', a:str)
+    return out
+endfun
 call MapAction('EnglishToGerman', '<leader>eg')
 
 fun! s:MakeNumberedList(str)
-      let out = system('echo "'.a:str.'" | nl -s". " -w1')
-      return out
-  endfun
+    let out = system('echo "'.a:str.'" | nl -s". " -w1')
+    return out
+endfun
 call MapAction('MakeNumberedList', '<leader>mnl')
 
 fun! s:MakeGraph(str)
-      let out = system('graph-easy', a:str)
-      return a:str . "\n" . out
-  endfun
+    let out = system('graph-easy', a:str)
+    return a:str . "\n" . out
+endfun
 call MapAction('MakeGraph', '<leader>mg')
 
 fun! s:Star(str)
@@ -661,23 +662,23 @@ endfun
 call MapAction('Brackets', '<leader>[')
 
 fun! s:Filefy(str)
-  let out = system('filefy ', a:str)
-  return out
+    let out = system('filefy ', a:str)
+    return out
 endfun
 call MapAction('Filefy', '<leader>fiy')
 
 fun! s:foldSomething(str)
     let comment=split(&commentstring, '%s')
     if len(l:comment)==1
-         call add(comment, l:comment[0])
+        call add(comment, l:comment[0])
     endif
     return l:comment[0]." {{{\n".a:str."\n".l:comment[1]."}}}"
 endfun
 call MapAction('foldSomething', '<leader>fo')
 
 fun! s:Trim(str)
-  let out = system('run_function trim ', a:str)
-  return out
+    let out = system('run_function trim ', a:str)
+    return out
 endfun
 call MapAction('Trim', '<leader>tr')
 
@@ -700,8 +701,8 @@ endfunc
 call MapAction('BCat', '<leader>bc')
 
 fun! s:Decode(str)
-  let out = system('url-decode ', a:str)
-  return out
+    let out = system('url-decode ', a:str)
+    return out
 endfunc
 call MapAction('Decode', '<leader>d')
 
@@ -724,41 +725,41 @@ endfunc
 call MapAction('ToSnakeCase', '<leader>tcs')
 
 fun! s:JsonBeautifier(str)
-  let out = system('run_function json_beautifier ', a:str)
-  return out
+    let out = system('run_function json_beautifier ', a:str)
+    return out
 endfunc
 call MapAction('JsonBeautifier', '<leader>jb')
 
 fun! s:UrlToJson(str)
-  let out = system('url-to-json ', a:str)
-  return out
+    let out = system('url-to-json ', a:str)
+    return out
 endfunc
 call MapAction('UrlToJson', '<leader>ju')
 
 
 fun! s:Alnum(str)
-  let out = system('run_function alnum ', a:str)
-  return out
+    let out = system('run_function alnum ', a:str)
+    return out
 endfunc
 call MapAction('Alnum', '<leader>a')
 
 fun! s:Unescape(str)
-  let out = system('sed "s/\\\//g" ', a:str)
-  return out
+    let out = system('sed "s/\\\//g" ', a:str)
+    return out
 endfunc
 call MapAction('Unescape', '<leader>u')
 
 
 fun! s:SqlBeautifier(str)
-  let out = system('run_function sql_format', a:str)
-  return out
+    let out = system('run_function sql_format', a:str)
+    return out
 endfunc
 call MapAction('SqlBeautifier', '<leader>sb')
 
 call MapAction('XmlBeautifier', '<leader>x')
 fun! s:XmlBeautifier(str)
-  let out = system('run_function xml_beautifier ', a:str)
-  return out
+    let out = system('run_function xml_beautifier ', a:str)
+    return out
 endfunc
 call MapAction('XmlBeautifier', '<leader>xb')
 "}}}
@@ -851,9 +852,9 @@ call MapAction('Repl', '<leader>ev')
 map <Leader>el :VimuxRunLastCommand<CR>
 
 fun! s:Subs(str)
-  let my_filetype = &filetype
-  let out = ChompedSystemCall('subs -p '.my_filetype, a:str."\n")
-  return out
+    let my_filetype = &filetype
+    let out = ChompedSystemCall('subs -p '.my_filetype, a:str."\n")
+    return out
 endfunc
 call MapAction('Subs', '<leader>o')
 "}}}
@@ -995,15 +996,15 @@ nmap <leader>ccp :!mycopy %:p:h<cr>
 nmap <leader>cdcd :cd %:p:h<cr>
 
 fun! SaveForcing()
-     execute "w !sudo tee > /dev/null %"
- endfunc
+    execute "w !sudo tee > /dev/null %"
+endfunc
 command! -nargs=* ForceSave call SaveForcing()
 command! -nargs=* SaveForce call SaveForcing()
 
 nmap <leader>crn :call CopyCurrentRelativePath()<cr>
 fun! CopyCurrentRelativePath()
-  let path = RelativePath(expand("%:p"))
-let result = system('mycopy ', path)
+    let path = RelativePath(expand("%:p"))
+    let result = system('mycopy ', path)
 endfunc
 fun! RelativePath(filename)
     let cwd = getcwd()
@@ -1012,23 +1013,23 @@ fun! RelativePath(filename)
 endfunc
 
 fun! RenameFile()
-  let old_name = expand('%')
-  let new_name = input('New file name: ', expand('%'), 'file')
-  if new_name != '' && new_name != old_name
-    exec ':saveas ' . new_name
-    exec ':silent !rm ' . old_name
-    redraw!
-  endif
+    let old_name = expand('%')
+    let new_name = input('New file name: ', expand('%'), 'file')
+    if new_name != '' && new_name != old_name
+        exec ':saveas ' . new_name
+        exec ':silent !rm ' . old_name
+        redraw!
+    endif
 endfunc
 map <Leader>rn :call RenameFile()<cr>
 
 fun! CopyFile()
-  let old_name = expand('%')
-  let new_name = input('New file name: ', expand('%'), 'file')
-  if new_name != '' && new_name != old_name
-    exec ':saveas ' . new_name
-    redraw!
-  endif
+    let old_name = expand('%')
+    let new_name = input('New file name: ', expand('%'), 'file')
+    if new_name != '' && new_name != old_name
+        exec ':saveas ' . new_name
+        redraw!
+    endif
 endfunc
 map <Leader>cp :call CopyFile()<cr>
 "}}}
@@ -1079,28 +1080,28 @@ command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
 "PHP{{{
 map <Leader>rat :call VimuxRunCommand("clear; \$CLIPP_PATH/Backend ; cpf-phpunit.sh ")<CR>
 fun! s:JsonEncode(str)
-  let out = system('json_encode_from_php', a:str)
-  return out
+    let out = system('json_encode_from_php', a:str)
+    return out
 endfunc
 call MapAction('JsonEncode', '<leader>pj')
 fun! RunCurrentPHPFile()
-  let linterOut = system('php -l ' . expand("%:p"))
-  let executionOut = system('php ' . expand("%:p"))
-  call ShowStringOnNewWindow(linterOut."\n\n".executionOut)
+    let linterOut = system('php -l ' . expand("%:p"))
+    let executionOut = system('php ' . expand("%:p"))
+    call ShowStringOnNewWindow(linterOut."\n\n".executionOut)
 endfunc
 noremap <Leader>pr :call RunCurrentPHPFile()<cr>
 
 fun! s:JsonToPhp(str)
-  let out = system('json-to-php ', a:str)
-  return out
+    let out = system('json-to-php ', a:str)
+    return out
 endfun
 call MapAction('JsonToPhp', '<leader>jp')
 
 function SessionDirectory() abort
-  if len(argv()) > 0
-    return fnamemodify(argv()[0], ':p:h')
-  endif
-  return getcwd()
+    if len(argv()) > 0
+        return fnamemodify(argv()[0], ':p:h')
+    endif
+    return getcwd()
 endfunction
 
 " gvim {{{
@@ -1142,13 +1143,13 @@ let g:airline_theme='solarized'
 
 
 augroup VimrcColors
-au!
-  autocmd ColorScheme * highlight WordsToAvoid ctermfg=DarkBlue cterm=underline
-  autocmd ColorScheme * highlight HardWords ctermfg=DarkBlue cterm=underline
-  autocmd ColorScheme * highlight Whitespace ctermbg=Grey
-  autocmd ColorScheme * highlight Overlength ctermbg=DarkGrey
-  autocmd ColorScheme * highlight SpellBad ctermfg=Brown
-  "makes a underline on the current cursor line
+    au!
+    autocmd ColorScheme * highlight WordsToAvoid ctermfg=DarkBlue cterm=underline
+    autocmd ColorScheme * highlight HardWords ctermfg=DarkBlue cterm=underline
+    autocmd ColorScheme * highlight Whitespace ctermbg=Grey
+    autocmd ColorScheme * highlight Overlength ctermbg=DarkGrey
+    autocmd ColorScheme * highlight SpellBad ctermfg=Brown
+    "makes a underline on the current cursor line
 augroup END
 
 autocmd Syntax * call matchadd('WordsToAvoid', '\c\<\(obviously\|basically\|simply\|of\scourse\|clearly\|just\|little\|quite\|everyone\knows\|however\|easy\|obviamente\|basicamente\|simplesmente\|com\certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então\|fácil\|bem\)\>')
@@ -1172,17 +1173,17 @@ set secure "disable unsecure options
 
 " windows {{{
 function! ToggleWindowHorizontalVerticalSplit()
-  if !exists('t:splitType')
-    let t:splitType = 'vertical'
-  endif
-  if t:splitType == 'vertical' " is vertical switch to horizontal
-    windo wincmd K
-    let t:splitType = 'horizontal'
+    if !exists('t:splitType')
+        let t:splitType = 'vertical'
+    endif
+    if t:splitType == 'vertical' " is vertical switch to horizontal
+        windo wincmd K
+        let t:splitType = 'horizontal'
 
-  else " is horizontal switch to vertical
-    windo wincmd H
-    let t:splitType = 'vertical'
-  endif
+    else " is horizontal switch to vertical
+        windo wincmd H
+        let t:splitType = 'vertical'
+    endif
 endfun
 nnoremap <silent> <leader>wt :call ToggleWindowHorizontalVerticalSplit()<cr>
 "}}}
@@ -1200,50 +1201,50 @@ map <Leader>wm :call WritingMode()<cr>
 
 " star search over any kind of text {{{
 vnoremap <silent> * :<C-U>
-  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-  \gvy/<C-R><C-R>=substitute(
-  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-  \gV:call setreg('"', old_reg, old_regtype)<CR>
+            \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+            \gvy/<C-R><C-R>=substitute(
+            \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+            \gV:call setreg('"', old_reg, old_regtype)<CR>
 vnoremap <silent> # :<C-U>
-  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-  \gvy?<C-R><C-R>=substitute(
-  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-  \gV:call setreg('"', old_reg, old_regtype)<CR>
+            \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+            \gvy?<C-R><C-R>=substitute(
+            \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+            \gV:call setreg('"', old_reg, old_regtype)<CR>
 "}}}
 
 " search {{{
 nnoremap <leader>fw :call FindStringWiki()<cr>
 
 function! FindStringWiki()
-  let curline = getline('.')
-  call inputsave()
-  let name = input('Find on wiki: ')
-  call inputrestore()
-  execute ":CtrlSF ".name." ".$WIKI_PATH
+    let curline = getline('.')
+    call inputsave()
+    let name = input('Find on wiki: ')
+    call inputrestore()
+    execute ":CtrlSF ".name." ".$WIKI_PATH
 endfunction
 
 "search on open files lines {{{
 function! s:buffer_lines()
-  let res = []
-  for b in filter(range(1, bufnr('$')), 'buflisted(v:val)')
-    call extend(res, map(getbufline(b,0,"$"), 'b . ":\t" . (v:key + 1) . ":\t" . v:val '))
-  endfor
-  return res
+    let res = []
+    for b in filter(range(1, bufnr('$')), 'buflisted(v:val)')
+        call extend(res, map(getbufline(b,0,"$"), 'b . ":\t" . (v:key + 1) . ":\t" . v:val '))
+    endfor
+    return res
 endfunction
 
 function! s:searchLineHandler(l)
-  let keys = split(a:l, ':\t')
-  exec 'buf' keys[0]
-  exec keys[1]
-  normal! ^zz
+    let keys = split(a:l, ':\t')
+    exec 'buf' keys[0]
+    exec keys[1]
+    normal! ^zz
 endfunction
 
 command! FZFLines call fzf#run({
-\   'source':  <sid>buffer_lines(),
-\   'sink':    function('<sid>searchLineHandler'),
-\   'options': '--extended --nth=3..',
-\   'down':    '60%'
-\})
+            \   'source':  <sid>buffer_lines(),
+            \   'sink':    function('<sid>searchLineHandler'),
+            \   'options': '--extended --nth=3..',
+            \   'down':    '60%'
+            \})
 map <Leader>sfl :FZFLines<cr>
 "}}}
 "}}}
@@ -1289,28 +1290,28 @@ set hidden "hides buffers instead of closing them, don't give warnings on unsave
 
 " tags
 function! s:tags_sink(line)
-  let parts = split(a:line, '\t\zs')
-  "let excmd = matchstr(parts[2:], '^.*\ze;"\t')
-  execute 'silent e' parts[1][:-2]
-  let [magic, &magic] = [&magic, 0]
-  "execute excmd
-  let &magic = magic
+    let parts = split(a:line, '\t\zs')
+    "let excmd = matchstr(parts[2:], '^.*\ze;"\t')
+    execute 'silent e' parts[1][:-2]
+    let [magic, &magic] = [&magic, 0]
+    "execute excmd
+    let &magic = magic
 endfunction
 
 function! s:tags()
-  if empty(tagfiles())
-    echohl WarningMsg
-    echom 'Preparing tags'
-    echohl None
-    call system('ctags -R')
-  endif
+    if empty(tagfiles())
+        echohl WarningMsg
+        echom 'Preparing tags'
+        echohl None
+        call system('ctags -R')
+    endif
 
-  call fzf#run({
-  \ 'source':  'cat '.join(map(tagfiles(), 'fnamemodify(v:val, ":S")')).
-  \            '| grep -v -a ^!',
-  \ 'options': '+m -d "\t" --with-nth 1,2.. -n 1 --tiebreak=index',
-  \ 'down':    '40%',
-  \ 'sink':    function('s:tags_sink')})
+    call fzf#run({
+                \ 'source':  'cat '.join(map(tagfiles(), 'fnamemodify(v:val, ":S")')).
+                \            '| grep -v -a ^!',
+                \ 'options': '+m -d "\t" --with-nth 1,2.. -n 1 --tiebreak=index',
+                \ 'down':    '40%',
+                \ 'sink':    function('s:tags_sink')})
 endfunction
 
 command! Tags call s:tags()
@@ -1320,20 +1321,20 @@ map <Leader>tag :Tags<cr>
 " listing buffers and enteing them {{{
 function! s:listBuffer()
     :redir @a
-        :ls
+    :ls
     :redir END
     return split(@a, '\n')
 endfun
 function! s:bufferLineHandler(l)
-  let keys = split(a:l, ' ')
-  exec 'buf' keys[0]
+    let keys = split(a:l, ' ')
+    exec 'buf' keys[0]
 endfunction
 
 command! ZFZBuffers call fzf#run({
-\   'source':  <sid>listBuffer(),
-\   'sink':    function('<sid>bufferLineHandler'),
-\   'options': '--extended --nth=..3  --height 40%'
-\})
+            \   'source':  <sid>listBuffer(),
+            \   'sink':    function('<sid>bufferLineHandler'),
+            \   'options': '--extended --nth=..3  --height 40%'
+            \})
 map <Leader>ls :ZFZBuffers<cr>
 "}}}
 
@@ -1345,10 +1346,26 @@ autocmd filetype crontab setlocal nobackup nowritebackup
 let g:ctrlsf_ackprg='rg'
 
 fun! s:GenerateTags(str)
-	let directory = input('Directory: ', getcwd() )
+    let directory = input('Directory: ', getcwd() )
     let out = system('ctags -R '.directory)
     if v:shell_error
         call ShowStringOnNewWindow(out)
     endif
 endfunc
 call MapAction('GenerateTags', '<leader>tt')
+
+fun! TmuxContent()
+    if !exists("g:VimuxRunnerIndex") || _VimuxHasRunner(g:VimuxRunnerIndex) == -1
+        call VimuxOpenRunner()
+    endif
+
+    let idx = g:VimuxRunnerIndex
+    let out = system('tmux capture-pane -J -p -t '.idx.' > /tmp/tmux')
+    :vsplit /tmp/tmux
+endfunc
+nnoremap <leader>ec :call TmuxContent()<cr>
+nnoremap <leader>eh :call TmuxContent()<cr>
+
+
+set guifont=Bitstream\ Vera\ Sans\ Mono:h19
+

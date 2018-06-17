@@ -166,9 +166,9 @@ nnoremap <leader>mru :MRU<cr>
 "netrw{{{
 nnoremap <leader>k :Vexplore<cr>
 let g:netrw_winsize = 25 "window width
-let g:netrw_browse_split=4 "open on the previous window
 let g:netrw_altv=1 "open vertical splits on the right
 let g:netrw_liststyle=3
+let g:netrw_winsize = 0
 "}}}
 
 "spelling {{{

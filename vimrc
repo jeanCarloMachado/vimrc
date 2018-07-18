@@ -1,7 +1,7 @@
 "It's a good practise to use folding to hide details of
 "Its better to organize the configs by semantic. Better to put wiki
 "mappings on the wiki section then on the mappings section
-"Generic functions{{{
+"Generic functions
 fun! ShowStringOnNewWindow(content)
     split _output_
     normal! ggdG
@@ -12,10 +12,9 @@ endfun
 fun! NotifySend(content)
     :Asyncrun notify-send '".a:content."'"
 endfun
-"}}}
 
 
-"Plugins Load {{{
+"Plugins Load 
 filetype on
 filetype plugin on "loading the plugin files for specific file types
 call plug#begin()
@@ -29,14 +28,16 @@ augroup plug_xtype
 augroup END
 Plug 'christoomey/vim-tmux-navigator'
 "Plug 'vim-utils/vim-man' "view manuals inside vim
-" custom text objects {{{
+" custom text objects 
 Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
 Plug 'kana/vim-textobj-function' "text object for a function: enables af and if
 Plug 'michaeljsmith/vim-indent-object' "same identation text object
 Plug 'vim-scripts/argtextobj.vim'
-"}}}
-Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim' "gist support
-Plug 'dyng/ctrlsf.vim' "grep like sublime one
+
+Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim'
+"gist support
+Plug 'dyng/ctrlsf.vim'
+"grep like sublime one
 Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
 "search for, substitute, and abbreviate multiple variants of a word
 Plug 'tpope/vim-abolish'
@@ -63,15 +64,17 @@ Plug 'kshenoy/vim-signature'
 "most recently used files list
 Plug 'yegappan/mru'
 Plug 'git@github.com:skywind3000/asyncrun.vim.git'
-" Plug 'junegunn/goyo.vim'
+Plug 'junegunn/goyo.vim'
 Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
+Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
+Plug 'Shougo/vimproc.vim', {'do' : 'make'}
+Plug 'vim-vdebug/vdebug'
 " Plug 'wakatime/vim-wakatime'
 Plug 'benmills/vimux'
 " Plug 'xolox/vim-session'
 call plug#end()
-"}}}
 
-"generic configs{{{
+"generic configs
 set splitright "split new windows to the right
 set nocompatible
 let mapleader = "\<space>"
@@ -106,43 +109,43 @@ if has("clipboard")
 endif
 let g:abolish_save_file = $HOME."/Dropbox/projects/vimrc/vim/abbreviations.vim"
 set wildignore+=*\\dist\\**
-"}}}
-nmap <leader>vn :vnew<cr>
-nmap <leader>fim :!runFunction fileManager %:h<cr>
-command! FileManager execute "!runFunction fileManager %:h"
 
-"linter config {{{
+nmap <leader>vn :vnew<cr>
+nmap <leader>fim :!runFunction fileManager %:h<cr> command! FileManager execute "!runFunction fileManager %:h"
+nnoremap <leader>on :only<cr> 
+
+"linter config 
 let g:airline#extensions#ale#enabled = 1
 let g:ale_set_highlights = 0
 let g:ale_php_phpcs_standard = $CLIPP_PATH."/Backend/ruleset.xml"
 let g:ale_lint_on_text_changed = 0
 let g:ale_lint_on_save = 1
-"}}}
 
-" visual mode {{{
+
+" visual mode 
 "Allow using the repeat operator with a visual selection
 vnoremap . :normal .<CR>
-" }}}
+" 
 
-" search{{{
+" search
 set hlsearch " match while typing the search
 set incsearch "show the next match while entering a search
 set ignorecase "the case of normal letters is ignored
 set smartcase "Override the 'ignorecase' option if the search pattern contains upper case characters
-"}}}
 
-" autocomplete {{{
+
+" autocomplete 
 " inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 " inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 " inoremap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
-"}}}
 
-"Fold {{{
+
+"Fold 
 autocmd FileType markdown set foldenable foldcolumn=1 foldlevel=1 foldmethod=marker
 " autocmd FileType php set foldenable foldcolumn=1 foldlevel=1 foldmethod=indent
-"}}}
 
-"Concealing {{{
+
+"Concealing 
 " autocmd FileType php call matchadd('Conceal', '!=', 999, -1, {'conceal': '≠'})
 " autocmd FileType php call matchadd('Conceal', '->', 999, -1, {'conceal': '➞'})
 " autocmd FileType php call matchadd('Conceal', '=>', 999, -1, {'conceal': '➞'})
@@ -151,27 +154,27 @@ autocmd FileType markdown set foldenable foldcolumn=1 foldlevel=1 foldmethod=mar
 " autocmd FileType markdown call matchadd('Conceal', '### ', 999, -1, {'conceal': ''})
 " autocmd FileType markdown call matchadd('Conceal', '#### ', 999, -1, {'conceal': ''})
 set conceallevel=2 "show pretty latex formulas
-"}}}
 
-"Grep {{{
+
+"Grep 
 set grepprg=rg\ --vimgrep
 set grepformat=%f:%l:%c:%m
 fun! Grepr( arg )
     execute "grep " . a:arg . " %:p:h/*"
 endfun
 command! -nargs=* Grepr call Grepr( '<args>' )
-"}}}
+
 
 nnoremap <leader>mru :MRU<cr>
-"netrw{{{
+"netrw
 nnoremap <leader>k :Vexplore<cr>
 let g:netrw_winsize = 25 "window width
 let g:netrw_altv=1 "open vertical splits on the right
 let g:netrw_liststyle=3
 let g:netrw_winsize = 0
-"}}}
 
-"spelling {{{
+
+"spelling 
 fun! FixLastSpellingError()
     normal! mm[s1z=`m
 endfun
@@ -181,10 +184,10 @@ map <leader>sen :set spell spelllang=en_us<cr>
 autocmd filetype rst set spell spelllang=en_us
 autocmd filetype txt set spell spelllang=en_us
 autocmd filetype markdown set spell spelllang=en_us
-"}}}
 
 
-"Open files quickly {{{
+
+"Open files quickly 
 fun! LatestPost()
     let out =  system("run_function latestPost")
     execute 'edit' out
@@ -240,9 +243,9 @@ fun! Meditation()
     :e $WIKI_PATH/src/meditation/meditation.md
 endfun
 command! -nargs=* Meditation call Meditation()
-"}}}
 
-"Generic mappings{{{
+
+"Generic mappings
 nnoremap <leader>gv  :! gvim %:p<cr>
 nnoremap <leader>; :normal!mtA;<esc>`t
 nnoremap <leader>: :normal!mtA:<esc>`t
@@ -275,9 +278,9 @@ cnoremap <C-n> <Down>
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 nnoremap <leader>cf :!filefy-clippboard<cr>
 map <c-p> :FZF<cr>
-"}}}
 
-"reload vim{{{
+
+"reload vim
 if !exists('*ReloadVim')
     fun! ReloadVim()
         silent source $MY_VIMRC
@@ -294,30 +297,29 @@ endfun
 command! -nargs=* RemoveFile call RemoveFile()
 noremap <silent> <leader>rmrf :RemoveFile<cr>
 
-"}}}
 
 
-"performance {{{
+
+"performance
 set ttyfast "Improves smoothness of redrawing when there are multiple windows
 " autocmd BufEnter * :syn sync maxlines=500
 set lazyredraw "don't redraw screend when running macros
 " syntax sync minlines=256
 
 "disables syntax for files going over a certain size
-autocmd BufReadPre * if getfsize(expand("%")) > 10000000 | syntax off | endif
+" autocmd BufReadPre * if getfsize(expand("%")) > 10000000 | syntax off | endif
 
 set nocursorline "highlighting of the current line is a big deal for vim, probably the most important setting
-"}}}
 
 
-"undo {{{
+"undo
 set undofile "enable undoing
 set undodir=~/.vim/undo/
 set undolevels=100
 set undoreload=100
-"}}}
 
-" backup options{{{
+
+" backup options
 set backup
 set writebackup
 set backupdir=~/.vim/backup
@@ -326,28 +328,30 @@ set swapfile
 set directory=~/.vim/swap
 "don't show alert message when the swap already exists
 set shortmess+=A "don't give the "ATTENTION" message when an existing swap file is found
-"}}}
 
-"indenting {{{
+
+"indenting 
 filetype plugin indent on
 set copyindent
 set autoindent
+" show existing tab with 4 spaces width
 set tabstop=4
+" when indenting with '>', use 4 spaces width
 set shiftwidth=4
+" On pressing tab, insert 4 spaces
 set expandtab
 
 
 " 2 spaces for html/js
-autocmd filetype javascript,html set tabstop=2 shiftwidth=2
-
 
 " for php use tabs
-autocmd filetype php,html,tpl,smarty set autoindent noexpandtab tabstop=4 shiftwidth=4
+" autocmd filetype php,html,tpl,smarty set autoindent noexpandtab tabstop=4 shiftwidth=4
+autocmd filetype javascript,html set autoindent noexpandtab tabstop=2 shiftwidth=2
 autocmd filetype haskell set tabstop=2 shiftwidth=2
 
-"}}}
 
-"custom text objects{{{
+
+"custom text objects
 call textobj#user#plugin('line', {
             \   '-': {
             \     'select-a-function': 'CurrentLineA',
@@ -459,9 +463,9 @@ fun! CurrentDocumentI()
     return ['v', head_pos, tail_pos]
 endfun
 inoremap ;<cr> <end>;<cr>
-"}}}
 
-"actions over text blocks{{{
+
+"actions over text blocks
 fun! s:DoAction(algorithm,type)
     " backup settings that we will change
     let sel_save = &selection
@@ -531,10 +535,19 @@ endfun
 call MapAction('OnlyTextSelection','<leader>ts')
 
 
+"find word under cursor
+noremap <leader>fw "zyiw:exe ":CtrlSF ".@z.""<cr>
+
+fun! s:FindIt(str)
+    :AsyncRun ':CtrlSF "'.a:str.'"<cr>'
+    return a:str;
+endfun
+call MapAction('FindIt','<leader>fit')
+
 nnoremap <leader>fi :CtrlSF 
 fun! s:FindIt(str)
     :AsyncRun ':CtrlSF "'.a:str.'"<cr>'
-    return a:str
+    return a:str;
 endfun
 call MapAction('FindIt','<leader>fit')
 
@@ -672,7 +685,7 @@ fun! s:foldSomething(str)
     if len(l:comment)==1
         call add(comment, l:comment[0])
     endif
-    return l:comment[0]." {{{\n".a:str."\n".l:comment[1]."}}}"
+    return l:comment[0]." \n".a:str."\n".l:comment[1]."
 endfun
 call MapAction('foldSomething', '<leader>fo')
 
@@ -762,9 +775,9 @@ fun! s:XmlBeautifier(str)
     return out
 endfunc
 call MapAction('XmlBeautifier', '<leader>xb')
-"}}}
 
-"Markdown{{{
+
+"Markdown
 
 let g:vim_markdown_no_extensions_in_markdown = 1
 autocmd Filetype markdown call MarkdownDefaultConfigs()
@@ -857,9 +870,9 @@ fun! s:Subs(str)
     return out
 endfunc
 call MapAction('Subs', '<leader>o')
-"}}}
 
-"diary{{{
+
+"diary
 fun! Diary( arg )
     let out = system('run_function diary_file "' . a:arg . '"')
     execute "edit " . out
@@ -900,9 +913,9 @@ fun! BottomDiary( arg )
     res 10
 endfunc
 command! -nargs=* BottomDiary call BottomDiary( '<args>' )
-"}}}
 
-"wiki{{{
+
+"wiki
 map <c-i> :FZF $WIKI_PATH/src<cr>
 let g:vim_markdown_no_default_key_mappings = 1
 fun! Wiki(arg)
@@ -965,23 +978,22 @@ fun! GrepWiki( arg )
 endfunc
 command! -nargs=* GrepWiki call GrepWiki( '<args>' )
 command! -nargs=* WikiGrep call GrepWiki( '<args>' )
-"}}}
 
-" templates for filetypes {{{
-" autocmd BufNewFile *Test.php 0r $TEMPLATES_DIR/php_test.php
-" autocmd BufNewFile *.php 0r $TEMPLATES_DIR/php.php
-" autocmd BufNewFile *.sh 0r $TEMPLATES_DIR/shell.sh
-" autocmd BufNewFile *.hs 0r $TEMPLATES_DIR/haskell.hs
-" autocmd BufNewFile *.html 0r $TEMPLATES_DIR/html.html
-" autocmd BufNewFile *.c 0r $TEMPLATES_DIR/c.c
-" autocmd BufNewFile **/papers/*.md 0r $TEMPLATES_DIR/science-review.md
-" autocmd BufNewFile **/*_paper.md 0r $TEMPLATES_DIR/science-review.md
-" autocmd BufNewFile **/*review*.md 0r $TEMPLATES_DIR/science-review.md
-" autocmd BufNewFile */diary/*.md 0r $TEMPLATES_DIR/diary.md
-" autocmd BufNewFile */posts/*.md 0r $TEMPLATES_DIR/post.md
-"}}}
 
-" generic actions relative to current file{{{
+" templates for filetypes 
+autocmd BufNewFile *.php 0r $TEMPLATES_DIR/php.php
+autocmd BufNewFile *.sh 0r $TEMPLATES_DIR/shell.sh
+autocmd BufNewFile *.hs 0r $TEMPLATES_DIR/haskell.hs
+autocmd BufNewFile *.html 0r $TEMPLATES_DIR/html.html
+autocmd BufNewFile *.elm 0r $TEMPLATES_DIR/elm.elm
+autocmd BufNewFile *.c 0r $TEMPLATES_DIR/c.c
+autocmd BufNewFile **/papers/*.md 0r $TEMPLATES_DIR/science-review.md
+autocmd BufNewFile **/*_paper.md 0r $TEMPLATES_DIR/science-review.md
+autocmd BufNewFile **/*review*.md 0r $TEMPLATES_DIR/science-review.md
+autocmd BufNewFile */diary/*.md 0r $TEMPLATES_DIR/diary.md
+autocmd BufNewFile */posts/*.md 0r $TEMPLATES_DIR/post.md
+
+" generic actions relative to current file
 nmap <leader>xo :!xdg-open % &<cr>
 "copy path name
 nmap <leader>cpn :!mycopy %:p<cr>
@@ -1032,9 +1044,9 @@ fun! CopyFile()
     endif
 endfunc
 map <Leader>cp :call CopyFile()<cr>
-"}}}
 
-"git {{{
+
+"git 
 fun! GitLog()
     let path = expand('%:p')
     let cmd='cd $(dirname '.path.') ; git log -p --follow '.path
@@ -1075,9 +1087,9 @@ fun! OpenRepoOnGithub(arg)
     let result = system("$BROWSER " . url . " & ")
 endfunc
 command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
-"}}}
 
-"PHP{{{
+
+"PHP
 map <Leader>rat :call VimuxRunCommand("clear; \$CLIPP_PATH/Backend ; cpf-phpunit.sh ")<CR>
 fun! s:JsonEncode(str)
     let out = system('json_encode_from_php', a:str)
@@ -1104,26 +1116,26 @@ function SessionDirectory() abort
     return getcwd()
 endfunction
 
-" gvim {{{
-" :set guioptions+=m  "remove menu bar
-" :set guioptions-=T  "remove toolbar
-" :set guioptions-=r  "remove right-hand scroll bar
-" :set guioptions-=L  "remove left-hand scroll bar
-" if has('gui_running')
-"   set guifont=DejaVu\ Sans\ Mono\ Book\ 13
-" endif
-"}}}
+" gvim 
+:set guioptions+=m  "remove menu bar
+:set guioptions-=T  "remove toolbar
+:set guioptions-=r  "remove right-hand scroll bar
+:set guioptions-=L  "remove left-hand scroll bar
+if has('gui_running')
+  set guifont=DejaVu\ Sans\ Mono\ Book\ 13
+endif
 
-" macros {{{
+
+" macros 
 " fun! RepeatAndMove()
 "     let @q ="n."
 "     normal! @q
 " endfun
 " nnoremap <leader>rm :RepeatAndMove()<cr>
 " command! -nargs=* RepeatAndMove call RepeatAndMove()
-"}}}
 
-" C lang {{{
+
+" C lang 
 fun! CFiletypeConfigs()
     "compile through gcc when there's no makefile
     if !filereadable(expand("%:p:h")."/Makefile")
@@ -1131,16 +1143,13 @@ fun! CFiletypeConfigs()
     endif
 endfun
 autocmd filetype c call CFiletypeConfigs()
-"}}}
 
 
-"theme, colors, highlights {{{
+
+"theme, colors, highlights 
 syntax enable
 
 " set background=light
-set background=dark
-let g:airline_theme='solarized'
-
 
 augroup VimrcColors
     au!
@@ -1158,20 +1167,24 @@ autocmd Syntax * call matchadd('HardWords', '\c\<\(porquê\|porque\|por\sque\|it
 autocmd Syntax * call matchadd('Whitespace', '\s\+$')
 autocmd Syntax * call matchadd('Overlength', '\%81v')
 
+let g:solarized_termtrans = 1
+let g:airline_theme='solarized'
+set background=dark
+
 colorscheme solarized
 set term=screen-256color
 let g:solarized_bold=1
 set t_Co=256
 " color 0 is the dark background and 15 is the light one
 hi StatusLine ctermfg=12 ctermbg=0 cterm=NONE
-"}}}
 
-" vimrc per project {{{
+
+" vimrc per project 
 set exrc "enable vimrc per project
 set secure "disable unsecure options
-"}}}
 
-" windows {{{
+
+" windows 
 function! ToggleWindowHorizontalVerticalSplit()
     if !exists('t:splitType')
         let t:splitType = 'vertical'
@@ -1186,20 +1199,20 @@ function! ToggleWindowHorizontalVerticalSplit()
     endif
 endfun
 nnoremap <silent> <leader>wt :call ToggleWindowHorizontalVerticalSplit()<cr>
-"}}}
 
 
-" writer mode {{{
+
+" writer mode 
 let writer_mode=$WRITER_MODE
 fun! WritingMode()
     :Goyo
 endfun
 command! -nargs=* WritingMode call WritingMode()
 map <Leader>wm :call WritingMode()<cr>
-"}}}
 
 
-" star search over any kind of text {{{
+
+" star search over any kind of text 
 vnoremap <silent> * :<C-U>
             \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
             \gvy/<C-R><C-R>=substitute(
@@ -1210,10 +1223,10 @@ vnoremap <silent> # :<C-U>
             \gvy?<C-R><C-R>=substitute(
             \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
             \gV:call setreg('"', old_reg, old_regtype)<CR>
-"}}}
 
-" search {{{
-nnoremap <leader>fw :call FindStringWiki()<cr>
+
+" search 
+nnoremap <leader>wf :call FindStringWiki()<cr>
 
 function! FindStringWiki()
     let curline = getline('.')
@@ -1223,7 +1236,7 @@ function! FindStringWiki()
     execute ":CtrlSF ".name." ".$WIKI_PATH
 endfunction
 
-"search on open files lines {{{
+"search on open files lines 
 function! s:buffer_lines()
     let res = []
     for b in filter(range(1, bufnr('$')), 'buflisted(v:val)')
@@ -1246,15 +1259,15 @@ command! FZFLines call fzf#run({
             \   'down':    '60%'
             \})
 map <Leader>sfl :FZFLines<cr>
-"}}}
-"}}}
+
+
 
 au BufRead,BufNewFile *.jar,*.war,*.ear,*.sar,*.rar set filetype=zip
 
 let g:VimuxHeight = "20"
 
 
-" to PDF {{{
+" to PDF 
 fun! s:PdfFile(str)
     echom "Starting to create pdf"
     let fileName = expand("%:p")
@@ -1275,7 +1288,7 @@ endfun
 command! -nargs=* WeekReport call WeekReport()
 map <Leader>wr :call WeekReport()<cr>
 
-" }}}
+" 
 
 let g:elm_format_autosave = 0
 let g:elm_make_show_warnings = 0
@@ -1318,7 +1331,7 @@ command! Tags call s:tags()
 map <Leader>tag :Tags<cr>
 
 
-" listing buffers and enteing them {{{
+" listing buffers and enteing them 
 function! s:listBuffer()
     :redir @a
     :ls
@@ -1336,7 +1349,6 @@ command! ZFZBuffers call fzf#run({
             \   'options': '--extended --nth=..3  --height 40%'
             \})
 map <Leader>ls :ZFZBuffers<cr>
-"}}}
 
 autocmd BufNewFile,BufRead *.es6 set filetype=javascript
 
@@ -1366,6 +1378,31 @@ endfunc
 nnoremap <leader>ec :call TmuxContent()<cr>
 nnoremap <leader>eh :call TmuxContent()<cr>
 
+" autocomplete
+au FileType php setl ofu=phpcomplete#CompletePHP
+au FileType ruby,eruby setl ofu=rubycomplete#Complete
+au FileType html,xhtml setl ofu=htmlcomplete#CompleteTags
+au FileType c setl ofu=ccomplete#CompleteCpp
+au FileType css setl ofu=csscomplete#CompleteCSS
 
-set guifont=Bitstream\ Vera\ Sans\ Mono:h19
+
+let g:vdebug_keymap = {
+\    "run" : "<leader>dr",
+\    "run_to_cursor" : "<leader>dc",
+\    "step_over" : "<leader>dd",
+\    "step_into" : "<leader>di",
+\    "step_out" : "<leader>do",
+\    "close" : "<leader>de",
+\    "detach" : "<F7>",
+\    "set_breakpoint" : "<leader>db",
+\    "get_context" : "dx",
+\    "eval_under_cursor" : "<F12>",
+\    "eval_visual" : "<Leader>dv",
+\}
+
+" save the previous cursor position
+augroup resCur
+  autocmd!
+  autocmd BufReadPost * call setpos(".", getpos("'\""))
+augroup END
 

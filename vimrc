@@ -13,8 +13,7 @@ fun! NotifySend(content)
     :Asyncrun notify-send '".a:content."'"
 endfun
 
-
-"Plugins Load 
+"Plugins Load
 filetype on
 filetype plugin on "loading the plugin files for specific file types
 call plug#begin()
@@ -28,7 +27,7 @@ augroup plug_xtype
 augroup END
 Plug 'christoomey/vim-tmux-navigator'
 "Plug 'vim-utils/vim-man' "view manuals inside vim
-" custom text objects 
+" custom text objects
 Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
 Plug 'kana/vim-textobj-function' "text object for a function: enables af and if
 Plug 'michaeljsmith/vim-indent-object' "same identation text object
@@ -47,20 +46,20 @@ Plug 'tpope/vim-surround'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-commentary'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-" Plug 'lervag/vimtex', { 'for': ['latex'] }
+Plug 'lervag/vimtex', { 'for': ['latex'] }
 Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
-" Plug 'fatih/vim-go', { 'for': ['go'] }
+Plug 'fatih/vim-go', { 'for': ['go'] }
 Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
-" Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
+Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 " Plug 'kovisoft/slimv', { 'for': ['common-lisp', 'lisp'] }
-" Plug 'maralla/completor.vim' "async autocomplete
+Plug 'maralla/completor.vim' "async autocomplete
 Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
 " visualizing marks
 Plug 'kshenoy/vim-signature'
 " this plugin is slow when the project is too big
-" Plug 'xolox/vim-misc' | Plug 'xolox/vim-easytags'
+Plug 'xolox/vim-misc' | Plug 'xolox/vim-easytags'
 "most recently used files list
 Plug 'yegappan/mru'
 Plug 'git@github.com:skywind3000/asyncrun.vim.git'
@@ -69,9 +68,9 @@ Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
 Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 Plug 'vim-vdebug/vdebug'
-" Plug 'wakatime/vim-wakatime'
+Plug 'wakatime/vim-wakatime'
 Plug 'benmills/vimux'
-" Plug 'xolox/vim-session'
+
 call plug#end()
 
 "generic configs
@@ -82,6 +81,7 @@ runtime macros/matchit.vim "Enable extended % matching
 set tags+=/usr/include/tags,./tags,./.git/tags,../.git/tags
 " set mouse=a "enable mouse on normal,visual,inter,command-line modes
 set backspace=indent,eol,start "make the backspace work like in most other programs
+
 set cot+=menuone "Use the popup menu also when there is only one match
 set number "show numbers
 set shell=$SHELL
@@ -122,10 +122,9 @@ let g:ale_lint_on_text_changed = 0
 let g:ale_lint_on_save = 1
 
 
-" visual mode 
+" visual mode
 "Allow using the repeat operator with a visual selection
 vnoremap . :normal .<CR>
-" 
 
 " search
 set hlsearch " match while typing the search
@@ -133,19 +132,12 @@ set incsearch "show the next match while entering a search
 set ignorecase "the case of normal letters is ignored
 set smartcase "Override the 'ignorecase' option if the search pattern contains upper case characters
 
-
-" autocomplete 
-" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-" inoremap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
-
-
-"Fold 
+"Fold
 autocmd FileType markdown set foldenable foldcolumn=1 foldlevel=1 foldmethod=marker
 " autocmd FileType php set foldenable foldcolumn=1 foldlevel=1 foldmethod=indent
 
 
-"Concealing 
+"Concealing
 " autocmd FileType php call matchadd('Conceal', '!=', 999, -1, {'conceal': '≠'})
 " autocmd FileType php call matchadd('Conceal', '->', 999, -1, {'conceal': '➞'})
 " autocmd FileType php call matchadd('Conceal', '=>', 999, -1, {'conceal': '➞'})
@@ -156,7 +148,7 @@ autocmd FileType markdown set foldenable foldcolumn=1 foldlevel=1 foldmethod=mar
 set conceallevel=2 "show pretty latex formulas
 
 
-"Grep 
+"Grep
 set grepprg=rg\ --vimgrep
 set grepformat=%f:%l:%c:%m
 fun! Grepr( arg )
@@ -174,7 +166,7 @@ let g:netrw_liststyle=3
 let g:netrw_winsize = 0
 
 
-"spelling 
+"spelling
 fun! FixLastSpellingError()
     normal! mm[s1z=`m
 endfun
@@ -297,9 +289,6 @@ endfun
 command! -nargs=* RemoveFile call RemoveFile()
 noremap <silent> <leader>rmrf :RemoveFile<cr>
 
-
-
-
 "performance
 set ttyfast "Improves smoothness of redrawing when there are multiple windows
 " autocmd BufEnter * :syn sync maxlines=500
@@ -345,7 +334,7 @@ set expandtab
 " 2 spaces for html/js
 
 " for php use tabs
-" autocmd filetype php,html,tpl,smarty set autoindent noexpandtab tabstop=4 shiftwidth=4
+autocmd filetype php,html,tpl,smarty set autoindent noexpandtab tabstop=4 shiftwidth=4
 autocmd filetype javascript,html set autoindent noexpandtab tabstop=2 shiftwidth=2
 autocmd filetype haskell set tabstop=2 shiftwidth=2
 
@@ -1171,8 +1160,14 @@ let g:solarized_termtrans = 1
 let g:airline_theme='solarized'
 set background=dark
 
+if has('nvim')
+    " Neovim specific commands
+else
+    "not nvim commands
+    set term=screen-256color
+endif
+
 colorscheme solarized
-set term=screen-256color
 let g:solarized_bold=1
 set t_Co=256
 " color 0 is the dark background and 15 is the light one
@@ -1378,13 +1373,6 @@ endfunc
 nnoremap <leader>ec :call TmuxContent()<cr>
 nnoremap <leader>eh :call TmuxContent()<cr>
 
-" autocomplete
-au FileType php setl ofu=phpcomplete#CompletePHP
-au FileType ruby,eruby setl ofu=rubycomplete#Complete
-au FileType html,xhtml setl ofu=htmlcomplete#CompleteTags
-au FileType c setl ofu=ccomplete#CompleteCpp
-au FileType css setl ofu=csscomplete#CompleteCSS
-
 
 let g:vdebug_keymap = {
 \    "run" : "<leader>dr",
@@ -1405,4 +1393,9 @@ augroup resCur
   autocmd!
   autocmd BufReadPost * call setpos(".", getpos("'\""))
 augroup END
+
+set tags=./tags;
+let g:easytags_dynamic_files = 1
+let g:easytags_async =  1
+let g:easytags_autorecurse = 0
 

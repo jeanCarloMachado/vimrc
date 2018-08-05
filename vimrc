@@ -53,13 +53,12 @@ Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
 Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 " Plug 'kovisoft/slimv', { 'for': ['common-lisp', 'lisp'] }
-Plug 'maralla/completor.vim' "async autocomplete
 Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
 " visualizing marks
 Plug 'kshenoy/vim-signature'
 " this plugin is slow when the project is too big
-Plug 'xolox/vim-misc' | Plug 'xolox/vim-easytags'
+Plug 'xolox/vim-misc' | Plug 'xolox/vim-easytags', {'for': ['php', 'python', 'c'] }
 "most recently used files list
 Plug 'yegappan/mru'
 Plug 'git@github.com:skywind3000/asyncrun.vim.git'
@@ -67,7 +66,7 @@ Plug 'junegunn/goyo.vim'
 Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
 Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
-Plug 'vim-vdebug/vdebug'
+Plug 'vim-vdebug/vdebug', {'for': ['php'] }
 Plug 'wakatime/vim-wakatime'
 Plug 'benmills/vimux'
 
@@ -82,7 +81,7 @@ set tags+=/usr/include/tags,./tags,./.git/tags,../.git/tags
 " set mouse=a "enable mouse on normal,visual,inter,command-line modes
 set backspace=indent,eol,start "make the backspace work like in most other programs
 
-set cot+=menuone "Use the popup menu also when there is only one match
+" set cot+=menuone "Use the popup menu also when there is only one match
 set number "show numbers
 set shell=$SHELL
 set encoding=utf-8
@@ -114,7 +113,7 @@ nmap <leader>vn :vnew<cr>
 nmap <leader>fim :!runFunction fileManager %:h<cr> command! FileManager execute "!runFunction fileManager %:h"
 nnoremap <leader>on :only<cr> 
 
-"linter config 
+"linter config
 let g:airline#extensions#ale#enabled = 1
 let g:ale_set_highlights = 0
 let g:ale_php_phpcs_standard = $CLIPP_PATH."/Backend/ruleset.xml"
@@ -138,13 +137,13 @@ autocmd FileType markdown set foldenable foldcolumn=1 foldlevel=1 foldmethod=mar
 
 
 "Concealing
-" autocmd FileType php call matchadd('Conceal', '!=', 999, -1, {'conceal': '≠'})
-" autocmd FileType php call matchadd('Conceal', '->', 999, -1, {'conceal': '➞'})
-" autocmd FileType php call matchadd('Conceal', '=>', 999, -1, {'conceal': '➞'})
-" autocmd FileType markdown call matchadd('Conceal', '# ', 999, -1, {'conceal': ''})
-" autocmd FileType markdown call matchadd('Conceal', '## ', 999, -1, {'conceal': ''})
-" autocmd FileType markdown call matchadd('Conceal', '### ', 999, -1, {'conceal': ''})
-" autocmd FileType markdown call matchadd('Conceal', '#### ', 999, -1, {'conceal': ''})
+autocmd FileType php call matchadd('Conceal', '!=', 999, -1, {'conceal': '≠'})
+autocmd FileType php call matchadd('Conceal', '->', 999, -1, {'conceal': '➞'})
+autocmd FileType php call matchadd('Conceal', '=>', 999, -1, {'conceal': '➞'})
+autocmd FileType markdown call matchadd('Conceal', '# ', 999, -1, {'conceal': ''})
+autocmd FileType markdown call matchadd('Conceal', '## ', 999, -1, {'conceal': ''})
+autocmd FileType markdown call matchadd('Conceal', '### ', 999, -1, {'conceal': ''})
+autocmd FileType markdown call matchadd('Conceal', '#### ', 999, -1, {'conceal': ''})
 set conceallevel=2 "show pretty latex formulas
 
 
@@ -299,6 +298,7 @@ set lazyredraw "don't redraw screend when running macros
 " autocmd BufReadPre * if getfsize(expand("%")) > 10000000 | syntax off | endif
 
 set nocursorline "highlighting of the current line is a big deal for vim, probably the most important setting
+set synmaxcol=128
 
 
 "undo
@@ -1398,4 +1398,7 @@ set tags=./tags;
 let g:easytags_dynamic_files = 1
 let g:easytags_async =  1
 let g:easytags_autorecurse = 0
+
+" make vim more verobse, good for debugging
+" set vbs=1
 

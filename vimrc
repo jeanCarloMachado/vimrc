@@ -20,11 +20,7 @@ call plug#begin()
 "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
 Plug 'altercation/vim-colors-solarized'
 "inline errors, this is great
-Plug 'w0rp/ale', { 'for': [] }
-"disable ale for  markdown
-augroup plug_xtype
-    autocmd FileType * if expand('<amatch>') != 'markdown' | call plug#load('ale') | execute 'autocmd! plug_xtype' | endif
-augroup END
+Plug 'w0rp/ale', { 'for': ['php', 'python'] }
 Plug 'christoomey/vim-tmux-navigator'
 "Plug 'vim-utils/vim-man' "view manuals inside vim
 " custom text objects
@@ -58,7 +54,7 @@ Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
 " visualizing marks
 Plug 'kshenoy/vim-signature'
 " this plugin is slow when the project is too big
-Plug 'xolox/vim-misc' | Plug 'xolox/vim-easytags', {'for': ['php', 'python', 'c'] }
+Plug 'xolox/vim-misc' | Plug 'xolox/vim-easytags', {'for': ['python', 'c'] }
 "most recently used files list
 Plug 'yegappan/mru'
 Plug 'git@github.com:skywind3000/asyncrun.vim.git'
@@ -115,11 +111,20 @@ nnoremap <leader>on :only<cr>
 
 "linter config
 let g:airline#extensions#ale#enabled = 1
-let g:ale_set_highlights = 0
+let g:ale_set_highlights = 1
 let g:ale_php_phpcs_standard = $CLIPP_PATH."/Backend/ruleset.xml"
 let g:ale_lint_on_text_changed = 0
 let g:ale_lint_on_save = 1
+" Check Python files with flake8 and pylint.
+let g:ale_linters = {
+\   'php': ['php', 'phpcs'],
+\   'python': ['flake8', 'pylint'],
+\}
+let g:ale_lint_on_save = 1
+let g:ale_lint_on_text_changed = 0
 
+" Fix Python files with autopep8 and yapf.
+let b:ale_fixers = ['autopep8', 'yapf', 'php-cs-fixer']
 
 " visual mode
 "Allow using the repeat operator with a visual selection
@@ -229,11 +234,6 @@ fun! Gyg()
 endfun
 command! -nargs=* Gyg call Gyg()
 nnoremap <leader>gyg  :call Gyg()<cr>
-
-fun! Meditation()
-    :e $WIKI_PATH/src/meditation/meditation.md
-endfun
-command! -nargs=* Meditation call Meditation()
 
 
 "Generic mappings
@@ -576,6 +576,12 @@ fun! s:ReverseString(str)
     return out
 endfun
 call MapAction('ReverseString', '<leader>i')
+
+fun! s:StrikeThrough(str)
+    return '~~'.a:str.'~~'
+endfun
+call MapAction('StrikeThrough', '<leader>st')
+
 
 fun! s:MathBlock(str)
     return '$ '.a:str.' $'
@@ -1401,4 +1407,3 @@ let g:easytags_autorecurse = 0
 
 " make vim more verobse, good for debugging
 " set vbs=1
-

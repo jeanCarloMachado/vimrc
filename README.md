@@ -13,9 +13,7 @@ Optimized for:
 Beyond a text editor my vim serves as well as:
  - wiki
  - journal/diary
- - task manager + calendar
  - manual viewer (vman)
- - pager (like less)
 
 Installation
 ------------

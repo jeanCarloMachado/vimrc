@@ -1,6 +1,6 @@
 # vimrc
 
-My awesome vim :).
+My awesome vim
 
 
 ## Features
@@ -15,12 +15,3 @@ Beyond a text editor my vim serves as well as:
  - journal/diary
  - manual viewer (vman)
 
-Installation
-------------
-
-Simmply move this directory to your home.
-```
-mv vim ~/.vim
-```
-
-![Image](http://i.imgur.com/HuL9v4Z.png)

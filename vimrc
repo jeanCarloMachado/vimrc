@@ -1,26 +1,19 @@
 "It's a good practise to use folding to hide details of
 "Its better to organize the configs by semantic. Better to put wiki
 "mappings on the wiki section then on the mappings section
-"Generic functions
-fun! ShowStringOnNewWindow(content)
-    split _output_
-    normal! ggdG
-    setlocal buftype=nofile
-    call append(0, split(a:content, '\v\n'))
-endfun
-
-fun! NotifySend(content)
-    :Asyncrun notify-send '".a:content."'"
-endfun
-
 "Plugins Load
+"
+" Userspace dependencies
+" - par
+" - rg
+
 filetype on
 filetype plugin on "loading the plugin files for specific file types
 call plug#begin()
 "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
 Plug 'altercation/vim-colors-solarized'
-"inline errors, this is great
-Plug 'w0rp/ale', { 'for': ['php', 'python'] }
+"inline errors, linting
+Plug 'w0rp/ale', { 'for': ['php', 'python', 'javascript'] }
 Plug 'christoomey/vim-tmux-navigator'
 "Plug 'vim-utils/vim-man' "view manuals inside vim
 " custom text objects
@@ -28,7 +21,6 @@ Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
 Plug 'kana/vim-textobj-function' "text object for a function: enables af and if
 Plug 'michaeljsmith/vim-indent-object' "same identation text object
 Plug 'vim-scripts/argtextobj.vim'
-
 Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim'
 "gist support
 Plug 'dyng/ctrlsf.vim'
@@ -89,7 +81,7 @@ set gdefault "When on, the :substitute flag 'g' is default on
 set showmatch
 set scrolloff=0 " Minimum lines to keep above and below cursor"
 set autoread "automaically read a file again when it's changed outside vim
-set history=500 "the quantity of normal commands recorded
+set history=1000 "the quantity of normal commands recorded
 set title "When on, the title of the window will be set to the value of 'titlestring'
 " For regular expressions turn magic on
 set magic
@@ -107,7 +99,7 @@ set wildignore+=*\\dist\\**
 
 nmap <leader>vn :vnew<cr>
 nmap <leader>fim :!runFunction fileManager %:h<cr> command! FileManager execute "!runFunction fileManager %:h"
-nnoremap <leader>on :only<cr> 
+nnoremap <leader>on :only<cr>
 
 "linter config
 let g:airline#extensions#ale#enabled = 1
@@ -119,12 +111,15 @@ let g:ale_lint_on_save = 1
 let g:ale_linters = {
 \   'php': ['php', 'phpcs'],
 \   'python': ['flake8', 'pylint'],
+\   'javascript': ['eslint'],
 \}
 let g:ale_lint_on_save = 1
 let g:ale_lint_on_text_changed = 0
 
-" Fix Python files with autopep8 and yapf.
-let b:ale_fixers = ['autopep8', 'yapf', 'php-cs-fixer']
+let g:ale_fixers = {
+\   'php': ['php-cs-fixer'],
+\   'python': ['autopep8', 'yapf'],
+\}
 
 " visual mode
 "Allow using the repeat operator with a visual selection
@@ -140,7 +135,6 @@ set smartcase "Override the 'ignorecase' option if the search pattern contains u
 autocmd FileType markdown set foldenable foldcolumn=1 foldlevel=1 foldmethod=marker
 " autocmd FileType php set foldenable foldcolumn=1 foldlevel=1 foldmethod=indent
 
-
 "Concealing
 autocmd FileType php call matchadd('Conceal', '!=', 999, -1, {'conceal': '≠'})
 autocmd FileType php call matchadd('Conceal', '->', 999, -1, {'conceal': '➞'})
@@ -150,7 +144,6 @@ autocmd FileType markdown call matchadd('Conceal', '## ', 999, -1, {'conceal': '
 autocmd FileType markdown call matchadd('Conceal', '### ', 999, -1, {'conceal': ''})
 autocmd FileType markdown call matchadd('Conceal', '#### ', 999, -1, {'conceal': ''})
 set conceallevel=2 "show pretty latex formulas
-
 
 "Grep
 set grepprg=rg\ --vimgrep
@@ -181,9 +174,7 @@ autocmd filetype rst set spell spelllang=en_us
 autocmd filetype txt set spell spelllang=en_us
 autocmd filetype markdown set spell spelllang=en_us
 
-
-
-"Open files quickly 
+"Open files quickly
 fun! LatestPost()
     let out =  system("run_function latestPost")
     execute 'edit' out
@@ -235,7 +226,6 @@ endfun
 command! -nargs=* Gyg call Gyg()
 nnoremap <leader>gyg  :call Gyg()<cr>
 
-
 "Generic mappings
 nnoremap <leader>gv  :! gvim %:p<cr>
 nnoremap <leader>; :normal!mtA;<esc>`t
@@ -270,7 +260,6 @@ cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 nnoremap <leader>cf :!filefy-clippboard<cr>
 map <c-p> :FZF<cr>
 
-
 "reload vim
 if !exists('*ReloadVim')
     fun! ReloadVim()
@@ -300,7 +289,6 @@ set lazyredraw "don't redraw screend when running macros
 set nocursorline "highlighting of the current line is a big deal for vim, probably the most important setting
 set synmaxcol=128
 
-
 "undo
 set undofile "enable undoing
 set undodir=~/.vim/undo/
@@ -319,7 +307,7 @@ set directory=~/.vim/swap
 set shortmess+=A "don't give the "ATTENTION" message when an existing swap file is found
 
 
-"indenting 
+"indenting
 filetype plugin indent on
 set copyindent
 set autoindent
@@ -337,8 +325,6 @@ set expandtab
 autocmd filetype php,html,tpl,smarty set autoindent noexpandtab tabstop=4 shiftwidth=4
 autocmd filetype javascript,html set autoindent noexpandtab tabstop=2 shiftwidth=2
 autocmd filetype haskell set tabstop=2 shiftwidth=2
-
-
 
 "custom text objects
 call textobj#user#plugin('line', {
@@ -386,7 +372,6 @@ fun! CurrentBarA()
     let tail_pos = getpos('.')
     return ['v', head_pos, tail_pos]
 endfun
-
 fun! CurrentBarI()
     normal! T/
     let head_pos = getpos('.')
@@ -779,7 +764,7 @@ autocmd Filetype markdown call MarkdownDefaultConfigs()
 highlight Folded ctermfg=DarkYellow
 
 fun! MarkdownDefaultConfigs()
-    set tw=80 "80 columsn are more than enough
+    " set tw=80 "80 columns are more than enough
     set syntax=markdown
     set spell spelllang=en_us
 endfunc
@@ -1120,17 +1105,7 @@ if has('gui_running')
   set guifont=DejaVu\ Sans\ Mono\ Book\ 13
 endif
 
-
-" macros 
-" fun! RepeatAndMove()
-"     let @q ="n."
-"     normal! @q
-" endfun
-" nnoremap <leader>rm :RepeatAndMove()<cr>
-" command! -nargs=* RepeatAndMove call RepeatAndMove()
-
-
-" C lang 
+" C lang
 fun! CFiletypeConfigs()
     "compile through gcc when there's no makefile
     if !filereadable(expand("%:p:h")."/Makefile")
@@ -1139,13 +1114,8 @@ fun! CFiletypeConfigs()
 endfun
 autocmd filetype c call CFiletypeConfigs()
 
-
-
 "theme, colors, highlights 
 syntax enable
-
-" set background=light
-
 augroup VimrcColors
     au!
     autocmd ColorScheme * highlight WordsToAvoid ctermfg=DarkBlue cterm=underline
@@ -1164,6 +1134,7 @@ autocmd Syntax * call matchadd('Overlength', '\%81v')
 
 let g:solarized_termtrans = 1
 let g:airline_theme='solarized'
+" set background=light
 set background=dark
 
 if has('nvim')
@@ -1180,12 +1151,12 @@ set t_Co=256
 hi StatusLine ctermfg=12 ctermbg=0 cterm=NONE
 
 
-" vimrc per project 
+" vimrc per project
 set exrc "enable vimrc per project
 set secure "disable unsecure options
 
 
-" windows 
+" windows
 function! ToggleWindowHorizontalVerticalSplit()
     if !exists('t:splitType')
         let t:splitType = 'vertical'
@@ -1202,7 +1173,6 @@ endfun
 nnoremap <silent> <leader>wt :call ToggleWindowHorizontalVerticalSplit()<cr>
 
 
-
 " writer mode 
 let writer_mode=$WRITER_MODE
 fun! WritingMode()
@@ -1210,8 +1180,6 @@ fun! WritingMode()
 endfun
 command! -nargs=* WritingMode call WritingMode()
 map <Leader>wm :call WritingMode()<cr>
-
-
 
 " star search over any kind of text 
 vnoremap <silent> * :<C-U>
@@ -1226,7 +1194,7 @@ vnoremap <silent> # :<C-U>
             \gV:call setreg('"', old_reg, old_regtype)<CR>
 
 
-" search 
+" search
 nnoremap <leader>wf :call FindStringWiki()<cr>
 
 function! FindStringWiki()
@@ -1237,7 +1205,7 @@ function! FindStringWiki()
     execute ":CtrlSF ".name." ".$WIKI_PATH
 endfunction
 
-"search on open files lines 
+"search on open files lines
 function! s:buffer_lines()
     let res = []
     for b in filter(range(1, bufnr('$')), 'buflisted(v:val)')
@@ -1268,7 +1236,7 @@ au BufRead,BufNewFile *.jar,*.war,*.ear,*.sar,*.rar set filetype=zip
 let g:VimuxHeight = "20"
 
 
-" to PDF 
+" to PDF
 fun! s:PdfFile(str)
     echom "Starting to create pdf"
     let fileName = expand("%:p")
@@ -1289,7 +1257,7 @@ endfun
 command! -nargs=* WeekReport call WeekReport()
 map <Leader>wr :call WeekReport()<cr>
 
-" 
+"
 
 let g:elm_format_autosave = 0
 let g:elm_make_show_warnings = 0
@@ -1404,6 +1372,17 @@ set tags=./tags;
 let g:easytags_dynamic_files = 1
 let g:easytags_async =  1
 let g:easytags_autorecurse = 0
+
+fun! ShowStringOnNewWindow(content)
+    split _output_
+    normal! ggdG
+    setlocal buftype=nofile
+    call append(0, split(a:content, '\v\n'))
+endfun
+
+fun! NotifySend(content)
+    :Asyncrun notify-send '".a:content."'"
+endfun
 
 " make vim more verobse, good for debugging
 " set vbs=1

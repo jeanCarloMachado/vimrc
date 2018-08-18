@@ -181,50 +181,35 @@ fun! LatestPost()
 endfun
 command! -nargs=* LatestPost call LatestPost()
 
-fun! Talk()
-    :e $WIKI_PATH/src/talks.md
-endfun
-command! -nargs=* Talk call Talk()
+let g:quickAccessFiles = {
+\   "talks": $WIKI_PATH."/src/talks.md",
+\   "snippet": $HOME."/.subsconfig.ini",
+\   "productivity": $WIKI_PATH."/src/productivity.md",
+\   "glossary": $WIKI_PATH."/src/glossary.md",
+\   "sql": $HOME."/.getyourguide.sql",
+\   "remember": $HOME."/.remember",
+\   "quotes": $WIKI_PATH."/src/quotes.md",
+\   "gyg": $WIKI_PATH."/src/gyg.md",
+\}
 
-fun! Snippet()
-    :e ~/.subsconfig.ini
+fun! OpenQuickly(fname)
+    let mfile = g:quickAccessFiles[a:fname]
+    exec ':e '.mfile
 endfun
-command! -nargs=* Snippet call Snippet()
-map <Leader>sn :call Snippet()<cr>
 
-
-fun! Glossary()
-    :e $WIKI_PATH/src/glossary.md
-endfun
-command! -nargs=* Glossary call Glossary()
-map <Leader>go :call Glossary()<cr>
-
-fun! Sql()
-    :e ~/.getyourguide.sql
-endfun
-command! -nargs=* Sql call Sql()
-nnoremap <leader>sql  :call Sql()<cr>
-
-fun! Remember()
-    :e ~/.remember
-endfun
-command! -nargs=* Remember call Remember()
-
-fun! Functions()
-    :e ~/projects/dotfiles/functions.sh
-endfun
-command! -nargs=* Functions call Functions()
-
-fun! Quotes()
-    :e $WIKI_PATH/src/quotes.md
-endfun
-command! -nargs=* Quotes call Quotes()
-nnoremap <leader>qo  :call Quotes()<cr>
-fun! Gyg()
-    :e $WIKI_PATH/src/gyg.md
-endfun
-command! -nargs=* Gyg call Gyg()
-nnoremap <leader>gyg  :call Gyg()<cr>
+command! -nargs=* Talk call OpenQuickly('talks')
+map <Leader>sn :call OpenQuickly('snippet')<cr>
+command! -nargs=* Productivity call OpenQuickly('productivity')
+map <Leader>pro :call OpenQuickly('productivity')<cr>
+command! -nargs=* Glossary call OpenQuickly('glossary')
+map <Leader>go :call OpenQuickly('glossary')<cr>
+command! -nargs=* Sql call OpenQuickly('sql')
+nnoremap <leader>sql  :call OpenQuickly('sql')<cr>
+command! -nargs=* Remember call OpenQuickly('remember')
+command! -nargs=* Quotes call OpenQuickly('quotes')
+nnoremap <leader>qo  :call OpenQuickly('quotes')<cr>
+command! -nargs=* Gyg call OpenQuickly('gyg')
+nnoremap <leader>gyg  :call OpenQuickly('gyg')<cr>
 
 "Generic mappings
 nnoremap <leader>gv  :! gvim %:p<cr>
@@ -287,7 +272,7 @@ set lazyredraw "don't redraw screend when running macros
 " autocmd BufReadPre * if getfsize(expand("%")) > 10000000 | syntax off | endif
 
 set nocursorline "highlighting of the current line is a big deal for vim, probably the most important setting
-set synmaxcol=128
+" set synmaxcol=128
 
 "undo
 set undofile "enable undoing
@@ -508,7 +493,6 @@ fun! s:OnlyTextSelection(str)
 endfun
 call MapAction('OnlyTextSelection','<leader>ts')
 
-
 "find word under cursor
 noremap <leader>fw "zyiw:exe ":CtrlSF ".@z.""<cr>
 
@@ -518,7 +502,7 @@ fun! s:FindIt(str)
 endfun
 call MapAction('FindIt','<leader>fit')
 
-nnoremap <leader>fi :CtrlSF 
+nnoremap <leader>fi :CtrlSF
 fun! s:FindIt(str)
     :AsyncRun ':CtrlSF "'.a:str.'"<cr>'
     return a:str;
@@ -857,15 +841,15 @@ fun! Diary( arg )
     let out = system('run_function diary_file "' . a:arg . '"')
     execute "edit " . out
 endfunc
+
 command! -nargs=* Today call Diary( 'today' )
 command! -nargs=* Someday call Diary( 'someday' )
 command! -nargs=* Diary call Diary( '<args>' )
 command! -nargs=* Diary call Diary( '<args>' )
-nnoremap <Leader>di :Today<cr>
-nnoremap <Leader>to :Today<cr>
-
+nnoremap <Leader>now :Today<cr>
 command! -nargs=* Tomorrow call Diary( 'tomorrow' )
 command! -nargs=* Yesterday call Diary( 'yesterday' )
+nnoremap <Leader>ye :Yesterday<cr>
 command! -nargs=* Today call Diary( 'today' )
 command! -nargs=* Someday call Diary( 'someday' )
 command! -nargs=* Diary call Diary( '<args>' )

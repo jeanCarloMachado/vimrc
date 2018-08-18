@@ -131,11 +131,50 @@ set incsearch "show the next match while entering a search
 set ignorecase "the case of normal letters is ignored
 set smartcase "Override the 'ignorecase' option if the search pattern contains upper case characters
 
-"Fold
-autocmd FileType markdown set foldenable foldcolumn=1 foldlevel=1 foldmethod=marker
-" autocmd FileType php set foldenable foldcolumn=1 foldlevel=1 foldmethod=indent
 
-"Concealing
+" fold {{{
+
+func! Foldexpr_markdown(lnum)
+    let l1 = getline(a:lnum)
+
+    if l1 =~ '^\s*$'
+        " ignore empty lines
+        return '='
+    endif
+
+    let l2 = getline(a:lnum+1)
+
+    if  l2 =~ '^==\+\s*'
+        " next line is underlined (level 1)
+        return '>1'
+    elseif l2 =~ '^--\+\s*'
+        " next line is underlined (level 2)
+        return '>2'
+    elseif l1 =~ '^#'
+        " current line starts with hashes
+        return '>'.matchend(l1, '^#\+')
+    elseif a:lnum == 1
+        " fold any 'preamble'
+        return '>1'
+    else
+        " keep previous foldlevel
+        return '='
+    endif
+endfunc
+
+setlocal foldexpr=Foldexpr_markdown(v:lnum)
+
+
+setlocal foldenable
+setlocal foldlevel=0
+setlocal foldcolumn=0
+set foldmethod=marker
+autocmd FileType markdown set foldmethod=expr
+autocmd FileType php set foldmethod=indent
+"}}}
+
+
+"Concealing {{{
 autocmd FileType php call matchadd('Conceal', '!=', 999, -1, {'conceal': '≠'})
 autocmd FileType php call matchadd('Conceal', '->', 999, -1, {'conceal': '➞'})
 autocmd FileType php call matchadd('Conceal', '=>', 999, -1, {'conceal': '➞'})
@@ -144,14 +183,16 @@ autocmd FileType markdown call matchadd('Conceal', '## ', 999, -1, {'conceal': '
 autocmd FileType markdown call matchadd('Conceal', '### ', 999, -1, {'conceal': ''})
 autocmd FileType markdown call matchadd('Conceal', '#### ', 999, -1, {'conceal': ''})
 set conceallevel=2 "show pretty latex formulas
+"}}}
 
-"Grep
+" grep {{{
 set grepprg=rg\ --vimgrep
 set grepformat=%f:%l:%c:%m
 fun! Grepr( arg )
     execute "grep " . a:arg . " %:p:h/*"
 endfun
 command! -nargs=* Grepr call Grepr( '<args>' )
+"}}}
 
 
 nnoremap <leader>mru :MRU<cr>
@@ -649,7 +690,7 @@ fun! s:foldSomething(str)
     if len(l:comment)==1
         call add(comment, l:comment[0])
     endif
-    return l:comment[0]." \n".a:str."\n".l:comment[1]."
+    return l:comment[0]." {{{\n".a:str."\n".l:comment[1]."}}}"
 endfun
 call MapAction('foldSomething', '<leader>fo')
 
@@ -1367,6 +1408,7 @@ endfun
 fun! NotifySend(content)
     :Asyncrun notify-send '".a:content."'"
 endfun
+
 
 " make vim more verobse, good for debugging
 " set vbs=1

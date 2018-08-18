@@ -1,12 +1,27 @@
-"It's a good practise to use folding to hide details of
-"Its better to organize the configs by semantic. Better to put wiki
-"mappings on the wiki section then on the mappings section
-"Plugins Load
+" Considerations
+"
+" - I'm using nvim now but the config works for both vim and nvim
+"
+" - Its better to organize the configs by semantic. Better to put wiki mappings on the wiki section then on the mappings section
 "
 " Userspace dependencies
 " - par
 " - rg
+"
+" Each new supported language should have configured the following features
+" - Inline linting
+" - Indentation
+" - default template for empty files
+" - automatic ctags generation
+" - documentation querying 
+" - simple repl setup
+" - unit testing execution in single command
+"
+" DEBUG
+" make vim more verobse, good for debugging
+" set vbs=1
 
+" plugins load {{{
 filetype on
 filetype plugin on "loading the plugin files for specific file types
 call plug#begin()
@@ -21,10 +36,10 @@ Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
 Plug 'kana/vim-textobj-function' "text object for a function: enables af and if
 Plug 'michaeljsmith/vim-indent-object' "same identation text object
 Plug 'vim-scripts/argtextobj.vim'
-Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim'
 "gist support
-Plug 'dyng/ctrlsf.vim'
+Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim'
 "grep like sublime one
+Plug 'dyng/ctrlsf.vim'
 Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
 "search for, substitute, and abbreviate multiple variants of a word
 Plug 'tpope/vim-abolish'
@@ -40,7 +55,6 @@ Plug 'fatih/vim-go', { 'for': ['go'] }
 Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
 Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
-" Plug 'kovisoft/slimv', { 'for': ['common-lisp', 'lisp'] }
 Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
 " visualizing marks
@@ -59,6 +73,7 @@ Plug 'wakatime/vim-wakatime'
 Plug 'benmills/vimux'
 
 call plug#end()
+"}}}
 
 "generic configs
 set splitright "split new windows to the right
@@ -131,9 +146,7 @@ set incsearch "show the next match while entering a search
 set ignorecase "the case of normal letters is ignored
 set smartcase "Override the 'ignorecase' option if the search pattern contains upper case characters
 
-
 " fold {{{
-
 func! Foldexpr_markdown(lnum)
     let l1 = getline(a:lnum)
 
@@ -173,7 +186,6 @@ autocmd FileType markdown set foldmethod=expr
 autocmd FileType php set foldmethod=indent
 "}}}
 
-
 "Concealing {{{
 autocmd FileType php call matchadd('Conceal', '!=', 999, -1, {'conceal': '≠'})
 autocmd FileType php call matchadd('Conceal', '->', 999, -1, {'conceal': '➞'})
@@ -194,7 +206,6 @@ endfun
 command! -nargs=* Grepr call Grepr( '<args>' )
 "}}}
 
-
 nnoremap <leader>mru :MRU<cr>
 "netrw
 nnoremap <leader>k :Vexplore<cr>
@@ -203,8 +214,7 @@ let g:netrw_altv=1 "open vertical splits on the right
 let g:netrw_liststyle=3
 let g:netrw_winsize = 0
 
-
-"spelling
+"spelling {{{
 fun! FixLastSpellingError()
     normal! mm[s1z=`m
 endfun
@@ -214,14 +224,9 @@ map <leader>sen :set spell spelllang=en_us<cr>
 autocmd filetype rst set spell spelllang=en_us
 autocmd filetype txt set spell spelllang=en_us
 autocmd filetype markdown set spell spelllang=en_us
+"}}}
 
-"Open files quickly
-fun! LatestPost()
-    let out =  system("run_function latestPost")
-    execute 'edit' out
-endfun
-command! -nargs=* LatestPost call LatestPost()
-
+" quick access {{{
 let g:quickAccessFiles = {
 \   "talks": $WIKI_PATH."/src/talks.md",
 \   "snippet": $HOME."/.subsconfig.ini",
@@ -251,6 +256,15 @@ command! -nargs=* Quotes call OpenQuickly('quotes')
 nnoremap <leader>qo  :call OpenQuickly('quotes')<cr>
 command! -nargs=* Gyg call OpenQuickly('gyg')
 nnoremap <leader>gyg  :call OpenQuickly('gyg')<cr>
+
+"Open files quickly
+fun! LatestPost()
+    let out =  system("run_function latestPost")
+    execute 'edit' out
+endfun
+command! -nargs=* LatestPost call LatestPost()
+
+"}}}
 
 "Generic mappings
 nnoremap <leader>gv  :! gvim %:p<cr>
@@ -304,6 +318,7 @@ command! -nargs=* RemoveFile call RemoveFile()
 noremap <silent> <leader>rmrf :RemoveFile<cr>
 
 "performance
+" {{{
 set ttyfast "Improves smoothness of redrawing when there are multiple windows
 " autocmd BufEnter * :syn sync maxlines=500
 set lazyredraw "don't redraw screend when running macros
@@ -314,15 +329,19 @@ set lazyredraw "don't redraw screend when running macros
 
 set nocursorline "highlighting of the current line is a big deal for vim, probably the most important setting
 " set synmaxcol=128
+"}}}
 
 "undo
+" {{{
 set undofile "enable undoing
 set undodir=~/.vim/undo/
 set undolevels=100
 set undoreload=100
+"}}}
 
 
 " backup options
+" {{{
 set backup
 set writebackup
 set backupdir=~/.vim/backup
@@ -331,9 +350,11 @@ set swapfile
 set directory=~/.vim/swap
 "don't show alert message when the swap already exists
 set shortmess+=A "don't give the "ATTENTION" message when an existing swap file is found
+"}}}
 
 
 "indenting
+" {{{
 filetype plugin indent on
 set copyindent
 set autoindent
@@ -344,15 +365,14 @@ set shiftwidth=4
 " On pressing tab, insert 4 spaces
 set expandtab
 
-
 " 2 spaces for html/js
-
 " for php use tabs
 autocmd filetype php,html,tpl,smarty set autoindent noexpandtab tabstop=4 shiftwidth=4
 autocmd filetype javascript,html set autoindent noexpandtab tabstop=2 shiftwidth=2
 autocmd filetype haskell set tabstop=2 shiftwidth=2
+"}}}
 
-"custom text objects
+"custom text objects{{{
 call textobj#user#plugin('line', {
             \   '-': {
             \     'select-a-function': 'CurrentLineA',
@@ -463,9 +483,10 @@ fun! CurrentDocumentI()
     return ['v', head_pos, tail_pos]
 endfun
 inoremap ;<cr> <end>;<cr>
+"}}}
 
+"actions over text blocks {{{
 
-"actions over text blocks
 fun! s:DoAction(algorithm,type)
     " backup settings that we will change
     let sel_save = &selection
@@ -780,9 +801,9 @@ fun! s:XmlBeautifier(str)
     return out
 endfunc
 call MapAction('XmlBeautifier', '<leader>xb')
+"}}}
 
-
-"Markdown
+" markdown {{{
 
 let g:vim_markdown_no_extensions_in_markdown = 1
 autocmd Filetype markdown call MarkdownDefaultConfigs()
@@ -798,7 +819,16 @@ endfunc
 "latex reference to know how to use it
 let g:vim_markdown_math = 1
 "syntax highlight for markdown
-let g:vim_markdown_fenced_languages = ['html', 'py=python', 'bash=sh', 'c', 'php=PHP', 'hs=haskell', 'elm', 'li=lisp']
+let g:vim_markdown_fenced_languages = [
+    \'html',
+    \'py=python',
+    \'bash=sh',
+    \'c',
+    \'php=PHP',
+    \'hs=haskell',
+    \'elm',
+    \'li=lisp'
+\]
 
 fun! UnderlineHeading(level)
     if a:level == 1
@@ -860,6 +890,8 @@ fun! s:CodeBlock(str)
     return "```sh\n".a:str."\n```"
 endfunc
 call MapAction('CodeBlock', '<leader>c')
+"}}}
+
 
 fun! s:Repl(str)
     :VimuxRunCommand(a:str."\n")
@@ -877,7 +909,7 @@ endfunc
 call MapAction('Subs', '<leader>o')
 
 
-"diary
+" diary {{{
 fun! Diary( arg )
     let out = system('run_function diary_file "' . a:arg . '"')
     execute "edit " . out
@@ -918,9 +950,9 @@ fun! BottomDiary( arg )
     res 10
 endfunc
 command! -nargs=* BottomDiary call BottomDiary( '<args>' )
+"}}}
 
-
-"wiki
+" wiki {{{
 map <c-i> :FZF $WIKI_PATH/src<cr>
 let g:vim_markdown_no_default_key_mappings = 1
 fun! Wiki(arg)
@@ -983,9 +1015,10 @@ fun! GrepWiki( arg )
 endfunc
 command! -nargs=* GrepWiki call GrepWiki( '<args>' )
 command! -nargs=* WikiGrep call GrepWiki( '<args>' )
+"}}}
 
 
-" templates for filetypes 
+" templates for filetypes {{{
 autocmd BufNewFile *.php 0r $TEMPLATES_DIR/php.php
 autocmd BufNewFile *.sh 0r $TEMPLATES_DIR/shell.sh
 autocmd BufNewFile *.hs 0r $TEMPLATES_DIR/haskell.hs
@@ -997,6 +1030,7 @@ autocmd BufNewFile **/*_paper.md 0r $TEMPLATES_DIR/science-review.md
 autocmd BufNewFile **/*review*.md 0r $TEMPLATES_DIR/science-review.md
 autocmd BufNewFile */diary/*.md 0r $TEMPLATES_DIR/diary.md
 autocmd BufNewFile */posts/*.md 0r $TEMPLATES_DIR/post.md
+"}}}
 
 " generic actions relative to current file
 nmap <leader>xo :!xdg-open % &<cr>
@@ -1050,8 +1084,7 @@ fun! CopyFile()
 endfunc
 map <Leader>cp :call CopyFile()<cr>
 
-
-"git 
+"git
 fun! GitLog()
     let path = expand('%:p')
     let cmd='cd $(dirname '.path.') ; git log -p --follow '.path
@@ -1198,7 +1231,7 @@ endfun
 nnoremap <silent> <leader>wt :call ToggleWindowHorizontalVerticalSplit()<cr>
 
 
-" writer mode 
+" writer mode
 let writer_mode=$WRITER_MODE
 fun! WritingMode()
     :Goyo
@@ -1372,7 +1405,6 @@ endfunc
 nnoremap <leader>ec :call TmuxContent()<cr>
 nnoremap <leader>eh :call TmuxContent()<cr>
 
-
 let g:vdebug_keymap = {
 \    "run" : "<leader>dr",
 \    "run_to_cursor" : "<leader>dc",
@@ -1409,6 +1441,3 @@ fun! NotifySend(content)
     :Asyncrun notify-send '".a:content."'"
 endfun
 
-
-" make vim more verobse, good for debugging
-" set vbs=1

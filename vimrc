@@ -28,7 +28,7 @@ call plug#begin()
 "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
 Plug 'altercation/vim-colors-solarized'
 "inline errors, linting
-Plug 'w0rp/ale', { 'for': ['php', 'python', 'javascript'] }
+Plug 'w0rp/ale', { 'for': ['php', 'python', 'javascript', 'sh', 'scala', 'haskell', 'elm'] }
 Plug 'christoomey/vim-tmux-navigator'
 "Plug 'vim-utils/vim-man' "view manuals inside vim
 " custom text objects
@@ -60,7 +60,6 @@ Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
 " visualizing marks
 Plug 'kshenoy/vim-signature'
 " this plugin is slow when the project is too big
-Plug 'xolox/vim-misc' | Plug 'xolox/vim-easytags', {'for': ['python', 'c'] }
 "most recently used files list
 Plug 'yegappan/mru'
 Plug 'git@github.com:skywind3000/asyncrun.vim.git'
@@ -71,6 +70,7 @@ Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 Plug 'vim-vdebug/vdebug', {'for': ['php'] }
 Plug 'wakatime/vim-wakatime'
 Plug 'benmills/vimux'
+Plug 'ludovicchabant/vim-gutentags'
 
 call plug#end()
 "}}}
@@ -116,18 +116,22 @@ nmap <leader>vn :vnew<cr>
 nmap <leader>fim :!runFunction fileManager %:h<cr> command! FileManager execute "!runFunction fileManager %:h"
 nnoremap <leader>on :only<cr>
 
-"linter config
+"linter config {{{
 let g:airline#extensions#ale#enabled = 1
 let g:ale_set_highlights = 1
 let g:ale_php_phpcs_standard = $CLIPP_PATH."/Backend/ruleset.xml"
 let g:ale_lint_on_text_changed = 0
 let g:ale_lint_on_save = 1
-" Check Python files with flake8 and pylint.
+let g:ale_lint_on_enter = 0
+
+
 let g:ale_linters = {
 \   'php': ['php', 'phpcs'],
 \   'python': ['flake8', 'pylint'],
 \   'javascript': ['eslint'],
+\   'sh': ['shell', 'shellcheck'],
 \}
+
 let g:ale_lint_on_save = 1
 let g:ale_lint_on_text_changed = 0
 
@@ -135,6 +139,8 @@ let g:ale_fixers = {
 \   'php': ['php-cs-fixer'],
 \   'python': ['autopep8', 'yapf'],
 \}
+
+"}}}
 
 " visual mode
 "Allow using the repeat operator with a visual selection
@@ -177,11 +183,17 @@ endfunc
 
 setlocal foldexpr=Foldexpr_markdown(v:lnum)
 
+"enter fold giving a list of options on conflicts
+nnoremap <C-]> g<C-]>
 
-setlocal foldenable
-setlocal foldlevel=0
-setlocal foldcolumn=0
+set foldcolumn=1
 set foldmethod=marker
+set foldenable!
+
+"enable fold for file greater than
+let g:MIN_LINES_TO_FOLD = 50
+autocmd! BufReadPost * :if line('$') > MIN_LINES_TO_FOLD | setlocal foldenable foldlevel=1 | endif
+
 autocmd FileType markdown set foldmethod=expr
 autocmd FileType php set foldmethod=indent
 "}}}
@@ -646,7 +658,7 @@ endfun
 call MapAction('MakeList', '<leader>ml')
 
 fun! s:Translate(str)
-    let out = system('translate ', a:str)
+    let out = system('translate.sh ', a:str)
     return out
 endfun
 call MapAction('Translate', '<leader>ti')
@@ -658,7 +670,7 @@ endfun
 call MapAction('TranslateGerman', '<leader>tg')
 
 fun! s:EnglishToGerman(str)
-    let out = system('translate en de', a:str)
+    let out = system('translate.sh en de', a:str)
     return out
 endfun
 call MapAction('EnglishToGerman', '<leader>eg')
@@ -1084,7 +1096,7 @@ fun! CopyFile()
 endfunc
 map <Leader>cp :call CopyFile()<cr>
 
-"git
+"git {{{
 fun! GitLog()
     let path = expand('%:p')
     let cmd='cd $(dirname '.path.') ; git log -p --follow '.path
@@ -1099,9 +1111,11 @@ fun! GitDiff()
     execute '!cd $(dirname '.path.') ; git diff '.path.' '
 endfunc
 nmap <leader>gdf :call GitDiff()<cr>
+"}}}
 
 map <leader>rl :edit!<cr>
 map <leader>ed :edit!<cr>
+map <leader>ee :edit!<cr>
 map <leader>ck :!git checkout %<cr>
 map <leader>gck :!git checkout %<cr>
 fun! Blame(arg)

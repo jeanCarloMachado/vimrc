@@ -28,7 +28,7 @@ call plug#begin()
 "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
 Plug 'altercation/vim-colors-solarized'
 "inline errors, linting
-Plug 'w0rp/ale', { 'for': ['php', 'python', 'javascript', 'sh', 'scala', 'haskell', 'elm'] }
+Plug 'w0rp/ale'
 Plug 'christoomey/vim-tmux-navigator'
 "Plug 'vim-utils/vim-man' "view manuals inside vim
 " custom text objects
@@ -130,16 +130,17 @@ let g:ale_linters = {
 \   'python': ['flake8', 'pylint'],
 \   'javascript': ['eslint'],
 \   'sh': ['shell', 'shellcheck'],
+\   'markdown': ['write-good', 'proselint']
 \}
 
 let g:ale_lint_on_save = 1
 let g:ale_lint_on_text_changed = 0
+let g:ale_writegood_options = ' --so --illusion --adverb --tooWordy --cliches'
 
 let g:ale_fixers = {
 \   'php': ['php-cs-fixer'],
 \   'python': ['autopep8', 'yapf'],
 \}
-
 "}}}
 
 " visual mode

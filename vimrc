@@ -13,7 +13,7 @@
 " - Indentation
 " - default template for empty files
 " - automatic ctags generation
-" - documentation querying 
+" - documentation querying
 " - simple repl setup
 " - unit testing execution in single command
 "
@@ -71,6 +71,7 @@ Plug 'vim-vdebug/vdebug', {'for': ['php'] }
 Plug 'wakatime/vim-wakatime'
 Plug 'benmills/vimux'
 Plug 'ludovicchabant/vim-gutentags'
+Plug 'easymotion/vim-easymotion'
 
 call plug#end()
 "}}}
@@ -102,6 +103,10 @@ set title "When on, the title of the window will be set to the value of 'titlest
 set magic
 setlocal formatoptions=1
 set formatprg=par "The name of an external program that will be used to format the lines selected with the |gq| operator.
+" Move to word
+let g:EasyMotion_do_mapping = 0 " Disable default mappings
+nmap <Leader>em <Plug>(easymotion-overwin-w)
+
 " setlocal linebreak "wrap long lines at a character in 'breakat'
 if has("clipboard")
     set clipboard=unnamed " copy to the system clipboard
@@ -125,12 +130,18 @@ let g:ale_lint_on_save = 1
 let g:ale_lint_on_enter = 0
 
 
+nnoremap <leader>fmt :ALEFix<cr>
+" autocmd FileType haskell map <Leader>fmt :!hfmt -w %:p<cr>
+" autocmd FileType php map <Leader>fmt :!php-code-check %:p<cr>
+
+
 let g:ale_linters = {
 \   'php': ['php', 'phpcs'],
 \   'python': ['flake8', 'pylint'],
 \   'javascript': ['eslint'],
 \   'sh': ['shell', 'shellcheck'],
-\   'markdown': ['write-good', 'proselint']
+\   'markdown': ['write-good', 'proselint'],
+\   'scala': ['fsc', 'scalac']
 \}
 
 let g:ale_lint_on_save = 1
@@ -138,7 +149,8 @@ let g:ale_lint_on_text_changed = 0
 let g:ale_writegood_options = ' --so --illusion --adverb --tooWordy --cliches'
 
 let g:ale_fixers = {
-\   'php': ['php-cs-fixer'],
+\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\   'php': ['php_cs_fixer', 'phpcbf'],
 \   'python': ['autopep8', 'yapf'],
 \}
 "}}}
@@ -845,15 +857,15 @@ let g:vim_markdown_fenced_languages = [
 
 fun! UnderlineHeading(level)
     if a:level == 1
-        normal! I# 
+        normal! I#
     elseif a:level == 2
-        normal! I## 
+        normal! I##
     elseif a:level == 3
-        normal! I### 
+        normal! I###
     elseif a:level == 4
-        normal! I#### 
+        normal! I####
     elseif a:level == 5
-        normal! I##### 
+        normal! I#####
     endif
 endfunc
 
@@ -1149,12 +1161,6 @@ fun! s:JsonEncode(str)
     return out
 endfunc
 call MapAction('JsonEncode', '<leader>pj')
-fun! RunCurrentPHPFile()
-    let linterOut = system('php -l ' . expand("%:p"))
-    let executionOut = system('php ' . expand("%:p"))
-    call ShowStringOnNewWindow(linterOut."\n\n".executionOut)
-endfunc
-noremap <Leader>pr :call RunCurrentPHPFile()<cr>
 
 fun! s:JsonToPhp(str)
     let out = system('json-to-php ', a:str)
@@ -1169,7 +1175,7 @@ function SessionDirectory() abort
     return getcwd()
 endfunction
 
-" gvim 
+" gvim
 :set guioptions+=m  "remove menu bar
 :set guioptions-=T  "remove toolbar
 :set guioptions-=r  "remove right-hand scroll bar
@@ -1187,7 +1193,7 @@ fun! CFiletypeConfigs()
 endfun
 autocmd filetype c call CFiletypeConfigs()
 
-"theme, colors, highlights 
+"theme, colors, highlights
 syntax enable
 augroup VimrcColors
     au!
@@ -1254,7 +1260,7 @@ endfun
 command! -nargs=* WritingMode call WritingMode()
 map <Leader>wm :call WritingMode()<cr>
 
-" star search over any kind of text 
+" star search over any kind of text
 vnoremap <silent> * :<C-U>
             \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
             \gvy/<C-R><C-R>=substitute(
@@ -1332,13 +1338,13 @@ map <Leader>wr :call WeekReport()<cr>
 
 "
 
+" elm {{{
 let g:elm_format_autosave = 0
 let g:elm_make_show_warnings = 0
 let g:elm_detailed_complete = 0
-
 autocmd FileType elm map <Leader>fmt :ElmFormat<cr>
-autocmd FileType haskell map <Leader>fmt :!hfmt -w %:p<cr>
-autocmd FileType php map <Leader>fmt :!php-code-check %:p<cr>
+"}}}
+
 
 nnoremap <leader>pd :call PhpDoc()<cr>
 set hidden "hides buffers instead of closing them, don't give warnings on unsaved things
@@ -1373,7 +1379,7 @@ command! Tags call s:tags()
 map <Leader>tag :Tags<cr>
 
 
-" listing buffers and enteing them 
+" listing buffers and enteing them
 function! s:listBuffer()
     :redir @a
     :ls
@@ -1455,4 +1461,3 @@ endfun
 fun! NotifySend(content)
     :Asyncrun notify-send '".a:content."'"
 endfun
-

@@ -53,6 +53,7 @@ Plug 'lervag/vimtex', { 'for': ['latex'] }
 Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
 Plug 'fatih/vim-go', { 'for': ['go'] }
 Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
+Plug 'derekwyatt/vim-scala', { 'for': ['scala'] }
 Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
@@ -122,17 +123,20 @@ nmap <leader>fim :!runFunction fileManager %:h<cr> command! FileManager execute 
 nnoremap <leader>on :only<cr>
 
 "linter config {{{
+
+nnoremap <leader>fmt :ALEFix<cr>
+" autocmd FileType haskell map <Leader>fmt :!hfmt -w %:p<cr>
+" autocmd FileType php map <Leader>fmt :!php-code-check %:p<cr>
+
 let g:airline#extensions#ale#enabled = 1
 let g:ale_set_highlights = 1
 let g:ale_php_phpcs_standard = $CLIPP_PATH."/Backend/ruleset.xml"
 let g:ale_lint_on_text_changed = 0
 let g:ale_lint_on_save = 1
 let g:ale_lint_on_enter = 0
-
-
-nnoremap <leader>fmt :ALEFix<cr>
-" autocmd FileType haskell map <Leader>fmt :!hfmt -w %:p<cr>
-" autocmd FileType php map <Leader>fmt :!php-code-check %:p<cr>
+let g:ale_lint_on_save = 1
+let g:ale_lint_on_text_changed = 0
+let g:ale_writegood_options = ' --so --illusion --adverb --tooWordy --cliches'
 
 
 let g:ale_linters = {
@@ -144,14 +148,11 @@ let g:ale_linters = {
 \   'scala': ['fsc', 'scalac']
 \}
 
-let g:ale_lint_on_save = 1
-let g:ale_lint_on_text_changed = 0
-let g:ale_writegood_options = ' --so --illusion --adverb --tooWordy --cliches'
-
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
 \   'php': ['php_cs_fixer', 'phpcbf'],
 \   'python': ['autopep8', 'yapf'],
+\   'scala': ['scalafmt']
 \}
 "}}}
 

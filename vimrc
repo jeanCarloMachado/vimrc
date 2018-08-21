@@ -58,6 +58,7 @@ Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
+Plug 'fatih/vim-go', { 'for': ['go'] }
 " visualizing marks
 Plug 'kshenoy/vim-signature'
 " this plugin is slow when the project is too big
@@ -73,7 +74,7 @@ Plug 'wakatime/vim-wakatime'
 Plug 'benmills/vimux'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'easymotion/vim-easymotion'
-
+Plug 'janko-m/vim-test'
 call plug#end()
 "}}}
 
@@ -201,25 +202,33 @@ setlocal foldexpr=Foldexpr_markdown(v:lnum)
 nnoremap <C-]> g<C-]>
 
 set foldcolumn=1
-set foldmethod=marker
 set foldenable!
+"for most programming languages make sense to use indentation method to fold
+autocmd FileType php,python,scala set foldmethod=indent
 
 "enable fold for file greater than
+autocmd FileType vim set foldmethod=marker
+autocmd FileType markdown set foldmethod=expr
 let g:MIN_LINES_TO_FOLD = 50
 autocmd! BufReadPost * :if line('$') > MIN_LINES_TO_FOLD | setlocal foldenable foldlevel=1 | endif
-
-autocmd FileType markdown set foldmethod=expr
-autocmd FileType php set foldmethod=indent
 "}}}
 
 "Concealing {{{
-autocmd FileType php call matchadd('Conceal', '!=', 999, -1, {'conceal': '≠'})
-autocmd FileType php call matchadd('Conceal', '->', 999, -1, {'conceal': '➞'})
-autocmd FileType php call matchadd('Conceal', '=>', 999, -1, {'conceal': '➞'})
+" autocmd FileType php call matchadd('Conceal', '!=', 999, -1, {'conceal': '≠'})
+" autocmd FileType php call matchadd('Conceal', '->', 999, -1, {'conceal': '➞'})
+" autocmd FileType php call matchadd('Conceal', '=>', 999, -1, {'conceal': '➞'})
+call matchadd('Conceal', '"', 999, -1, {'conceal': ''})
+call matchadd('Conceal', "'", 999, -1, {'conceal': ''})
 autocmd FileType markdown call matchadd('Conceal', '# ', 999, -1, {'conceal': ''})
 autocmd FileType markdown call matchadd('Conceal', '## ', 999, -1, {'conceal': ''})
 autocmd FileType markdown call matchadd('Conceal', '### ', 999, -1, {'conceal': ''})
 autocmd FileType markdown call matchadd('Conceal', '#### ', 999, -1, {'conceal': ''})
+autocmd FileType php call matchadd('Conceal', 'class ', 999, -1, {'conceal': ''})
+autocmd FileType php call matchadd('Conceal', ';', 999, -1, {'conceal': ''})
+autocmd FileType php call matchadd('Conceal', '\$', 999, -1, {'conceal': ''})
+autocmd FileType php call matchadd('Conceal', 'function ', 999, -1, {'conceal': ''})
+
+
 set conceallevel=2 "show pretty latex formulas
 "}}}
 
@@ -307,7 +316,7 @@ nnoremap cwi ciw
 map <leader>i mmgg=G`m
 map <leader>x :w<','> !bash<cr>
 map <leader>me :!chmod +x %<cr>
-nnoremap <leader>tn :tabnew<cr>
+nnoremap <leader>nt :tabnew<cr>
 "open director (file manager)
 nmap <leader>sh :!cd %:h && zsh <cr>
 nmap <leader>pn :!echo %<cr>
@@ -318,8 +327,7 @@ nnoremap <leader>c :noh<cr>
 nnoremap <leader><space> :w<cr>
 "use C-p and C-n to browser normal mode commands history
 cnoremap <C-p> <Up>
-nnoremap <C-c> :q!<cr>
-nmap <leader>q :q!<cr>
+noremap <leader>qq :q!<cr>
 cnoremap <C-n> <Down>
 " use %% to expand to the current buffer directory
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
@@ -574,6 +582,16 @@ fun! MapAction(algorithm, key)
     exe 'nmap '.a:key.a:key[strlen(a:key)-1].' <Plug>actionsLine'.a:algorithm
 endfun
 
+let g:ctrlsf_auto_close = {
+    \ "normal" : 0,
+    \ "compact": 0
+    \}
+let g:ctrlsf_default_view_mode = 'compact'
+" let g:ctrlsf_winsize = '30%'
+" " or
+" let g:ctrlsf_winsize = '100'
+
+
 fun! s:OnlyTextSelection(str)
     normal! ggVGx
     set noreadonly
@@ -675,13 +693,13 @@ fun! s:Translate(str)
     let out = system('translate.sh ', a:str)
     return out
 endfun
-call MapAction('Translate', '<leader>ti')
+call MapAction('Translate', '<leader>le')
 
 fun! s:TranslateGerman(str)
     let out = system('run_function translateGerman ', a:str)
     return out
 endfun
-call MapAction('TranslateGerman', '<leader>tg')
+call MapAction('TranslateGerman', '<leader>lg')
 
 fun! s:EnglishToGerman(str)
     let out = system('translate.sh en de', a:str)
@@ -701,6 +719,7 @@ fun! s:MakeGraph(str)
 endfun
 call MapAction('MakeGraph', '<leader>mg')
 
+" special characters surrounding {{{
 fun! s:Star(str)
     return '*'.a:str.'*'
 endfun
@@ -725,12 +744,7 @@ fun! s:Brackets(str)
     return '['.a:str.']'
 endfun
 call MapAction('Brackets', '<leader>[')
-
-fun! s:Filefy(str)
-    let out = system('filefy ', a:str)
-    return out
-endfun
-call MapAction('Filefy', '<leader>fiy')
+"}}}
 
 fun! s:foldSomething(str)
     let comment=split(&commentstring, '%s')
@@ -770,12 +784,6 @@ fun! s:Decode(str)
     return out
 endfunc
 call MapAction('Decode', '<leader>d')
-
-fun! s:Lisp(str)
-    let out = system('sbcl_snippet', a:str)
-    return out
-endfunc
-call MapAction('Lisp', '<leader>li')
 
 fun! s:ToCamelCase(str)
     let out = ChompedSystemCall('run_function toCamelCase', a:str)
@@ -1376,8 +1384,8 @@ function! s:tags()
                 \ 'sink':    function('s:tags_sink')})
 endfunction
 
-command! Tags call s:tags()
-map <Leader>tag :Tags<cr>
+" command! Tags call s:tags()
+" map <Leader>tag :Tags<cr>
 
 
 " listing buffers and enteing them
@@ -1462,3 +1470,18 @@ endfun
 fun! NotifySend(content)
     :Asyncrun notify-send '".a:content."'"
 endfun
+
+" these "Ctrl mappings" work well when Caps Lock is mapped to Ctrl
+noremap <silent> <leader>tn :TestNearest<CR> " t Ctrl+n
+noremap <silent> <leader>tf :TestFile<CR>    " t Ctrl+f
+noremap <silent> <leader>ts :TestSuite<CR>   " t Ctrl+s
+noremap <silent> <leader>tl :TestLast<CR>    " t Ctrl+l
+noremap <silent> <leader>tg :TestVisit<CR>   " t Ctrl+g
+let test#strategy = "vimux"
+
+" let test#strategy = {
+"   \ 'nearest': 'neovim',
+"   \ 'file':    'dispatch',
+"   \ 'suite':   'basic',
+" \}
+

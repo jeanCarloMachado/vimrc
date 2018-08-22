@@ -2,8 +2,6 @@
 "
 " - I'm using nvim now but the config works for both vim and nvim
 "
-" - Its better to organize the configs by semantic. Better to put wiki mappings on the wiki section then on the mappings section
-"
 " Userspace dependencies
 " - par
 " - rg

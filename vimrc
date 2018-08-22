@@ -10,12 +10,12 @@
 "
 " Each new supported language should have configured the following features
 " - Inline linting
-" - Indentation
 " - default template for empty files
 " - automatic ctags generation
 " - documentation querying
 " - simple repl setup
 " - unit testing execution in single command
+"- Indentation
 "
 " DEBUG
 " make vim more verobse, good for debugging
@@ -59,6 +59,7 @@ Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
 Plug 'fatih/vim-go', { 'for': ['go'] }
+Plug 'kballard/vim-swift', { 'for': ['swift'] }
 " visualizing marks
 Plug 'kshenoy/vim-signature'
 " this plugin is slow when the project is too big
@@ -75,6 +76,7 @@ Plug 'benmills/vimux'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'easymotion/vim-easymotion'
 Plug 'janko-m/vim-test'
+Plug 'rhysd/devdocs.vim'
 call plug#end()
 "}}}
 
@@ -311,7 +313,9 @@ nnoremap + ddp
 nnoremap _ dd2kp
 nnoremap <Leader>le :noh<cr>
 nnoremap <Leader>dt :r ! date<cr>
-nnoremap <Leader>dc :ElmShowDocs<cr>
+
+
+
 nnoremap cwi ciw
 map <leader>i mmgg=G`m
 map <leader>x :w<','> !bash<cr>
@@ -634,7 +638,7 @@ fun! s:ComputeMD5(str)
     let out = substitute(out, '\n$', '', '')
     return out
 endfun
-call MapAction('ComputeMD5','<leader>M')
+call MapAction('ComputeMD5','<leader>md5')
 
 function! Chomp(string)
     return substitute(a:string, '\n\+$', '', '')
@@ -926,14 +930,13 @@ endfunc
 call MapAction('CodeBlock', '<leader>c')
 "}}}
 
-
 fun! s:Repl(str)
     :VimuxRunCommand(a:str."\n")
 endfunc
-
-
 call MapAction('Repl', '<leader>ev')
-map <Leader>el :VimuxRunLastCommand<CR>
+
+nmap <Leader>els :VimuxRunCommand("\n")<CR>
+nmap <Leader>el :VimuxRunLastCommand<CR>
 
 fun! s:Subs(str)
     let my_filetype = &filetype
@@ -1037,7 +1040,7 @@ autocmd CmdwinEnter * nnoremap <CR> <CR>
 autocmd BufReadPost quickfix nnoremap <CR> <CR>
 
 fun! OpenUrl(url)
-    silent execute '! $BROWSER "' . a:url . '" 1>/dev/null  &'
+    silent execute '! open "' . a:url . '" 1>/dev/null  &'
 endfunc
 nnoremap gx :call OpenUrl()<cr>
 
@@ -1158,7 +1161,7 @@ command! -nargs=* CheckoutFile call CheckoutFile( '<args>' )
 fun! OpenRepoOnGithub(arg)
     let repo = system('git remote -v | cut -d ":" -f2 | cut -d "." -f1 | head -n 1')
     let url = "https://github.com/" . repo . ".git"
-    let result = system("$BROWSER " . url . " & ")
+    let result = system("open " . url . " & ")
 endfunc
 command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
 
@@ -1437,7 +1440,7 @@ nnoremap <leader>eh :call TmuxContent()<cr>
 
 let g:vdebug_keymap = {
 \    "run" : "<leader>dr",
-\    "run_to_cursor" : "<leader>dc",
+\    "run_to_cursor" : "<leader>du",
 \    "step_over" : "<leader>dd",
 \    "step_into" : "<leader>di",
 \    "step_out" : "<leader>do",
@@ -1479,9 +1482,23 @@ noremap <silent> <leader>tl :TestLast<CR>    " t Ctrl+l
 noremap <silent> <leader>tg :TestVisit<CR>   " t Ctrl+g
 let test#strategy = "vimux"
 
-" let test#strategy = {
-"   \ 'nearest': 'neovim',
-"   \ 'file':    'dispatch',
-"   \ 'suite':   'basic',
-" \}
+"docummentation {{{
+fun! Documentation(str)
+
+    if (&filetype == 'scala')
+        let url = 'https://www.scala-lang.org/api/current/?search='.a:str
+        let out = system("open '" . url . "' ")
+        return
+    endif
+
+    execute ":DevDocsAll ".a:str
+endfunc
+
+fun! s:Dit(str)
+    call Documentation(a:str)
+endfunc
+
+nmap <leader>dcw  "zyiw:exe "call Documentation('".@z."')"<cr>
+call MapAction('Dit', '<leader>dci')
+"}}}
 

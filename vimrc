@@ -13,7 +13,6 @@
 " - documentation querying
 " - simple repl setup
 " - unit testing execution in single command
-"- Indentation
 "
 " DEBUG
 " make vim more verobse, good for debugging
@@ -65,7 +64,6 @@ Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
 Plug 'kshenoy/vim-signature'
 " this plugin is slow when the project is too big
 "most recently used files list
-Plug 'yegappan/mru'
 Plug 'git@github.com:skywind3000/asyncrun.vim.git'
 Plug 'junegunn/goyo.vim'
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
@@ -75,6 +73,7 @@ Plug 'ludovicchabant/vim-gutentags'
 Plug 'easymotion/vim-easymotion'
 Plug 'janko-m/vim-test'
 Plug 'rhysd/devdocs.vim'
+Plug 'tpope/vim-sleuth'
 
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -264,7 +263,6 @@ endfun
 command! -nargs=* Grepr call Grepr( '<args>' )
 "}}}
 
-nnoremap <leader>mru :MRU<cr>
 "netrw
 nnoremap <leader>k :Vexplore<cr>
 let g:netrw_winsize = 25 "window width
@@ -411,23 +409,10 @@ set shortmess+=A "don't give the "ATTENTION" message when an existing swap file 
 "}}}
 
 
-"indenting
-" {{{
+"indenting {{{
 filetype plugin indent on
 set copyindent
 set autoindent
-" show existing tab with 4 spaces width
-set tabstop=4
-" when indenting with '>', use 4 spaces width
-set shiftwidth=4
-" On pressing tab, insert 4 spaces
-set expandtab
-
-" 2 spaces for html/js
-" for php use tabs
-autocmd filetype php,html,tpl,smarty set autoindent noexpandtab tabstop=4 shiftwidth=4
-autocmd filetype javascript,html set autoindent noexpandtab tabstop=2 shiftwidth=2
-autocmd filetype haskell set tabstop=2 shiftwidth=2
 "}}}
 
 "custom text objects{{{
@@ -1331,16 +1316,6 @@ function! s:searchLineHandler(l)
     normal! ^zz
 endfunction
 
-map <c-p> :FZF<cr>
-command! FZFLines call fzf#run({
-            \   'source':  <sid>buffer_lines(),
-            \   'sink':    function('<sid>searchLineHandler'),
-            \   'options': '--extended --nth=3..',
-            \   'down':    '60%'
-            \})
-map <Leader>sfl :FZFLines<cr>
-
-
 
 au BufRead,BufNewFile *.jar,*.war,*.ear,*.sar,*.rar set filetype=zip
 
@@ -1381,55 +1356,38 @@ autocmd FileType elm map <Leader>fmt :ElmFormat<cr>
 nnoremap <leader>pd :call PhpDoc()<cr>
 set hidden "hides buffers instead of closing them, don't give warnings on unsaved things
 
-" tags
-function! s:tags_sink(line)
-    let parts = split(a:line, '\t\zs')
-    "let excmd = matchstr(parts[2:], '^.*\ze;"\t')
-    execute 'silent e' parts[1][:-2]
-    let [magic, &magic] = [&magic, 0]
-    "execute excmd
-    let &magic = magic
+"fzf {{{
+let g:fzf_buffers_jump = 1
+" let g:fzf_layout = { 'window': 'split enew' }
+map <c-p> :FZF<cr>
+
+function! s:buflist()
+  redir => ls
+  silent ls
+  redir END
+  return split(ls, '\n')
 endfunction
 
-function! s:tags()
-    if empty(tagfiles())
-        echohl WarningMsg
-        echom 'Preparing tags'
-        echohl None
-        call system('ctags -R')
-    endif
-
-    call fzf#run({
-                \ 'source':  'cat '.join(map(tagfiles(), 'fnamemodify(v:val, ":S")')).
-                \            '| grep -v -a ^!',
-                \ 'options': '+m -d "\t" --with-nth 1,2.. -n 1 --tiebreak=index',
-                \ 'down':    '40%',
-                \ 'sink':    function('s:tags_sink')})
+function! s:bufopen(e)
+  execute 'buffer' matchstr(a:e, '^[ 0-9]*')
 endfunction
 
-" command! Tags call s:tags()
-" map <Leader>tag :Tags<cr>
+nnoremap <silent> <Leader>ls :call fzf#run({
+\   'source':  reverse(<sid>buflist()),
+\   'sink':    function('<sid>bufopen'),
+\   'options': '+m',
+\   'down':    len(<sid>buflist()) + 2
+\ })<CR>
 
 
-" listing buffers and enteing them
-function! s:listBuffer()
-    :redir @a
-    :ls
-    :redir END
-    return split(@a, '\n')
-endfun
-function! s:bufferLineHandler(l)
-    let keys = split(a:l, ' ')
-    exec 'buf' keys[0]
-endfunction
+nnoremap <leader>mru :FZFMru<cr>
+command! FZFMru call fzf#run({
+\  'source':  v:oldfiles,
+\  'sink':    'e',
+\  'options': '-m -x +s',
+\  'down':    '40%'})
 
-command! ZFZBuffers call fzf#run({
-            \   'source':  <sid>listBuffer(),
-            \   'sink':    function('<sid>bufferLineHandler'),
-            \   'options': '--extended --nth=..3  --height 40%'
-            \})
-map <Leader>ls :ZFZBuffers<cr>
-
+"}}}
 autocmd BufNewFile,BufRead *.es6 set filetype=javascript
 
 autocmd filetype crontab setlocal nobackup nowritebackup

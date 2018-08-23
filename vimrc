@@ -56,8 +56,11 @@ Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
+Plug 'vim-vdebug/vdebug', {'for': ['php'] }
 Plug 'fatih/vim-go', { 'for': ['go'] }
 Plug 'kballard/vim-swift', { 'for': ['swift'] }
+Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
+Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
 " visualizing marks
 Plug 'kshenoy/vim-signature'
 " this plugin is slow when the project is too big
@@ -65,21 +68,27 @@ Plug 'kshenoy/vim-signature'
 Plug 'yegappan/mru'
 Plug 'git@github.com:skywind3000/asyncrun.vim.git'
 Plug 'junegunn/goyo.vim'
-Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
-Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
-Plug 'vim-vdebug/vdebug', {'for': ['php'] }
 Plug 'wakatime/vim-wakatime'
 Plug 'benmills/vimux'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'easymotion/vim-easymotion'
 Plug 'janko-m/vim-test'
 Plug 'rhysd/devdocs.vim'
+
+if has('nvim')
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+else
+  Plug 'Shougo/deoplete.nvim'
+  Plug 'roxma/nvim-yarp'
+  Plug 'roxma/vim-hug-neovim-rpc'
+endif
+
+
 call plug#end()
 "}}}
 
 "generic configs
-set splitright "split new windows to the right
 set nocompatible
 let mapleader = "\<space>"
 runtime macros/matchit.vim "Enable extended % matching
@@ -87,6 +96,7 @@ set tags+=/usr/include/tags,./tags,./.git/tags,../.git/tags
 " set mouse=a "enable mouse on normal,visual,inter,command-line modes
 set backspace=indent,eol,start "make the backspace work like in most other programs
 
+set splitright "split new windows to the right
 " set cot+=menuone "Use the popup menu also when there is only one match
 set number "show numbers
 set shell=$SHELL
@@ -123,8 +133,7 @@ nmap <leader>vn :vnew<cr>
 nmap <leader>fim :!runFunction fileManager %:h<cr> command! FileManager execute "!runFunction fileManager %:h"
 nnoremap <leader>on :only<cr>
 
-"linter config {{{
-
+"ale config {{{
 nnoremap <leader>fmt :ALEFix<cr>
 " autocmd FileType haskell map <Leader>fmt :!hfmt -w %:p<cr>
 " autocmd FileType php map <Leader>fmt :!php-code-check %:p<cr>
@@ -138,6 +147,8 @@ let g:ale_lint_on_enter = 0
 let g:ale_lint_on_save = 1
 let g:ale_lint_on_text_changed = 0
 let g:ale_writegood_options = ' --so --illusion --adverb --tooWordy --cliches'
+let g:ale_sign_error = '⤫'
+let g:ale_sign_warning = '⚠'
 
 
 let g:ale_linters = {
@@ -155,11 +166,23 @@ let g:ale_fixers = {
 \   'python': ['autopep8', 'yapf'],
 \   'scala': ['scalafmt']
 \}
+
 "}}}
+
+
+" autocomplete {{{
+" let g:ale_completion_enabled = 1
+" set completeopt=longest,menuone
+" set omnifunc=syntaxcomplete#Complete
+let g:deoplete#enable_at_startup = 1
+"}}}
+
 
 " visual mode
 "Allow using the repeat operator with a visual selection
 vnoremap . :normal .<CR>
+
+
 
 " search
 set hlsearch " match while typing the search
@@ -334,7 +357,6 @@ cnoremap <C-n> <Down>
 " use %% to expand to the current buffer directory
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 nnoremap <leader>cf :!filefy-clippboard<cr>
-map <c-p> :FZF<cr>
 
 "reload vim
 if !exists('*ReloadVim')
@@ -868,15 +890,15 @@ let g:vim_markdown_fenced_languages = [
 
 fun! UnderlineHeading(level)
     if a:level == 1
-        normal! I#
+        normal! I# 
     elseif a:level == 2
-        normal! I##
+        normal! I## 
     elseif a:level == 3
-        normal! I###
+        normal! I### 
     elseif a:level == 4
-        normal! I####
+        normal! I#### 
     elseif a:level == 5
-        normal! I#####
+        normal! I##### 
     endif
 endfunc
 
@@ -1164,8 +1186,7 @@ endfunc
 command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
 
 
-"PHP
-map <Leader>rat :call VimuxRunCommand("clear; \$CLIPP_PATH/Backend ; cpf-phpunit.sh ")<CR>
+"PHP {{{
 fun! s:JsonEncode(str)
     let out = system('json_encode_from_php', a:str)
     return out
@@ -1177,7 +1198,7 @@ fun! s:JsonToPhp(str)
     return out
 endfun
 call MapAction('JsonToPhp', '<leader>jp')
-
+"}}}
 function SessionDirectory() abort
     if len(argv()) > 0
         return fnamemodify(argv()[0], ':p:h')
@@ -1185,7 +1206,7 @@ function SessionDirectory() abort
     return getcwd()
 endfunction
 
-" gvim
+" gvim {{{ 
 :set guioptions+=m  "remove menu bar
 :set guioptions-=T  "remove toolbar
 :set guioptions-=r  "remove right-hand scroll bar
@@ -1193,7 +1214,7 @@ endfunction
 if has('gui_running')
   set guifont=DejaVu\ Sans\ Mono\ Book\ 13
 endif
-
+"}}}
 " C lang
 fun! CFiletypeConfigs()
     "compile through gcc when there's no makefile
@@ -1310,6 +1331,7 @@ function! s:searchLineHandler(l)
     normal! ^zz
 endfunction
 
+map <c-p> :FZF<cr>
 command! FZFLines call fzf#run({
             \   'source':  <sid>buffer_lines(),
             \   'sink':    function('<sid>searchLineHandler'),

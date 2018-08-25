@@ -27,7 +27,7 @@ Plug 'altercation/vim-colors-solarized'
 "inline errors, linting
 Plug 'w0rp/ale'
 Plug 'christoomey/vim-tmux-navigator'
-"Plug 'vim-utils/vim-man' "view manuals inside vim
+Plug 'vim-utils/vim-man' "view manuals inside vim
 " custom text objects
 Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
 Plug 'kana/vim-textobj-function' "text object for a function: enables af and if
@@ -74,6 +74,7 @@ Plug 'easymotion/vim-easymotion'
 Plug 'janko-m/vim-test'
 Plug 'rhysd/devdocs.vim'
 Plug 'tpope/vim-sleuth'
+Plug 'breuckelen/vim-resize'
 
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -231,7 +232,7 @@ autocmd FileType php,python,scala set foldmethod=indent
 "enable fold for file greater than
 autocmd FileType vim set foldmethod=marker
 autocmd FileType markdown set foldmethod=expr
-let g:MIN_LINES_TO_FOLD = 50
+let g:MIN_LINES_TO_FOLD = 60
 autocmd! BufReadPost * :if line('$') > MIN_LINES_TO_FOLD | setlocal foldenable foldlevel=1 | endif
 "}}}
 
@@ -1480,3 +1481,10 @@ nmap <leader>dcw  "zyiw:exe "call Documentation('".@z."')"<cr>
 call MapAction('Dit', '<leader>dci')
 "}}}
 
+
+let g:resize_count = 11
+let g:vim_resize_disable_auto_mappings = 1
+nnoremap <leader>H :CmdResizeLeft<cr>
+nnoremap <leader>L :CmdResizeRight<cr>
+nnoremap <leader>K :CmdResizeUp<cr>
+nnoremap <leader>J :CmdResizeDown<cr>

@@ -600,6 +600,12 @@ let g:ctrlsf_auto_close = {
     \ "normal" : 0,
     \ "compact": 0
     \}
+
+" let g:ctrlsf_mapping = {
+"     \ "openb"    : ["<CR>", "o", "<2-LeftMouse>"],
+"     \ "open"   : "O",
+"     \ }
+
 let g:ctrlsf_default_view_mode = 'compact'
 " let g:ctrlsf_winsize = '30%'
 " " or
@@ -1487,10 +1493,12 @@ call MapAction('Dit', '<leader>dci')
 "}}}
 
 " window resize {{{
-let g:resize_count = 11
+let g:resize_count = 12
 let g:vim_resize_disable_auto_mappings = 1
 nnoremap <leader>H :CmdResizeLeft<cr>
 nnoremap <leader>L :CmdResizeRight<cr>
 nnoremap <leader>K :CmdResizeUp<cr>
 nnoremap <leader>J :CmdResizeDown<cr>
+nnoremap <leader>= <cw>=
+
 "}}}

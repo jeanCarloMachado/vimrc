@@ -592,6 +592,10 @@ fun! MapAction(algorithm, key)
     exe 'nmap '.a:key.a:key[strlen(a:key)-1].' <Plug>actionsLine'.a:algorithm
 endfun
 
+" ctrlsf {{{
+
+let g:ctrlsf_default_root = 'project'
+let g:ctrlsf_ackprg='rg'
 let g:ctrlsf_auto_close = {
     \ "normal" : 0,
     \ "compact": 0
@@ -601,16 +605,8 @@ let g:ctrlsf_default_view_mode = 'compact'
 " " or
 " let g:ctrlsf_winsize = '100'
 
-
-fun! s:OnlyTextSelection(str)
-    normal! ggVGx
-    set noreadonly
-    call append(0, split(Chomp(a:str), '\v\n'))
-endfun
-call MapAction('OnlyTextSelection','<leader>ts')
-
 "find word under cursor
-noremap <leader>fw "zyiw:exe ":CtrlSF ".@z.""<cr>
+noremap <leader>fw :CtrlSF <C-r><C-w>
 
 fun! s:FindIt(str)
     :AsyncRun ':CtrlSF "'.a:str.'"<cr>'
@@ -631,6 +627,25 @@ fun! s:FindLocal(str)
     return a:str
 endfun
 call MapAction('FindLocal','<leader>fl')
+
+
+function! FindStringWiki()
+    let curline = getline('.')
+    call inputsave()
+    let name = input('Find on wiki: ')
+    call inputrestore()
+    execute ":CtrlSF ".name." ".$WIKI_PATH
+endfunction
+
+"}}}
+
+fun! s:OnlyTextSelection(str)
+    normal! ggVGx
+    set noreadonly
+    call append(0, split(Chomp(a:str), '\v\n'))
+endfun
+call MapAction('OnlyTextSelection','<leader>ts')
+
 
 fun! s:ToSingleQuote(str)
     let out = system("tr '\"' \"'\"", a:str)
@@ -1292,15 +1307,6 @@ vnoremap <silent> # :<C-U>
 
 " search
 nnoremap <leader>wf :call FindStringWiki()<cr>
-
-function! FindStringWiki()
-    let curline = getline('.')
-    call inputsave()
-    let name = input('Find on wiki: ')
-    call inputrestore()
-    execute ":CtrlSF ".name." ".$WIKI_PATH
-endfunction
-
 "search on open files lines
 function! s:buffer_lines()
     let res = []
@@ -1394,7 +1400,6 @@ autocmd BufNewFile,BufRead *.es6 set filetype=javascript
 autocmd filetype crontab setlocal nobackup nowritebackup
 
 
-let g:ctrlsf_ackprg='rg'
 
 fun! s:GenerateTags(str)
     let directory = input('Directory: ', getcwd() )
@@ -1481,10 +1486,11 @@ nmap <leader>dcw  "zyiw:exe "call Documentation('".@z."')"<cr>
 call MapAction('Dit', '<leader>dci')
 "}}}
 
-
+" window resize {{{
 let g:resize_count = 11
 let g:vim_resize_disable_auto_mappings = 1
 nnoremap <leader>H :CmdResizeLeft<cr>
 nnoremap <leader>L :CmdResizeRight<cr>
 nnoremap <leader>K :CmdResizeUp<cr>
 nnoremap <leader>J :CmdResizeDown<cr>
+"}}}

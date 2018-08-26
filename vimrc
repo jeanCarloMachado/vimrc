@@ -65,7 +65,7 @@ Plug 'kshenoy/vim-signature'
 " this plugin is slow when the project is too big
 "most recently used files list
 Plug 'git@github.com:skywind3000/asyncrun.vim.git'
-Plug 'junegunn/goyo.vim'
+Plug 'junegunn/goyo.vim', { 'for': ['markdown'] }
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 Plug 'wakatime/vim-wakatime'
 Plug 'benmills/vimux'
@@ -99,6 +99,7 @@ set backspace=indent,eol,start "make the backspace work like in most other progr
 set splitright "split new windows to the right
 " set cot+=menuone "Use the popup menu also when there is only one match
 set number "show numbers
+set relativenumber
 set shell=$SHELL
 set encoding=utf-8
 set showmode "If in Insert, Replace or Visual mode put a message on the last line
@@ -118,6 +119,11 @@ set formatprg=par "The name of an external program that will be used to format t
 " Move to word
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
 nmap <Leader>em <Plug>(easymotion-overwin-w)
+nmap , :
+
+" insert filname in insert mode
+inoremap ,fn <C-R>=expand("%:t:r")<CR>
+
 
 " setlocal linebreak "wrap long lines at a character in 'breakat'
 if has("clipboard")
@@ -1499,6 +1505,5 @@ nnoremap <leader>H :CmdResizeLeft<cr>
 nnoremap <leader>L :CmdResizeRight<cr>
 nnoremap <leader>K :CmdResizeUp<cr>
 nnoremap <leader>J :CmdResizeDown<cr>
-nnoremap <leader>= <cw>=
-
+nnoremap <leader>= <C-w>=
 "}}}

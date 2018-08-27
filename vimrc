@@ -7,10 +7,10 @@
 " - rg
 "
 " Each new supported language should have configured the following features
-" - Inline linting
+" - linters and fixer
 " - default template for empty files
-" - automatic ctags generation
-" - documentation querying
+" - check if ctags support works, otherwise add
+" - documentation querying on devdocs otherwiser add exception
 " - simple repl setup
 " - unit testing execution in single command
 "
@@ -163,16 +163,17 @@ let g:ale_linters = {
 \   'javascript': ['eslint'],
 \   'sh': ['shell', 'shellcheck'],
 \   'markdown': ['write-good', 'proselint'],
-\   'scala': ['fsc', 'scalac']
+\   'scala': ['fsc', 'scalac'],
+\   'swift': ['swiftlint']
 \}
 
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
 \   'php': ['php_cs_fixer', 'phpcbf'],
 \   'python': ['autopep8', 'yapf'],
-\   'scala': ['scalafmt']
+\   'scala': ['scalafmt'],
+\   'swift': ['swiftformat']
 \}
-
 "}}}
 
 
@@ -196,51 +197,6 @@ set incsearch "show the next match while entering a search
 set ignorecase "the case of normal letters is ignored
 set smartcase "Override the 'ignorecase' option if the search pattern contains upper case characters
 
-" fold {{{
-func! Foldexpr_markdown(lnum)
-    let l1 = getline(a:lnum)
-
-    if l1 =~ '^\s*$'
-        " ignore empty lines
-        return '='
-    endif
-
-    let l2 = getline(a:lnum+1)
-
-    if  l2 =~ '^==\+\s*'
-        " next line is underlined (level 1)
-        return '>1'
-    elseif l2 =~ '^--\+\s*'
-        " next line is underlined (level 2)
-        return '>2'
-    elseif l1 =~ '^#'
-        " current line starts with hashes
-        return '>'.matchend(l1, '^#\+')
-    elseif a:lnum == 1
-        " fold any 'preamble'
-        return '>1'
-    else
-        " keep previous foldlevel
-        return '='
-    endif
-endfunc
-
-setlocal foldexpr=Foldexpr_markdown(v:lnum)
-
-"enter fold giving a list of options on conflicts
-nnoremap <C-]> g<C-]>
-
-set foldcolumn=1
-set foldenable!
-"for most programming languages make sense to use indentation method to fold
-autocmd FileType php,python,scala set foldmethod=indent
-
-"enable fold for file greater than
-autocmd FileType vim set foldmethod=marker
-autocmd FileType markdown set foldmethod=expr
-let g:MIN_LINES_TO_FOLD = 60
-autocmd! BufReadPost * :if line('$') > MIN_LINES_TO_FOLD | setlocal foldenable foldlevel=1 | endif
-"}}}
 
 "Concealing {{{
 " autocmd FileType php call matchadd('Conceal', '!=', 999, -1, {'conceal': '≠'})
@@ -261,7 +217,7 @@ autocmd FileType php call matchadd('Conceal', 'function ', 999, -1, {'conceal': 
 set conceallevel=2 "show pretty latex formulas
 "}}}
 
-" grep {{{
+"{{{ grep
 set grepprg=rg\ --vimgrep
 set grepformat=%f:%l:%c:%m
 fun! Grepr( arg )
@@ -270,12 +226,13 @@ endfun
 command! -nargs=* Grepr call Grepr( '<args>' )
 "}}}
 
-"netrw
+" netrw {{{
 nnoremap <leader>k :Vexplore<cr>
 let g:netrw_winsize = 25 "window width
 let g:netrw_altv=1 "open vertical splits on the right
 let g:netrw_liststyle=3
 let g:netrw_winsize = 0
+"}}}
 
 "spelling {{{
 fun! FixLastSpellingError()
@@ -340,8 +297,6 @@ nnoremap _ dd2kp
 nnoremap <Leader>le :noh<cr>
 nnoremap <Leader>dt :r ! date<cr>
 
-
-
 nnoremap cwi ciw
 map <leader>i mmgg=G`m
 map <leader>x :w<','> !bash<cr>
@@ -394,8 +349,7 @@ set nocursorline "highlighting of the current line is a big deal for vim, probab
 " set synmaxcol=128
 "}}}
 
-"undo
-" {{{
+"undo {{{
 set undofile "enable undoing
 set undodir=~/.vim/undo/
 set undolevels=100
@@ -403,8 +357,7 @@ set undoreload=100
 "}}}
 
 
-" backup options
-" {{{
+" backup options {{{
 set backup
 set writebackup
 set backupdir=~/.vim/backup
@@ -783,14 +736,6 @@ endfun
 call MapAction('Brackets', '<leader>[')
 "}}}
 
-fun! s:foldSomething(str)
-    let comment=split(&commentstring, '%s')
-    if len(l:comment)==1
-        call add(comment, l:comment[0])
-    endif
-    return l:comment[0]." {{{\n".a:str."\n".l:comment[1]."}}}"
-endfun
-call MapAction('foldSomething', '<leader>fo')
 
 fun! s:Trim(str)
     let out = system('run_function trim ', a:str)
@@ -963,10 +908,70 @@ endfunc
 call MapAction('CodeBlock', '<leader>c')
 "}}}
 
-fun! s:Repl(str)
+
+" fold {{{
+fun! s:foldSomething(str)
+    let comment=split(&commentstring, '%s')
+    if len(l:comment)==1
+        call add(comment, l:comment[0])
+    endif
+    return l:comment[0]." {{{\n".a:str."\n".l:comment[1]."}}}"
+endfun
+
+call MapAction('foldSomething', '<leader>fo')
+func! Foldexpr_markdown(lnum)
+    let l1 = getline(a:lnum)
+
+    if l1 =~ '^\s*$'
+        " ignore empty lines
+        return '='
+    endif
+
+    let l2 = getline(a:lnum+1)
+
+    if  l2 =~ '^==\+\s*'
+        " next line is underlined (level 1)
+        return '>1'
+    elseif l2 =~ '^--\+\s*'
+        " next line is underlined (level 2)
+        return '>2'
+    elseif l1 =~ '^#'
+        " current line starts with hashes
+        return '>'.matchend(l1, '^#\+')
+    elseif a:lnum == 1
+        " fold any 'preamble'
+        return '>1'
+    else
+        " keep previous foldlevel
+        return '='
+    endif
+endfunc
+
+setlocal foldexpr=Foldexpr_markdown(v:lnum)
+
+"enter fold giving a list of options on conflicts
+nnoremap <C-]> g<C-]>
+
+set foldmarker={{{,}}}
+set foldcolumn=2
+set foldenable
+set foldmethod=marker
+set foldopen=block,hor,insert,jump,mark,percent,quickfix,search,tag,undo
+
+autocmd FileType * set foldlevel=0
+"methods
+autocmd FileType php,python,scala,swift set foldmethod=indent foldlevel=1
+autocmd FileType markdown set foldmethod=expr
+
+let g:MIN_LINES_TO_FOLD = 60
+autocmd! BufReadPost * :if (&foldmethod == 'indent' && line('$') < MIN_LINES_TO_FOLD ) | setlocal !foldenable | endif
+"}}}
+
+"eval {{{
+fun! s:Eval(str)
     :VimuxRunCommand(a:str."\n")
 endfunc
-call MapAction('Repl', '<leader>ev')
+call MapAction('Eval', '<leader>ev')
 
 nmap <Leader>els :VimuxRunCommand("\n")<CR>
 nmap <Leader>el :VimuxRunLastCommand<CR>
@@ -977,7 +982,7 @@ fun! s:Subs(str)
     return out
 endfunc
 call MapAction('Subs', '<leader>o')
-
+"}}}
 
 " diary {{{
 fun! Diary( arg )
@@ -1087,7 +1092,6 @@ command! -nargs=* GrepWiki call GrepWiki( '<args>' )
 command! -nargs=* WikiGrep call GrepWiki( '<args>' )
 "}}}
 
-
 " templates for filetypes {{{
 autocmd BufNewFile *.php 0r $TEMPLATES_DIR/php.php
 autocmd BufNewFile *.sh 0r $TEMPLATES_DIR/shell.sh
@@ -1102,7 +1106,8 @@ autocmd BufNewFile */diary/*.md 0r $TEMPLATES_DIR/diary.md
 autocmd BufNewFile */posts/*.md 0r $TEMPLATES_DIR/post.md
 "}}}
 
-" generic actions relative to current file
+" generic actions relative to current file {{{
+
 nmap <leader>xo :!xdg-open % &<cr>
 "copy path name
 nmap <leader>cpn :!mycopy %:p<cr>
@@ -1119,6 +1124,7 @@ nmap <leader>cdcd :cd %:p:h<cr>
 fun! SaveForcing()
     execute "w !sudo tee > /dev/null %"
 endfunc
+
 command! -nargs=* ForceSave call SaveForcing()
 command! -nargs=* SaveForce call SaveForcing()
 
@@ -1153,6 +1159,11 @@ fun! CopyFile()
     endif
 endfunc
 map <Leader>cp :call CopyFile()<cr>
+map <leader>rl :edit!<cr>
+map <leader>ed :edit!<cr>
+map <leader>ee :edit!<cr>
+map <leader>ck :!git checkout %<cr>
+"}}}
 
 "git {{{
 fun! GitLog()
@@ -1169,12 +1180,7 @@ fun! GitDiff()
     execute '!cd $(dirname '.path.') ; git diff '.path.' '
 endfunc
 nmap <leader>gdf :call GitDiff()<cr>
-"}}}
 
-map <leader>rl :edit!<cr>
-map <leader>ed :edit!<cr>
-map <leader>ee :edit!<cr>
-map <leader>ck :!git checkout %<cr>
 map <leader>gck :!git checkout %<cr>
 fun! Blame(arg)
     let current_line = line(".") + 1
@@ -1197,6 +1203,7 @@ fun! OpenRepoOnGithub(arg)
     let result = system("open " . url . " & ")
 endfunc
 command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
+"}}}
 
 
 "PHP {{{
@@ -1212,6 +1219,7 @@ fun! s:JsonToPhp(str)
 endfun
 call MapAction('JsonToPhp', '<leader>jp')
 "}}}
+"
 function SessionDirectory() abort
     if len(argv()) > 0
         return fnamemodify(argv()[0], ':p:h')
@@ -1219,7 +1227,7 @@ function SessionDirectory() abort
     return getcwd()
 endfunction
 
-" gvim {{{ 
+" gvim {{{
 :set guioptions+=m  "remove menu bar
 :set guioptions-=T  "remove toolbar
 :set guioptions-=r  "remove right-hand scroll bar
@@ -1228,6 +1236,7 @@ if has('gui_running')
   set guifont=DejaVu\ Sans\ Mono\ Book\ 13
 endif
 "}}}
+
 " C lang
 fun! CFiletypeConfigs()
     "compile through gcc when there's no makefile
@@ -1237,7 +1246,7 @@ fun! CFiletypeConfigs()
 endfun
 autocmd filetype c call CFiletypeConfigs()
 
-"theme, colors, highlights
+" {{{ theme, colors, highlights
 syntax enable
 augroup VimrcColors
     au!
@@ -1272,6 +1281,7 @@ let g:solarized_bold=1
 set t_Co=256
 " color 0 is the dark background and 15 is the light one
 hi StatusLine ctermfg=12 ctermbg=0 cterm=NONE
+"}}}
 
 
 " vimrc per project
@@ -1411,17 +1421,6 @@ autocmd BufNewFile,BufRead *.es6 set filetype=javascript
 
 autocmd filetype crontab setlocal nobackup nowritebackup
 
-
-
-fun! s:GenerateTags(str)
-    let directory = input('Directory: ', getcwd() )
-    let out = system('ctags -R '.directory)
-    if v:shell_error
-        call ShowStringOnNewWindow(out)
-    endif
-endfunc
-call MapAction('GenerateTags', '<leader>tt')
-
 fun! TmuxContent()
     if !exists("g:VimuxRunnerIndex") || _VimuxHasRunner(g:VimuxRunnerIndex) == -1
         call VimuxOpenRunner()
@@ -1448,17 +1447,21 @@ let g:vdebug_keymap = {
 \    "eval_visual" : "<Leader>dv",
 \}
 
-" save the previous cursor position
+"{{{ save the previous cursor position
 augroup resCur
   autocmd!
   autocmd BufReadPost * call setpos(".", getpos("'\""))
 augroup END
+"}}}
 
+"tags {{{
 set tags=./tags;
 let g:easytags_dynamic_files = 1
 let g:easytags_async =  1
 let g:easytags_autorecurse = 0
+"}}}
 
+"debugging tools {{{
 fun! ShowStringOnNewWindow(content)
     split _output_
     normal! ggdG
@@ -1469,18 +1472,19 @@ endfun
 fun! NotifySend(content)
     :Asyncrun notify-send '".a:content."'"
 endfun
+"}}}
 
-" these "Ctrl mappings" work well when Caps Lock is mapped to Ctrl
+" run tests {{{
 noremap <silent> <leader>tn :TestNearest<CR> " t Ctrl+n
 noremap <silent> <leader>tf :TestFile<CR>    " t Ctrl+f
 noremap <silent> <leader>ts :TestSuite<CR>   " t Ctrl+s
 noremap <silent> <leader>tl :TestLast<CR>    " t Ctrl+l
 noremap <silent> <leader>tg :TestVisit<CR>   " t Ctrl+g
 let test#strategy = "vimux"
+"}}}
 
 "docummentation {{{
 fun! Documentation(str)
-
     if (&filetype == 'scala')
         let url = 'https://www.scala-lang.org/api/current/?search='.a:str
         let out = system("open '" . url . "' ")
@@ -1506,4 +1510,27 @@ nnoremap <leader>L :CmdResizeRight<cr>
 nnoremap <leader>K :CmdResizeUp<cr>
 nnoremap <leader>J :CmdResizeDown<cr>
 nnoremap <leader>= <C-w>=
+"}}}
+
+" repl setup {{{
+let g:repls = {
+\   'ruby': 'irb',
+\   'python': 'python',
+\   'haskell': 'ghc',
+\   'php': 'boris',
+\   'default': 'irb'
+\}
+
+fun! RunRepl()
+
+    if (has_key(g:repls, &filetype))
+      let cmd = get(g:repls, &filetype)
+      :VimuxRunCommand(cmd."\n")
+      return
+    endif
+
+    let cmd = get(g:repls, 'default')
+    :VimuxRunCommand(cmd."\n")
+endfunc
+nmap <leader>rr  :call RunRepl()<cr>
 "}}}

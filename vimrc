@@ -95,10 +95,9 @@ runtime macros/matchit.vim "Enable extended % matching
 set tags+=/usr/include/tags,./tags,./.git/tags,../.git/tags
 " set mouse=a "enable mouse on normal,visual,inter,command-line modes
 set backspace=indent,eol,start "make the backspace work like in most other programs
-
-set splitright "split new windows to the right
 " set cot+=menuone "Use the popup menu also when there is only one match
 set number "show numbers
+set hidden "hides buffers instead of closing them, don't give warnings on unsaved things
 set relativenumber
 set shell=$SHELL
 set encoding=utf-8
@@ -176,7 +175,6 @@ let g:ale_fixers = {
 \}
 "}}}
 
-
 " autocomplete {{{
 " let g:ale_completion_enabled = 1
 " set completeopt=longest,menuone
@@ -189,13 +187,6 @@ let g:deoplete#enable_at_startup = 1
 "Allow using the repeat operator with a visual selection
 vnoremap . :normal .<CR>
 
-
-
-" search
-set hlsearch " match while typing the search
-set incsearch "show the next match while entering a search
-set ignorecase "the case of normal letters is ignored
-set smartcase "Override the 'ignorecase' option if the search pattern contains upper case characters
 
 
 "Concealing {{{
@@ -241,9 +232,7 @@ endfun
 nnoremap <leader>fs :call FixLastSpellingError()<cr>
 map <leader>spt :set spell spelllang=pt_br<cr>
 map <leader>sen :set spell spelllang=en_us<cr>
-autocmd filetype rst set spell spelllang=en_us
-autocmd filetype txt set spell spelllang=en_us
-autocmd filetype markdown set spell spelllang=en_us
+autocmd filetype rst,txt,markdown set spell spelllang=en_us
 "}}}
 
 " quick access {{{
@@ -367,7 +356,6 @@ set directory=~/.vim/swap
 "don't show alert message when the swap already exists
 set shortmess+=A "don't give the "ATTENTION" message when an existing swap file is found
 "}}}
-
 
 "indenting {{{
 filetype plugin indent on
@@ -748,13 +736,6 @@ fun! s:googleIt(str)
 endfunc
 call MapAction('googleIt', '<leader>gi')
 
-
-fun! s:getHelp(str)
-    let my_filetype = &filetype
-    let out = system('getHelp.sh '.my_filetype, a:str)
-endfunc
-call MapAction('getHelp', '<leader>h')
-
 "render a html chunk on the browser
 fun! s:BCat(str)
     :'<,'>AsyncRun browser-cat
@@ -908,7 +889,6 @@ endfunc
 call MapAction('CodeBlock', '<leader>c')
 "}}}
 
-
 " fold {{{
 fun! s:foldSomething(str)
     let comment=split(&commentstring, '%s')
@@ -959,11 +939,11 @@ set foldmethod=marker
 set foldopen=block,hor,insert,jump,mark,percent,quickfix,search,tag,undo
 
 autocmd FileType * set foldlevel=0
-"methods
 autocmd FileType php,python,scala,swift set foldmethod=indent foldlevel=1
 autocmd FileType markdown set foldmethod=expr
 
 let g:MIN_LINES_TO_FOLD = 60
+"disable indent fold for files with less than 60 lines
 autocmd! BufReadPost * :if (&foldmethod == 'indent' && line('$') < MIN_LINES_TO_FOLD ) | setlocal !foldenable | endif
 "}}}
 
@@ -984,7 +964,28 @@ endfunc
 call MapAction('Subs', '<leader>o')
 "}}}
 
-" diary {{{
+" journal, diary {{{
+"
+fun! s:PdfFile(str)
+    echom "Starting to create pdf"
+    let fileName = expand("%:p")
+    let out = system('md2pdf.sh '.fileName)
+    if v:shell_error
+        call ShowStringOnNewWindow(out)
+    endif
+endfunc
+call MapAction('PdfFile', '<leader>pdf')
+
+fun! WeekReport()
+    echom "Generating report"
+    let out = system('journalReport.sh & ')
+    if v:shell_error
+        call ShowStringOnNewWindow(out)
+    endif
+endfun
+command! -nargs=* WeekReport call WeekReport()
+map <Leader>wr :call WeekReport()<cr>
+"
 fun! Diary( arg )
     let out = system('run_function diary_file "' . a:arg . '"')
     execute "edit " . out
@@ -1288,24 +1289,6 @@ hi StatusLine ctermfg=12 ctermbg=0 cterm=NONE
 set exrc "enable vimrc per project
 set secure "disable unsecure options
 
-
-" windows
-function! ToggleWindowHorizontalVerticalSplit()
-    if !exists('t:splitType')
-        let t:splitType = 'vertical'
-    endif
-    if t:splitType == 'vertical' " is vertical switch to horizontal
-        windo wincmd K
-        let t:splitType = 'horizontal'
-
-    else " is horizontal switch to vertical
-        windo wincmd H
-        let t:splitType = 'vertical'
-    endif
-endfun
-nnoremap <silent> <leader>wt :call ToggleWindowHorizontalVerticalSplit()<cr>
-
-
 " writer mode
 let writer_mode=$WRITER_MODE
 fun! WritingMode()
@@ -1327,7 +1310,12 @@ vnoremap <silent> # :<C-U>
             \gV:call setreg('"', old_reg, old_regtype)<CR>
 
 
-" search
+" {{{ search
+set hlsearch " match while typing the search
+set incsearch "show the next match while entering a search
+set ignorecase "the case of normal letters is ignored
+set smartcase "Override the 'ignorecase' option if the search pattern contains upper case characters
+
 nnoremap <leader>wf :call FindStringWiki()<cr>
 "search on open files lines
 function! s:buffer_lines()
@@ -1344,35 +1332,13 @@ function! s:searchLineHandler(l)
     exec keys[1]
     normal! ^zz
 endfunction
+"}}}
 
-
+" simple filetype configs {{{
 au BufRead,BufNewFile *.jar,*.war,*.ear,*.sar,*.rar set filetype=zip
-
-let g:VimuxHeight = "20"
-
-
-" to PDF
-fun! s:PdfFile(str)
-    echom "Starting to create pdf"
-    let fileName = expand("%:p")
-    let out = system('md2pdf.sh '.fileName)
-    if v:shell_error
-        call ShowStringOnNewWindow(out)
-    endif
-endfunc
-call MapAction('PdfFile', '<leader>pdf')
-
-fun! WeekReport()
-    echom "Generating report"
-    let out = system('journalReport.sh & ')
-    if v:shell_error
-        call ShowStringOnNewWindow(out)
-    endif
-endfun
-command! -nargs=* WeekReport call WeekReport()
-map <Leader>wr :call WeekReport()<cr>
-
-"
+autocmd BufNewFile,BufRead *.es6 set filetype=javascript
+autocmd filetype crontab setlocal nobackup nowritebackup
+"}}}
 
 " elm {{{
 let g:elm_format_autosave = 0
@@ -1380,10 +1346,6 @@ let g:elm_make_show_warnings = 0
 let g:elm_detailed_complete = 0
 autocmd FileType elm map <Leader>fmt :ElmFormat<cr>
 "}}}
-
-
-nnoremap <leader>pd :call PhpDoc()<cr>
-set hidden "hides buffers instead of closing them, don't give warnings on unsaved things
 
 "fzf {{{
 let g:fzf_buffers_jump = 1
@@ -1417,10 +1379,9 @@ command! FZFMru call fzf#run({
 \  'down':    '40%'})
 
 "}}}
-autocmd BufNewFile,BufRead *.es6 set filetype=javascript
 
-autocmd filetype crontab setlocal nobackup nowritebackup
-
+" repl, eval, tmux integration {{{
+let g:VimuxHeight = "20"
 fun! TmuxContent()
     if !exists("g:VimuxRunnerIndex") || _VimuxHasRunner(g:VimuxRunnerIndex) == -1
         call VimuxOpenRunner()
@@ -1432,7 +1393,9 @@ fun! TmuxContent()
 endfunc
 nnoremap <leader>ec :call TmuxContent()<cr>
 nnoremap <leader>eh :call TmuxContent()<cr>
+"}}}
 
+" debug {{{
 let g:vdebug_keymap = {
 \    "run" : "<leader>dr",
 \    "run_to_cursor" : "<leader>du",
@@ -1447,6 +1410,19 @@ let g:vdebug_keymap = {
 \    "eval_visual" : "<Leader>dv",
 \}
 
+fun! ShowStringOnNewWindow(content)
+    split _output_
+    normal! ggdG
+    setlocal buftype=nofile
+    call append(0, split(a:content, '\v\n'))
+endfun
+
+fun! NotifySend(content)
+    :Asyncrun notify-send '".a:content."'"
+endfun
+
+"}}}
+
 "{{{ save the previous cursor position
 augroup resCur
   autocmd!
@@ -1459,19 +1435,6 @@ set tags=./tags;
 let g:easytags_dynamic_files = 1
 let g:easytags_async =  1
 let g:easytags_autorecurse = 0
-"}}}
-
-"debugging tools {{{
-fun! ShowStringOnNewWindow(content)
-    split _output_
-    normal! ggdG
-    setlocal buftype=nofile
-    call append(0, split(a:content, '\v\n'))
-endfun
-
-fun! NotifySend(content)
-    :Asyncrun notify-send '".a:content."'"
-endfun
 "}}}
 
 " run tests {{{
@@ -1502,7 +1465,9 @@ nmap <leader>dcw  "zyiw:exe "call Documentation('".@z."')"<cr>
 call MapAction('Dit', '<leader>dci')
 "}}}
 
-" window resize {{{
+" windows management {{{
+
+set splitright "split new windows to the right
 let g:resize_count = 12
 let g:vim_resize_disable_auto_mappings = 1
 nnoremap <leader>H :CmdResizeLeft<cr>
@@ -1510,6 +1475,23 @@ nnoremap <leader>L :CmdResizeRight<cr>
 nnoremap <leader>K :CmdResizeUp<cr>
 nnoremap <leader>J :CmdResizeDown<cr>
 nnoremap <leader>= <C-w>=
+
+function! ToggleWindowHorizontalVerticalSplit()
+    if !exists('t:splitType')
+        let t:splitType = 'vertical'
+    endif
+    if t:splitType == 'vertical' " is vertical switch to horizontal
+        windo wincmd K
+        let t:splitType = 'horizontal'
+
+    else " is horizontal switch to vertical
+        windo wincmd H
+        let t:splitType = 'vertical'
+    endif
+endfun
+nnoremap <silent> <leader>wt :call ToggleWindowHorizontalVerticalSplit()<cr>
+
+
 "}}}
 
 " repl setup {{{

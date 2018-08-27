@@ -88,7 +88,9 @@ endif
 call plug#end()
 "}}}
 
-"generic configs
+" {{{ generic sets, let's
+let g:abolish_save_file = $HOME."/Dropbox/projects/vimrc/vim/abbreviations.vim"
+set wildignore+=*\\dist\\**
 set nocompatible
 let mapleader = "\<space>"
 runtime macros/matchit.vim "Enable extended % matching
@@ -115,28 +117,61 @@ set title "When on, the title of the window will be set to the value of 'titlest
 set magic
 setlocal formatoptions=1
 set formatprg=par "The name of an external program that will be used to format the lines selected with the |gq| operator.
+" vimrc per project
+set exrc "enable vimrc per project
+set secure "disable unsecure options
 " Move to word
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
-nmap <Leader>em <Plug>(easymotion-overwin-w)
-nmap , :
-
-" insert filname in insert mode
-inoremap ,fn <C-R>=expand("%:t:r")<CR>
-
-
-" setlocal linebreak "wrap long lines at a character in 'breakat'
 if has("clipboard")
     set clipboard=unnamed " copy to the system clipboard
     if has("unnamedplus") " X11 support
         set clipboard+=unnamedplus
     endif
 endif
-let g:abolish_save_file = $HOME."/Dropbox/projects/vimrc/vim/abbreviations.vim"
-set wildignore+=*\\dist\\**
 
-nmap <leader>vn :vnew<cr>
+"}}}
+
+" {{{ Generic mappings
+" visual mode
+"Allow using the repeat operator with a visual selection
+vnoremap . :normal .<CR>
+" insert filname in insert mode
+inoremap ,fn <C-R>=expand("%:t:r")<CR>
+
+nnoremap <leader>; :normal!mtA;<esc>`t
+nnoremap <leader>: :normal!mtA:<esc>`t
+nnoremap <leader>, :normal!mtA,<esc>`t
+nnoremap <BS> :Rex<cr>
+nnoremap + ddp
+nnoremap _ dd2kp
+nnoremap <Leader>le :noh<cr>
+nnoremap <Leader>dt :r ! date<cr>
+
+nnoremap cwi ciw
+map <leader>i mmgg=G`m
+map <leader>x :w<','> !bash<cr>
+map <leader>me :!chmod +x %<cr>
+nnoremap <leader>nt :tabnew<cr>
+"open director (file manager)
+nmap <leader>sh :!cd %:h && zsh <cr>
+nmap <leader>pn :!echo %<cr>
+nmap <leader>pfn :!echo %:p<cr>
+nmap <silent> <leader>ve :e $MY_VIMRC<cr>:lcd %:h<cr>
+nnoremap <leader>c :noh<cr>
+"set shellcmdflag=-ic "make vim :! behave like a normal prompt
+nnoremap <leader><space> :w<cr>
+"use C-p and C-n to browser normal mode commands history
+cnoremap <C-p> <Up>
+noremap <leader>qq :q!<cr>
+cnoremap <C-n> <Down>
+" use %% to expand to the current buffer directory
+cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
+nnoremap <leader>cf :!filefy-clippboard<cr>
+nmap <Leader>em <Plug>(easymotion-overwin-w)
+"fast normal mode access through , instead of :
+nmap , :
 nmap <leader>fim :!runFunction fileManager %:h<cr> command! FileManager execute "!runFunction fileManager %:h"
-nnoremap <leader>on :only<cr>
+"}}}
 
 "ale config {{{
 nnoremap <leader>fmt :ALEFix<cr>
@@ -181,13 +216,6 @@ let g:ale_fixers = {
 " set omnifunc=syntaxcomplete#Complete
 let g:deoplete#enable_at_startup = 1
 "}}}
-
-
-" visual mode
-"Allow using the repeat operator with a visual selection
-vnoremap . :normal .<CR>
-
-
 
 "Concealing {{{
 " autocmd FileType php call matchadd('Conceal', '!=', 999, -1, {'conceal': '≠'})
@@ -275,57 +303,7 @@ command! -nargs=* LatestPost call LatestPost()
 
 "}}}
 
-"Generic mappings
-nnoremap <leader>gv  :! gvim %:p<cr>
-nnoremap <leader>; :normal!mtA;<esc>`t
-nnoremap <leader>: :normal!mtA:<esc>`t
-nnoremap <leader>, :normal!mtA,<esc>`t
-nnoremap <BS> :Rex<cr>
-nnoremap + ddp
-nnoremap _ dd2kp
-nnoremap <Leader>le :noh<cr>
-nnoremap <Leader>dt :r ! date<cr>
-
-nnoremap cwi ciw
-map <leader>i mmgg=G`m
-map <leader>x :w<','> !bash<cr>
-map <leader>me :!chmod +x %<cr>
-nnoremap <leader>nt :tabnew<cr>
-"open director (file manager)
-nmap <leader>sh :!cd %:h && zsh <cr>
-nmap <leader>pn :!echo %<cr>
-nmap <leader>pfn :!echo %:p<cr>
-nmap <silent> <leader>ve :e $MY_VIMRC<cr>:lcd %:h<cr>
-nnoremap <leader>c :noh<cr>
-"set shellcmdflag=-ic "make vim :! behave like a normal prompt
-nnoremap <leader><space> :w<cr>
-"use C-p and C-n to browser normal mode commands history
-cnoremap <C-p> <Up>
-noremap <leader>qq :q!<cr>
-cnoremap <C-n> <Down>
-" use %% to expand to the current buffer directory
-cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
-nnoremap <leader>cf :!filefy-clippboard<cr>
-
-"reload vim
-if !exists('*ReloadVim')
-    fun! ReloadVim()
-        silent source $MY_VIMRC
-        execute "edit %"
-    endfun
-    command! -nargs=* ReloadVim call ReloadVim()
-    nmap <silent> <leader>vs :ReloadVim<cr>
-endif
-
-
-fun! RemoveFile()
-    execute "!rm -rf %:p"
-endfun
-command! -nargs=* RemoveFile call RemoveFile()
-noremap <silent> <leader>rmrf :RemoveFile<cr>
-
-"performance
-" {{{
+"performance {{{
 set ttyfast "Improves smoothness of redrawing when there are multiple windows
 " autocmd BufEnter * :syn sync maxlines=500
 set lazyredraw "don't redraw screend when running macros
@@ -344,7 +322,6 @@ set undodir=~/.vim/undo/
 set undolevels=100
 set undoreload=100
 "}}}
-
 
 " backup options {{{
 set backup
@@ -1109,6 +1086,23 @@ autocmd BufNewFile */posts/*.md 0r $TEMPLATES_DIR/post.md
 
 " generic actions relative to current file {{{
 
+"reload vim
+if !exists('*ReloadVim')
+    fun! ReloadVim()
+        silent source $MY_VIMRC
+        execute "edit %"
+    endfun
+    command! -nargs=* ReloadVim call ReloadVim()
+    nmap <silent> <leader>vs :ReloadVim<cr>
+endif
+
+
+fun! RemoveFile()
+    execute "!rm -rf %:p"
+endfun
+command! -nargs=* RemoveFile call RemoveFile()
+noremap <silent> <leader>rmrf :RemoveFile<cr>
+
 nmap <leader>xo :!xdg-open % &<cr>
 "copy path name
 nmap <leader>cpn :!mycopy %:p<cr>
@@ -1206,7 +1200,6 @@ endfunc
 command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
 "}}}
 
-
 "PHP {{{
 fun! s:JsonEncode(str)
     let out = system('json_encode_from_php', a:str)
@@ -1221,24 +1214,18 @@ endfun
 call MapAction('JsonToPhp', '<leader>jp')
 "}}}
 "
-function SessionDirectory() abort
-    if len(argv()) > 0
-        return fnamemodify(argv()[0], ':p:h')
-    endif
-    return getcwd()
-endfunction
-
 " gvim {{{
-:set guioptions+=m  "remove menu bar
-:set guioptions-=T  "remove toolbar
-:set guioptions-=r  "remove right-hand scroll bar
-:set guioptions-=L  "remove left-hand scroll bar
+nnoremap <leader>gv  :! gvim %:p<cr>
+set guioptions+=m  "remove menu bar
+set guioptions-=T  "remove toolbar
+set guioptions-=r  "remove right-hand scroll bar
+set guioptions-=L  "remove left-hand scroll bar
 if has('gui_running')
   set guifont=DejaVu\ Sans\ Mono\ Book\ 13
 endif
 "}}}
 
-" C lang
+" {{{ C lang
 fun! CFiletypeConfigs()
     "compile through gcc when there's no makefile
     if !filereadable(expand("%:p:h")."/Makefile")
@@ -1246,6 +1233,7 @@ fun! CFiletypeConfigs()
     endif
 endfun
 autocmd filetype c call CFiletypeConfigs()
+"}}}
 
 " {{{ theme, colors, highlights
 syntax enable
@@ -1284,31 +1272,14 @@ set t_Co=256
 hi StatusLine ctermfg=12 ctermbg=0 cterm=NONE
 "}}}
 
-
-" vimrc per project
-set exrc "enable vimrc per project
-set secure "disable unsecure options
-
-" writer mode
+" {{{ writer mode
 let writer_mode=$WRITER_MODE
 fun! WritingMode()
     :Goyo
 endfun
 command! -nargs=* WritingMode call WritingMode()
 map <Leader>wm :call WritingMode()<cr>
-
-" star search over any kind of text
-vnoremap <silent> * :<C-U>
-            \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-            \gvy/<C-R><C-R>=substitute(
-            \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-            \gV:call setreg('"', old_reg, old_regtype)<CR>
-vnoremap <silent> # :<C-U>
-            \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-            \gvy?<C-R><C-R>=substitute(
-            \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-            \gV:call setreg('"', old_reg, old_regtype)<CR>
-
+"}}}
 
 " {{{ search
 set hlsearch " match while typing the search
@@ -1332,6 +1303,18 @@ function! s:searchLineHandler(l)
     exec keys[1]
     normal! ^zz
 endfunction
+" star search over any kind of text
+vnoremap <silent> * :<C-U>
+            \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+            \gvy/<C-R><C-R>=substitute(
+            \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+            \gV:call setreg('"', old_reg, old_regtype)<CR>
+vnoremap <silent> # :<C-U>
+            \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+            \gvy?<C-R><C-R>=substitute(
+            \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+            \gV:call setreg('"', old_reg, old_regtype)<CR>
+
 "}}}
 
 " simple filetype configs {{{
@@ -1467,6 +1450,8 @@ call MapAction('Dit', '<leader>dci')
 
 " windows management {{{
 
+nmap <leader>vn :vnew<cr>
+nnoremap <leader>on :only<cr>
 set splitright "split new windows to the right
 let g:resize_count = 12
 let g:vim_resize_disable_auto_mappings = 1

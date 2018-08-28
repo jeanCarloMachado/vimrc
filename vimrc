@@ -1,4 +1,4 @@
-" Considerations
+"Considerations
 "
 " - I'm using nvim now but the config works for both vim and nvim
 "
@@ -13,10 +13,6 @@
 " - documentation querying on devdocs otherwiser add exception
 " - simple repl setup
 " - unit testing execution in single command
-"
-" DEBUG
-" make vim more verobse, good for debugging
-" set vbs=1
 
 " plugins load {{{
 filetype on
@@ -30,8 +26,10 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'vim-utils/vim-man' "view manuals inside vim
 " custom text objects
 Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
-Plug 'kana/vim-textobj-function' "text object for a function: enables af and if
-Plug 'michaeljsmith/vim-indent-object' "same identation text object
+"text object for a function: enables af and if
+Plug 'kana/vim-textobj-function'
+"same indentation text object
+Plug 'michaeljsmith/vim-indent-object'
 Plug 'vim-scripts/argtextobj.vim'
 "gist support
 Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim'
@@ -75,15 +73,11 @@ Plug 'janko-m/vim-test'
 Plug 'rhysd/devdocs.vim'
 Plug 'tpope/vim-sleuth'
 Plug 'breuckelen/vim-resize'
-
-if has('nvim')
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-else
-  Plug 'Shougo/deoplete.nvim'
-  Plug 'roxma/nvim-yarp'
-  Plug 'roxma/vim-hug-neovim-rpc'
-endif
-
+Plug 'tpope/vim-fugitive'
+Plug 'nathanaelkane/vim-indent-guides'
+"autocomplete
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'jeanCarloMachado/concealPHP', { 'for': ['php'] }
 
 call plug#end()
 "}}}
@@ -131,7 +125,7 @@ endif
 
 "}}}
 
-" {{{ Generic mappings
+"Generic mappings{{{
 " visual mode
 "Allow using the repeat operator with a visual selection
 vnoremap . :normal .<CR>
@@ -221,17 +215,11 @@ let g:deoplete#enable_at_startup = 1
 " autocmd FileType php call matchadd('Conceal', '!=', 999, -1, {'conceal': '≠'})
 " autocmd FileType php call matchadd('Conceal', '->', 999, -1, {'conceal': '➞'})
 " autocmd FileType php call matchadd('Conceal', '=>', 999, -1, {'conceal': '➞'})
-call matchadd('Conceal', '"', 999, -1, {'conceal': ''})
-call matchadd('Conceal', "'", 999, -1, {'conceal': ''})
+
 autocmd FileType markdown call matchadd('Conceal', '# ', 999, -1, {'conceal': ''})
 autocmd FileType markdown call matchadd('Conceal', '## ', 999, -1, {'conceal': ''})
 autocmd FileType markdown call matchadd('Conceal', '### ', 999, -1, {'conceal': ''})
 autocmd FileType markdown call matchadd('Conceal', '#### ', 999, -1, {'conceal': ''})
-autocmd FileType php call matchadd('Conceal', 'class ', 999, -1, {'conceal': ''})
-autocmd FileType php call matchadd('Conceal', ';', 999, -1, {'conceal': ''})
-autocmd FileType php call matchadd('Conceal', '\$', 999, -1, {'conceal': ''})
-autocmd FileType php call matchadd('Conceal', 'function ', 999, -1, {'conceal': ''})
-
 
 set conceallevel=2 "show pretty latex formulas
 "}}}
@@ -338,17 +326,20 @@ set shortmess+=A "don't give the "ATTENTION" message when an existing swap file 
 filetype plugin indent on
 set copyindent
 set autoindent
+
+let g:indent_guides_enable_on_vim_startup = 1
+map <Leader>id :IndentGuidesToggle<cr>
 "}}}
 
 "custom text objects{{{
 call textobj#user#plugin('line', {
-            \   '-': {
-            \     'select-a-function': 'CurrentLineA',
-            \     'select-a': 'al',
-            \     'select-i-function': 'CurrentLineI',
-            \     'select-i': 'il',
-            \   },
-            \ })
+  \   '-': {
+  \     'select-a-function': 'CurrentLineA',
+  \     'select-a': 'al',
+  \     'select-i-function': 'CurrentLineI',
+  \     'select-i': 'il',
+  \   },
+  \ })
 
 fun! CurrentLineA()
     normal! 0
@@ -867,6 +858,24 @@ call MapAction('CodeBlock', '<leader>c')
 "}}}
 
 " fold {{{
+
+"enter fold giving a list of options on conflicts
+nnoremap <C-]> g<C-]>
+
+set foldmarker={{{,}}}
+set foldcolumn=2
+set foldmethod=marker
+set foldenable!
+set foldopen=block,hor,insert,jump,mark,percent,quickfix,search,tag,undo
+
+autocmd FileType php,python,scala,swift set foldmethod=indent foldlevel=1 foldenable
+autocmd FileType markdown set foldmethod=expr foldlevel=1 foldenable
+autocmd FileType vim set foldlevel=0 foldenable
+
+let g:MIN_LINES_TO_FOLD = 60
+"disable indent fold for files with less than 60 lines
+autocmd! BufReadPost * :if line('$') < MIN_LINES_TO_FOLD  | setlocal foldenable! | endif
+
 fun! s:foldSomething(str)
     let comment=split(&commentstring, '%s')
     if len(l:comment)==1
@@ -906,22 +915,6 @@ endfunc
 
 setlocal foldexpr=Foldexpr_markdown(v:lnum)
 
-"enter fold giving a list of options on conflicts
-nnoremap <C-]> g<C-]>
-
-set foldmarker={{{,}}}
-set foldcolumn=2
-set foldenable
-set foldmethod=marker
-set foldopen=block,hor,insert,jump,mark,percent,quickfix,search,tag,undo
-
-autocmd FileType * set foldlevel=0
-autocmd FileType php,python,scala,swift set foldmethod=indent foldlevel=1
-autocmd FileType markdown set foldmethod=expr
-
-let g:MIN_LINES_TO_FOLD = 60
-"disable indent fold for files with less than 60 lines
-autocmd! BufReadPost * :if (&foldmethod == 'indent' && line('$') < MIN_LINES_TO_FOLD ) | setlocal !foldenable | endif
 "}}}
 
 "eval {{{
@@ -1085,7 +1078,6 @@ autocmd BufNewFile */posts/*.md 0r $TEMPLATES_DIR/post.md
 "}}}
 
 " generic actions relative to current file {{{
-
 "reload vim
 if !exists('*ReloadVim')
     fun! ReloadVim()
@@ -1180,10 +1172,13 @@ map <leader>gck :!git checkout %<cr>
 fun! Blame(arg)
     let current_line = line(".") + 1
     let file_name = expand('%')
-    let out = system('git blame '.file_name.' > /tmp/blame')
-    execute "vsplit +".current_line." /tmp/blame"
+    let out = system('git blame '.file_name.' > /tmp/blame.blame')
+    execute "vsplit +".current_line." /tmp/blame.blame"
+    setlocal nospell
+    set filetype=fugitiveblame
 endfunc
 command! -nargs=* Blame call Blame( '<args>' )
+map <leader>bl :call Blame( '<args>' )<cr>
 
 fun! CheckoutFile(arg)
     let file_name = expand('%')
@@ -1235,7 +1230,7 @@ endfun
 autocmd filetype c call CFiletypeConfigs()
 "}}}
 
-" {{{ theme, colors, highlights
+"theme, colors, highlights {{{
 syntax enable
 augroup VimrcColors
     au!
@@ -1475,8 +1470,6 @@ function! ToggleWindowHorizontalVerticalSplit()
     endif
 endfun
 nnoremap <silent> <leader>wt :call ToggleWindowHorizontalVerticalSplit()<cr>
-
-
 "}}}
 
 " repl setup {{{

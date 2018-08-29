@@ -1,6 +1,6 @@
 "Considerations
 "
-" - I'm using nvim now but the config works for both vim and nvim
+" - 1% of the configs here are nvim only
 "
 " Userspace dependencies
 " - par
@@ -50,7 +50,6 @@ Plug 'fatih/vim-go', { 'for': ['go'] }
 Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
 Plug 'derekwyatt/vim-scala', { 'for': ['scala'] }
 Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
-Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
 Plug 'vim-vdebug/vdebug', {'for': ['php'] }
@@ -64,7 +63,6 @@ Plug 'kshenoy/vim-signature'
 "most recently used files list
 Plug 'git@github.com:skywind3000/asyncrun.vim.git'
 Plug 'junegunn/goyo.vim', { 'for': ['markdown'] }
-Plug 'nelstrom/vim-markdown-folding', { 'for': ['markdown'] }
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 Plug 'wakatime/vim-wakatime'
 Plug 'benmills/vimux'
@@ -79,7 +77,9 @@ Plug 'nathanaelkane/vim-indent-guides'
 "autocomplete
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'jeanCarloMachado/concealPHP', { 'for': ['php'] }
-
+Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
+"hides links paths, and other small niceties
+Plug 'nelstrom/vim-markdown-folding', { 'for': ['markdown'] }
 call plug#end()
 "}}}
 
@@ -768,7 +768,6 @@ call MapAction('XmlBeautifier', '<leader>xb')
 "}}}
 
 " markdown {{{
-
 let g:vim_markdown_no_extensions_in_markdown = 1
 autocmd Filetype markdown call MarkdownDefaultConfigs()
 highlight Folded ctermfg=DarkYellow
@@ -880,16 +879,19 @@ fun FoldFiletypeSpecific()
     for s in  indent_filetypes
         if (&filetype == s)
             setlocal foldmethod=indent
+            return
         endif
     endfor
 
     if (&filetype == "markdown")
         setlocal foldmethod=expr
         setlocal foldlevel=0
+        return
     endif
 
     if (&filetype == "vim")
         setlocal foldlevel=0
+        return
     endif
 endfunc
 autocmd BufReadPost * call FoldFiletypeSpecific()
@@ -959,7 +961,7 @@ nnoremap <Leader>now :Today<cr>
 command! -nargs=* Tomorrow call Diary( 'tomorrow' )
 nnoremap <Leader>to :Tomorrow<cr>
 command! -nargs=* Yesterday call Diary( 'yesterday' )
-nnoremap <Leader>ye :Yesterday<cr>
+nnoremap <Leader>yes :Yesterday<cr>
 command! -nargs=* Today call Diary( 'today' )
 command! -nargs=* Someday call Diary( 'someday' )
 command! -nargs=* Diary call Diary( '<args>' )

@@ -77,9 +77,8 @@ Plug 'nathanaelkane/vim-indent-guides'
 "autocomplete
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'jeanCarloMachado/concealPHP', { 'for': ['php'] }
-Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 "hides links paths, and other small niceties
-Plug 'nelstrom/vim-markdown-folding', { 'for': ['markdown'] }
+Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 call plug#end()
 "}}}
 
@@ -884,8 +883,9 @@ fun FoldFiletypeSpecific()
     endfor
 
     if (&filetype == "markdown")
-        setlocal foldmethod=expr
-        setlocal foldlevel=0
+      setlocal foldexpr=0
+      setlocal foldlevel=1
+      setlocal foldmethod=manual
         return
     endif
 

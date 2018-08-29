@@ -64,6 +64,7 @@ Plug 'kshenoy/vim-signature'
 "most recently used files list
 Plug 'git@github.com:skywind3000/asyncrun.vim.git'
 Plug 'junegunn/goyo.vim', { 'for': ['markdown'] }
+Plug 'nelstrom/vim-markdown-folding', { 'for': ['markdown'] }
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 Plug 'wakatime/vim-wakatime'
 Plug 'benmills/vimux'
@@ -169,8 +170,6 @@ nmap <leader>fim :!runFunction fileManager %:h<cr> command! FileManager execute 
 
 "ale config {{{
 nnoremap <leader>fmt :ALEFix<cr>
-" autocmd FileType haskell map <Leader>fmt :!hfmt -w %:p<cr>
-" autocmd FileType php map <Leader>fmt :!php-code-check %:p<cr>
 
 let g:airline#extensions#ale#enabled = 1
 let g:ale_set_highlights = 1
@@ -858,23 +857,44 @@ call MapAction('CodeBlock', '<leader>c')
 "}}}
 
 " fold {{{
-
 "enter fold giving a list of options on conflicts
 nnoremap <C-]> g<C-]>
 
 set foldmarker={{{,}}}
 set foldcolumn=2
 set foldmethod=marker
-set foldenable!
+set foldenable
+set foldlevel=1
 set foldopen=block,hor,insert,jump,mark,percent,quickfix,search,tag,undo
 
-autocmd FileType php,python,scala,swift set foldmethod=indent foldlevel=1 foldenable
-autocmd FileType markdown set foldmethod=expr foldlevel=1 foldenable
-autocmd FileType vim set foldlevel=0 foldenable
 
-let g:MIN_LINES_TO_FOLD = 60
+fun FoldFiletypeSpecific()
+
+    let MIN_LINES_TO_FOLD = 60
+    if (line('$') < MIN_LINES_TO_FOLD)
+        setlocal foldenable!
+        return
+    endif
+
+    let indent_filetypes=['php','python','scala','swift']
+    for s in  indent_filetypes
+        if (&filetype == s)
+            setlocal foldmethod=indent
+        endif
+    endfor
+
+    if (&filetype == "markdown")
+        setlocal foldmethod=expr
+        setlocal foldlevel=0
+    endif
+
+    if (&filetype == "vim")
+        setlocal foldlevel=0
+    endif
+endfunc
+autocmd BufReadPost * call FoldFiletypeSpecific()
+
 "disable indent fold for files with less than 60 lines
-autocmd! BufReadPost * :if line('$') < MIN_LINES_TO_FOLD  | setlocal foldenable! | endif
 
 fun! s:foldSomething(str)
     let comment=split(&commentstring, '%s')
@@ -885,36 +905,6 @@ fun! s:foldSomething(str)
 endfun
 
 call MapAction('foldSomething', '<leader>fo')
-func! Foldexpr_markdown(lnum)
-    let l1 = getline(a:lnum)
-
-    if l1 =~ '^\s*$'
-        " ignore empty lines
-        return '='
-    endif
-
-    let l2 = getline(a:lnum+1)
-
-    if  l2 =~ '^==\+\s*'
-        " next line is underlined (level 1)
-        return '>1'
-    elseif l2 =~ '^--\+\s*'
-        " next line is underlined (level 2)
-        return '>2'
-    elseif l1 =~ '^#'
-        " current line starts with hashes
-        return '>'.matchend(l1, '^#\+')
-    elseif a:lnum == 1
-        " fold any 'preamble'
-        return '>1'
-    else
-        " keep previous foldlevel
-        return '='
-    endif
-endfunc
-
-setlocal foldexpr=Foldexpr_markdown(v:lnum)
-
 "}}}
 
 "eval {{{
@@ -967,6 +957,7 @@ command! -nargs=* Diary call Diary( '<args>' )
 command! -nargs=* Diary call Diary( '<args>' )
 nnoremap <Leader>now :Today<cr>
 command! -nargs=* Tomorrow call Diary( 'tomorrow' )
+nnoremap <Leader>to :Tomorrow<cr>
 command! -nargs=* Yesterday call Diary( 'yesterday' )
 nnoremap <Leader>ye :Yesterday<cr>
 command! -nargs=* Today call Diary( 'today' )
@@ -1087,7 +1078,6 @@ if !exists('*ReloadVim')
     command! -nargs=* ReloadVim call ReloadVim()
     nmap <silent> <leader>vs :ReloadVim<cr>
 endif
-
 
 fun! RemoveFile()
     execute "!rm -rf %:p"

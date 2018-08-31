@@ -77,6 +77,7 @@ Plug 'nathanaelkane/vim-indent-guides'
 "autocomplete
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'jeanCarloMachado/concealPHP', { 'for': ['php'] }
+" Plug 'jeanCarloMachado/customActionsOnTextObjects'
 "hides links paths, and other small niceties
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 call plug#end()
@@ -115,7 +116,6 @@ set formatprg=par "The name of an external program that will be used to format t
 set exrc "enable vimrc per project
 set secure "disable unsecure options
 " Move to word
-let g:EasyMotion_do_mapping = 0 " Disable default mappings
 if has("clipboard")
     set clipboard=unnamed " copy to the system clipboard
     if has("unnamedplus") " X11 support
@@ -141,6 +141,7 @@ nnoremap _ dd2kp
 nnoremap <Leader>le :noh<cr>
 nnoremap <Leader>dt :r ! date<cr>
 
+map <leader>pu :PlugUpdate<cr>
 nnoremap cwi ciw
 map <leader>i mmgg=G`m
 map <leader>x :w<','> !bash<cr>
@@ -164,7 +165,8 @@ nnoremap <leader>cf :!filefy-clippboard<cr>
 nmap <Leader>em <Plug>(easymotion-overwin-w)
 "fast normal mode access through , instead of :
 nmap , :
-nmap <leader>fim :!runFunction fileManager %:h<cr> command! FileManager execute "!runFunction fileManager %:h"
+" nmap <leader>fim :!runFunction fileManager %:h<cr> command! FileManager execute "!runFunction fileManager %:h"
+let g:EasyMotion_do_mapping = 0 " Disable default mappings
 "}}}
 
 "ale config {{{
@@ -441,9 +443,20 @@ fun! CurrentDocumentI()
 endfun
 inoremap ;<cr> <end>;<cr>
 "}}}
+"
 
-"actions over text blocks {{{
+fun! MapAction(algorithm, key)
+    exe 'nnoremap <silent> <Plug>actions'    .a:algorithm.' :<C-U>call <SID>ActionSetup("'.a:algorithm.'")<CR>g@'
+    exe 'xnoremap <silent> <Plug>actions'    .a:algorithm.' :<C-U>call <SID>DoAction("'.a:algorithm.'",visualmode())<CR>'
+    exe 'nnoremap <silent> <Plug>actionsLine'.a:algorithm.' :<C-U>call <SID>DoAction("'.a:algorithm.'",v:count1)<CR>'
+    exe 'nmap '.a:key.'  <Plug>actions'.a:algorithm
+    exe 'xmap '.a:key.'  <Plug>actions'.a:algorithm
+    exe 'nmap '.a:key.a:key[strlen(a:key)-1].' <Plug>actionsLine'.a:algorithm
+endfun
+" command -nargs=* MapAction :call MapAction(<args>)
+" command! -nargs=* MapAction call MapAction( <f-args> )
 
+"only works with s:
 fun! s:DoAction(algorithm,type)
     " backup settings that we will change
     let sel_save = &selection
@@ -471,7 +484,7 @@ fun! s:DoAction(algorithm,type)
         silent exe "normal! `[v`]y"
     endif
     " call the user-defined function, passing it the contents of the unnamed register
-    let repl = s:{a:algorithm}(Chomp(@@))
+    let repl = {a:algorithm}(Chomp(@@))
     " if the function returned a value, then replace the text
     if type(repl) == 1
         " put the replacement text into the unnamed register, and also set it to be a
@@ -487,23 +500,31 @@ fun! s:DoAction(algorithm,type)
     let &clipboard = cb_save
 endfun
 
-fun! s:ActionOpfunc(type)
-    return s:DoAction(s:encode_algorithm, a:type)
+fun! ActionOpfunc(type)
+    return DoAction(encode_algorithm, a:type)
 endfun
 
-fun! s:ActionSetup(algorithm)
-    let s:encode_algorithm = a:algorithm
+fun! ActionSetup(algorithm)
+    let encode_algorithm = a:algorithm
     let &opfunc = matchstr(expand('<sfile>'), '<SNR>\d\+_').'ActionOpfunc'
 endfun
 
-fun! MapAction(algorithm, key)
-    exe 'nnoremap <silent> <Plug>actions'    .a:algorithm.' :<C-U>call <SID>ActionSetup("'.a:algorithm.'")<CR>g@'
-    exe 'xnoremap <silent> <Plug>actions'    .a:algorithm.' :<C-U>call <SID>DoAction("'.a:algorithm.'",visualmode())<CR>'
-    exe 'nnoremap <silent> <Plug>actionsLine'.a:algorithm.' :<C-U>call <SID>DoAction("'.a:algorithm.'",v:count1)<CR>'
-    exe 'nmap '.a:key.'  <Plug>actions'.a:algorithm
-    exe 'xmap '.a:key.'  <Plug>actions'.a:algorithm
-    exe 'nmap '.a:key.a:key[strlen(a:key)-1].' <Plug>actionsLine'.a:algorithm
+fun! ShowStringOnNewWindow(content)
+    split _output_
+    normal! ggdG
+    setlocal buftype=nofile
+    call append(0, split(a:content, '\v\n'))
 endfun
+
+fun! FoldSomething(str)
+    let comment=split(&commentstring, '%s')
+    if len(l:comment)==1
+        call add(comment, l:comment[0])
+    endif
+    return l:comment[0]." {{{\n".a:str."\n".l:comment[1]."}}}"
+endfun
+
+call MapAction('FoldSomething', '<leader>fo')
 
 " ctrlsf {{{
 
@@ -527,25 +548,25 @@ let g:ctrlsf_default_view_mode = 'compact'
 "find word under cursor
 noremap <leader>fw :CtrlSF <C-r><C-w>
 
-fun! s:FindIt(str)
+fun! FindIt(str)
     :AsyncRun ':CtrlSF "'.a:str.'"<cr>'
     return a:str;
 endfun
-call MapAction('FindIt','<leader>fit')
+call MapAction('FindIt', '<leader>fit')
 
 nnoremap <leader>fi :CtrlSF
-fun! s:FindIt(str)
+fun! FindIt(str)
     :AsyncRun ':CtrlSF "'.a:str.'"<cr>'
     return a:str;
 endfun
-call MapAction('FindIt','<leader>fit')
+call MapAction('FindIt', '<leader>fit')
 
-fun! s:FindLocal(str)
+fun! FindLocal(str)
     let path = expand('%:p:h')
     exec ':CtrlSF "'.a:str.'"  "'.path.'" <cr>'
     return a:str
 endfun
-call MapAction('FindLocal','<leader>fl')
+call MapAction('FindLocal', '<leader>fl')
 
 
 function! FindStringWiki()
@@ -558,27 +579,27 @@ endfunction
 
 "}}}
 
-fun! s:OnlyTextSelection(str)
+fun! OnlyTextSelection(str)
     normal! ggVGx
     set noreadonly
     call append(0, split(Chomp(a:str), '\v\n'))
 endfun
-call MapAction('OnlyTextSelection','<leader>ts')
+call MapAction('OnlyTextSelection', '<leader>ts')
 
 
-fun! s:ToSingleQuote(str)
+fun! ToSingleQuote(str)
     let out = system("tr '\"' \"'\"", a:str)
     return out
 endfun
-call MapAction('ToSingleQuote','<leader>tsq')
+call MapAction('ToSingleQuote', '<leader>tsq')
 
-fun! s:ComputeMD5(str)
+fun! ComputeMD5(str)
     let out = system('md5sum |cut -b 1-32', a:str)
     " Remove trailing newline.
     let out = substitute(out, '\n$', '', '')
     return out
 endfun
-call MapAction('ComputeMD5','<leader>md5')
+call MapAction('ComputeMD5', '<leader>md5')
 
 function! Chomp(string)
     return substitute(a:string, '\n\+$', '', '')
@@ -588,7 +609,7 @@ function! ChompedSystemCall( ... )
     return substitute(call('system', a:000), '\n\+$', '', '')
 endfun
 
-fun! s:ReverseString(str)
+fun! ReverseString(str)
     let out = join(reverse(split(a:str, '\zs')), '')
     " Remove a trailing newline that reverse() moved to the front.
     let out = substitute(out, '^\n', '', '')
@@ -596,170 +617,171 @@ fun! s:ReverseString(str)
 endfun
 call MapAction('ReverseString', '<leader>i')
 
-fun! s:StrikeThrough(str)
+fun! StrikeThrough(str)
     return '~~'.a:str.'~~'
 endfun
 call MapAction('StrikeThrough', '<leader>st')
 
 
-fun! s:MathBlock(str)
+fun! MathBlock(str)
     return '$ '.a:str.' $'
 endfun
 call MapAction('MathBlock', '<leader>mb')
 
-fun! s:Backtick(str)
+fun! Backtick(str)
     return "`".a:str."`"
 endfun
 call MapAction('Backtick', "<leader>`")
 
-fun! s:Quote(str)
+fun! Quote(str)
     return "'".a:str."'"
 endfun
 call MapAction('Quote', "<leader>'")
 
-fun! s:DoubleQuote(str)
+fun! DoubleQuote(str)
     return '"'.a:str.'"'
 endfun
 call MapAction('DoubleQuote', '<leader>"')
 
-fun! s:Tag(str)
+fun! Tag(str)
     return '<'.a:str.'>'
 endfun
 call MapAction('Tag', '<leader><')
 
-fun! s:MakeList(str)
+fun! MakeList(str)
     let out = system('run_function prepend " - " ', a:str)
     return out
 endfun
 call MapAction('MakeList', '<leader>ml')
 
-fun! s:Translate(str)
+fun! Translate(str)
     let out = system('translate.sh ', a:str)
     return out
 endfun
 call MapAction('Translate', '<leader>le')
 
-fun! s:TranslateGerman(str)
+fun! TranslateGerman(str)
     let out = system('run_function translateGerman ', a:str)
     return out
 endfun
 call MapAction('TranslateGerman', '<leader>lg')
 
-fun! s:EnglishToGerman(str)
+fun! EnglishToGerman(str)
     let out = system('translate.sh en de', a:str)
     return out
 endfun
 call MapAction('EnglishToGerman', '<leader>eg')
 
-fun! s:MakeNumberedList(str)
+fun! MakeNumberedList(str)
     let out = system('echo "'.a:str.'" | nl -s". " -w1')
     return out
 endfun
 call MapAction('MakeNumberedList', '<leader>mnl')
 
-fun! s:MakeGraph(str)
+fun! MakeGraph(str)
     let out = system('graph-easy', a:str)
     return a:str . "\n" . out
 endfun
 call MapAction('MakeGraph', '<leader>mg')
 
 " special characters surrounding {{{
-fun! s:Star(str)
+fun! Star(str)
     return '*'.a:str.'*'
 endfun
 call MapAction('Star', '<leader>*')
 
-fun! s:Parenthesis(str)
+fun! Parenthesis(str)
     return '('.a:str.')'
 endfun
 call MapAction('Parenthesis', '<leader>(')
 
-fun! s:Braces(str)
+fun! Braces(str)
     return '{'.a:str.'}'
 endfun
 call MapAction('Braces', '<leader>{')
 
-fun! s:Dollars(str)
+fun! Dollars(str)
     return '$'.a:str.'$'
 endfun
 call MapAction('Dollars', '<leader>$')
 
-fun! s:Brackets(str)
+fun! Brackets(str)
     return '['.a:str.']'
 endfun
 call MapAction('Brackets', '<leader>[')
 "}}}
+ 
 
-
-fun! s:Trim(str)
+fun! Trim(str)
     let out = system('run_function trim ', a:str)
     return out
 endfun
 call MapAction('Trim', '<leader>tr')
 
-fun! s:googleIt(str)
+fun! GoogleIt(str)
     execute 'AsyncRun run_function googleIt "'.a:str.'"'
 endfunc
-call MapAction('googleIt', '<leader>gi')
+
+call MapAction('GoogleIt', '<leader>gi')
 
 "render a html chunk on the browser
-fun! s:BCat(str)
+fun! BCat(str)
     :'<,'>AsyncRun browser-cat
 endfunc
 call MapAction('BCat', '<leader>bc')
 
-fun! s:Decode(str)
+fun! Decode(str)
     let out = system('url-decode ', a:str)
     return out
 endfunc
 call MapAction('Decode', '<leader>d')
 
-fun! s:ToCamelCase(str)
+fun! ToCamelCase(str)
     let out = ChompedSystemCall('run_function toCamelCase', a:str)
     return out
 endfunc
 call MapAction('ToCamelCase', '<leader>tcc')
 
-fun! s:ToSnakeCase(str)
+fun! ToSnakeCase(str)
     let out = ChompedSystemCall('run_function toSnakeCase', a:str)
     return out
 endfunc
 call MapAction('ToSnakeCase', '<leader>tcs')
 
-fun! s:JsonBeautifier(str)
+fun! JsonBeautifier(str)
     let out = system('run_function json_beautifier ', a:str)
     return out
 endfunc
 call MapAction('JsonBeautifier', '<leader>jb')
 
-fun! s:UrlToJson(str)
+fun! UrlToJson(str)
     let out = system('url-to-json ', a:str)
     return out
 endfunc
 call MapAction('UrlToJson', '<leader>ju')
 
 
-fun! s:Alnum(str)
+fun! Alnum(str)
     let out = system('run_function alnum ', a:str)
     return out
 endfunc
 call MapAction('Alnum', '<leader>a')
 
-fun! s:Unescape(str)
+fun! Unescape(str)
     let out = system('sed "s/\\\//g" ', a:str)
     return out
 endfunc
 call MapAction('Unescape', '<leader>u')
 
 
-fun! s:SqlBeautifier(str)
+fun! SqlBeautifier(str)
     let out = system('run_function sql_format', a:str)
     return out
 endfunc
 call MapAction('SqlBeautifier', '<leader>sb')
 
 call MapAction('XmlBeautifier', '<leader>x')
-fun! s:XmlBeautifier(str)
+fun! XmlBeautifier(str)
     let out = system('run_function xml_beautifier ', a:str)
     return out
 endfunc
@@ -833,40 +855,40 @@ function! MarkdownLevel()
     endif
     return "="
 endfunc
-fun! s:Italic(str)
+fun! Italic(str)
     return '*'.a:str.'*'
 endfunc
 call MapAction('Italic', '<leader>it')
 
-fun! s:Bold(str)
+fun! Bold(str)
     return '**'.a:str.'**'
 endfunc
 call MapAction('Bold', '<leader>bo')
 
-fun! s:Highlight(str)
+fun! Highlight(str)
     return '***'."\n".a:str.'***'
 endfunc
 call MapAction('Highlight', '<leader>hl')
 
-fun! s:CodeBlock(str)
+fun! CodeBlock(str)
     return "```sh\n".a:str."\n```"
 endfunc
 call MapAction('CodeBlock', '<leader>c')
 "}}}
-
+ 
 " fold {{{
 "enter fold giving a list of options on conflicts
 nnoremap <C-]> g<C-]>
 
-set foldmarker={{{,}}}
-set foldcolumn=2
-set foldmethod=marker
-set foldenable
-set foldlevel=1
-set foldopen=block,hor,insert,jump,mark,percent,quickfix,search,tag,undo
-
-
 fun FoldFiletypeSpecific()
+
+    set foldmarker={{{,}}}
+    set foldcolumn=2
+    set foldmethod=marker
+    set foldenable
+    set foldlevel=1
+    set foldopen=block,hor,insert,jump,mark,percent,quickfix,search,tag,undo
+
 
     let MIN_LINES_TO_FOLD = 60
     if (line('$') < MIN_LINES_TO_FOLD)
@@ -894,11 +916,11 @@ fun FoldFiletypeSpecific()
         return
     endif
 endfunc
-autocmd BufReadPost * call FoldFiletypeSpecific()
+autocmd! BufReadPost * call FoldFiletypeSpecific()
 
 "disable indent fold for files with less than 60 lines
 
-fun! s:foldSomething(str)
+fun! FoldSomething(str)
     let comment=split(&commentstring, '%s')
     if len(l:comment)==1
         call add(comment, l:comment[0])
@@ -906,11 +928,11 @@ fun! s:foldSomething(str)
     return l:comment[0]." {{{\n".a:str."\n".l:comment[1]."}}}"
 endfun
 
-call MapAction('foldSomething', '<leader>fo')
+call MapAction('FoldSomething', '<leader>fo')
 "}}}
 
 "eval {{{
-fun! s:Eval(str)
+fun! Eval(str)
     :VimuxRunCommand(a:str."\n")
 endfunc
 call MapAction('Eval', '<leader>ev')
@@ -918,17 +940,17 @@ call MapAction('Eval', '<leader>ev')
 nmap <Leader>els :VimuxRunCommand("\n")<CR>
 nmap <Leader>el :VimuxRunLastCommand<CR>
 
-fun! s:Subs(str)
+fun! Subs(str)
     let my_filetype = &filetype
     let out = ChompedSystemCall('subs -p '.my_filetype, a:str."\n")
     return out
 endfunc
 call MapAction('Subs', '<leader>o')
 "}}}
-
+ 
 " journal, diary {{{
 "
-fun! s:PdfFile(str)
+fun! PdfFile(str)
     echom "Starting to create pdf"
     let fileName = expand("%:p")
     let out = system('md2pdf.sh '.fileName)
@@ -1188,19 +1210,20 @@ command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
 "}}}
 
 "PHP {{{
-fun! s:JsonEncode(str)
+fun! JsonEncode(str)
     let out = system('json_encode_from_php', a:str)
     return out
 endfunc
+
 call MapAction('JsonEncode', '<leader>pj')
 
-fun! s:JsonToPhp(str)
+fun! JsonToPhp(str)
     let out = system('json-to-php ', a:str)
     return out
 endfun
 call MapAction('JsonToPhp', '<leader>jp')
 "}}}
-"
+ 
 " gvim {{{
 nnoremap <leader>gv  :! gvim %:p<cr>
 set guioptions+=m  "remove menu bar
@@ -1353,16 +1376,33 @@ command! FZFMru call fzf#run({
 " repl, eval, tmux integration {{{
 let g:VimuxHeight = "20"
 fun! TmuxContent()
-    if !exists("g:VimuxRunnerIndex") || _VimuxHasRunner(g:VimuxRunnerIndex) == -1
-        call VimuxOpenRunner()
-    endif
-
     let idx = g:VimuxRunnerIndex
     let out = system('tmux capture-pane -J -p -t '.idx.' > /tmp/tmux')
     :vsplit /tmp/tmux
 endfunc
 nnoremap <leader>ec :call TmuxContent()<cr>
 nnoremap <leader>eh :call TmuxContent()<cr>
+
+let g:repls = {
+\   'ruby': 'irb',
+\   'python': 'python',
+\   'haskell': 'ghc',
+\   'php': 'boris',
+\   'default': 'irb'
+\}
+
+fun! RunRepl()
+    if (has_key(g:repls, &filetype))
+      let cmd = get(g:repls, &filetype)
+      :VimuxRunCommand(cmd."\n")
+      return
+    endif
+
+    let cmd = get(g:repls, 'default')
+    :VimuxRunCommand(cmd."\n")
+endfunc
+nmap <leader>rr  :call RunRepl()<cr>
+
 "}}}
 
 " debug {{{
@@ -1427,14 +1467,14 @@ fun! Documentation(str)
     execute ":DevDocsAll ".a:str
 endfunc
 
-fun! s:Dit(str)
+fun! Dit(str)
     call Documentation(a:str)
 endfunc
 
 nmap <leader>dcw  "zyiw:exe "call Documentation('".@z."')"<cr>
 call MapAction('Dit', '<leader>dci')
 "}}}
-
+ 
 " windows management {{{
 
 nmap <leader>vn :vnew<cr>
@@ -1462,27 +1502,4 @@ function! ToggleWindowHorizontalVerticalSplit()
     endif
 endfun
 nnoremap <silent> <leader>wt :call ToggleWindowHorizontalVerticalSplit()<cr>
-"}}}
-
-" repl setup {{{
-let g:repls = {
-\   'ruby': 'irb',
-\   'python': 'python',
-\   'haskell': 'ghc',
-\   'php': 'boris',
-\   'default': 'irb'
-\}
-
-fun! RunRepl()
-
-    if (has_key(g:repls, &filetype))
-      let cmd = get(g:repls, &filetype)
-      :VimuxRunCommand(cmd."\n")
-      return
-    endif
-
-    let cmd = get(g:repls, 'default')
-    :VimuxRunCommand(cmd."\n")
-endfunc
-nmap <leader>rr  :call RunRepl()<cr>
 "}}}

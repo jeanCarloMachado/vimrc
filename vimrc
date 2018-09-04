@@ -53,7 +53,7 @@ Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
 Plug 'vim-vdebug/vdebug', {'for': ['php'] }
-Plug 'jeanCarloMachado/concealPHP', { 'for': ['php'] }
+Plug 'jeanCarloMachado/vim-php-conceal', { 'for': ['php'] }
 Plug 'fatih/vim-go', { 'for': ['go'] }
 Plug 'kballard/vim-swift', { 'for': ['swift'] }
 Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
@@ -80,6 +80,7 @@ Plug 'jeanCarloMachado/customActionsOnTextObjects'
 "hides links paths, and other small niceties
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'junegunn/goyo.vim', { 'for': ['markdown'] }
+Plug 'majutsushi/tagbar'
 call plug#end()
 "}}}
 
@@ -122,7 +123,7 @@ if has("clipboard")
         set clipboard+=unnamedplus
     endif
 endif
-
+let g:conceal_php_disable_ligature=1
 "}}}
 
 "Generic mappings{{{
@@ -328,8 +329,13 @@ filetype plugin indent on
 set copyindent
 set autoindent
 
-let g:indent_guides_enable_on_vim_startup = 1
 map <Leader>id :IndentGuidesToggle<cr>
+autocmd filetype html,tpl :IndentGuidesEnable
+"}}}
+
+" tagbar {{{
+map <Leader>tt :TagbarToggle<cr>
+autocmd filetype php,vimscript,python,swift  :TagbarOpen
 "}}}
 
 "custom text objects{{{
@@ -444,8 +450,8 @@ fun! CurrentDocumentI()
 endfun
 inoremap ;<cr> <end>;<cr>
 "}}}
-"
 
+" custom text actions {{{
 function! MyMapAction(algorithm, key)
     call customActionsOnTextObjects#mapaction(a:algorithm, a:key)
 endfunc
@@ -526,7 +532,6 @@ fun! OnlyTextSelection(str)
     call append(0, split(Chomp(a:str), '\v\n'))
 endfun
 call MyMapAction('OnlyTextSelection', '<leader>ts')
-
 
 fun! ToSingleQuote(str)
     let out = system("tr '\"' \"'\"", a:str)
@@ -833,7 +838,7 @@ fun FoldFiletypeSpecific()
     set foldopen=block,hor,insert,jump,mark,percent,quickfix,search,tag,undo
 
 
-    let MIN_LINES_TO_FOLD = 60
+    let MIN_LINES_TO_FOLD = 80
     if (line('$') < MIN_LINES_TO_FOLD)
         setlocal foldenable!
         return
@@ -1444,4 +1449,5 @@ function! ToggleWindowHorizontalVerticalSplit()
 endfun
 nnoremap <silent> <leader>wt :call ToggleWindowHorizontalVerticalSplit()<cr>
 "}}}
+
 

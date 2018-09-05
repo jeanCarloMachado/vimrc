@@ -76,7 +76,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'nathanaelkane/vim-indent-guides'
 "autocomplete
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'jeanCarloMachado/customActionsOnTextObjects'
+Plug 'jeanCarloMachado/vim-toop'
 "hides links paths, and other small niceties
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'junegunn/goyo.vim', { 'for': ['markdown'] }
@@ -452,10 +452,6 @@ inoremap ;<cr> <end>;<cr>
 "}}}
 
 " custom text actions {{{
-function! MyMapAction(algorithm, key)
-    call customActionsOnTextObjects#mapaction(a:algorithm, a:key)
-endfunc
-
 fun! ShowStringOnNewWindow(content)
     split _output_
     normal! ggdG
@@ -471,7 +467,7 @@ fun! FoldSomething(str)
     return l:comment[0]." {{{\n".a:str."\n".l:comment[1]."}}}"
 endfun
 
-call MyMapAction('FoldSomething', '<leader>fo')
+call toop#mapFunction('FoldSomething', '<leader>fo')
 
 " ctrlsf {{{
 
@@ -499,21 +495,16 @@ fun! FindIt(str)
     :AsyncRun ':CtrlSF "'.a:str.'"<cr>'
     return a:str;
 endfun
-call MyMapAction('FindIt', '<leader>fit')
+call toop#mapFunction('FindIt', '<leader>fit')
 
 nnoremap <leader>fi :CtrlSF
-fun! FindIt(str)
-    :AsyncRun ':CtrlSF "'.a:str.'"<cr>'
-    return a:str;
-endfun
-call MyMapAction('FindIt', '<leader>fit')
 
 fun! FindLocal(str)
     let path = expand('%:p:h')
     exec ':CtrlSF "'.a:str.'"  "'.path.'" <cr>'
     return a:str
 endfun
-call MyMapAction('FindLocal', '<leader>fl')
+call toop#mapFunction('FindLocal', '<leader>fl')
 
 
 function! FindStringWiki()
@@ -531,13 +522,13 @@ fun! OnlyTextSelection(str)
     set noreadonly
     call append(0, split(Chomp(a:str), '\v\n'))
 endfun
-call MyMapAction('OnlyTextSelection', '<leader>ts')
+call toop#mapFunction('OnlyTextSelection', '<leader>ts')
 
 fun! ToSingleQuote(str)
     let out = system("tr '\"' \"'\"", a:str)
     return out
 endfun
-call MyMapAction('ToSingleQuote', '<leader>tsq')
+call toop#mapFunction('ToSingleQuote', '<leader>tsq')
 
 fun! ComputeMD5(str)
     let out = system('md5sum |cut -b 1-32', a:str)
@@ -545,7 +536,7 @@ fun! ComputeMD5(str)
     let out = substitute(out, '\n$', '', '')
     return out
 endfun
-call MyMapAction('ComputeMD5', '<leader>md5')
+call toop#mapFunction('ComputeMD5', '<leader>md5')
 
 function! Chomp(string)
     return substitute(a:string, '\n\+$', '', '')
@@ -561,100 +552,75 @@ fun! ReverseString(str)
     let out = substitute(out, '^\n', '', '')
     return out
 endfun
-call MyMapAction('ReverseString', '<leader>i')
+call toop#mapFunction('ReverseString', '<leader>i')
 
-fun! StrikeThrough(str)
-    return '~~'.a:str.'~~'
-endfun
-call MyMapAction('StrikeThrough', '<leader>st')
+"strike through
+call toop#mapAround('~~', '<leader>st')
 
 
-fun! MathBlock(str)
-    return '$ '.a:str.' $'
-endfun
-call MyMapAction('MathBlock', '<leader>mb')
+"math block
+call toop#mapAround('$', '<leader>mb')
 
 fun! Backtick(str)
     return "`".a:str."`"
 endfun
-call MyMapAction('Backtick', "<leader>`")
+call toop#mapFunction('Backtick', "<leader>`")
 
-fun! Quote(str)
-    return "'".a:str."'"
-endfun
-call MyMapAction('Quote', "<leader>'")
-
-fun! DoubleQuote(str)
-    return '"'.a:str.'"'
-endfun
-call MyMapAction('DoubleQuote', '<leader>"')
+"double quote
+call toop#mapAround("'", "<leader>'")
+"single quote
+call toop#mapAround('"', '<leader>"')
 
 fun! Tag(str)
     return '<'.a:str.'>'
 endfun
-call MyMapAction('Tag', '<leader><')
+call toop#mapFunction('Tag', '<leader><')
 
 fun! MakeList(str)
     let out = system('run_function prepend " - " ', a:str)
     return out
 endfun
-call MyMapAction('MakeList', '<leader>ml')
+call toop#mapFunction('MakeList', '<leader>ml')
 
-fun! Translate(str)
-    let out = system('translate.sh ', a:str)
-    return out
-endfun
-call MyMapAction('Translate', '<leader>le')
+call toop#mapShell('translate.sh', '<leader>le')
 
-fun! TranslateGerman(str)
-    let out = system('run_function translateGerman ', a:str)
-    return out
-endfun
-call MyMapAction('TranslateGerman', '<leader>lg')
-
-fun! EnglishToGerman(str)
-    let out = system('translate.sh en de', a:str)
-    return out
-endfun
-call MyMapAction('EnglishToGerman', '<leader>eg')
+call toop#mapShell('run_function translateGerman ', '<leader>lg')
+"english german
+call toop#mapShell('translate.sh en de', '<leader>eg')
 
 fun! MakeNumberedList(str)
     let out = system('echo "'.a:str.'" | nl -s". " -w1')
     return out
 endfun
-call MyMapAction('MakeNumberedList', '<leader>mnl')
+call toop#mapFunction('MakeNumberedList', '<leader>mnl')
 
 fun! MakeGraph(str)
     let out = system('graph-easy', a:str)
     return a:str . "\n" . out
 endfun
-call MyMapAction('MakeGraph', '<leader>mg')
+call toop#mapFunction('MakeGraph', '<leader>mg')
 
 " special characters surrounding {{{
 fun! Star(str)
     return '*'.a:str.'*'
 endfun
-call MyMapAction('Star', '<leader>*')
+call toop#mapFunction('Star', '<leader>*')
 
 fun! Parenthesis(str)
     return '('.a:str.')'
 endfun
-call MyMapAction('Parenthesis', '<leader>(')
+call toop#mapFunction('Parenthesis', '<leader>(')
 
 fun! Braces(str)
     return '{'.a:str.'}'
 endfun
-call MyMapAction('Braces', '<leader>{')
-
-fun! Dollars(str)
-    return '$'.a:str.'$'
-endfun
-call MyMapAction('Dollars', '<leader>$')
+call toop#mapFunction('Braces', '<leader>{')
+call toop#mapAround('$', '<leader>$')
 
 fun! Brackets(str)
     return '['.a:str.']'
 endfun
-call MyMapAction('Brackets', '<leader>[')
+call toop#mapFunction('Brackets', '<leader>[')
 "}}}
  
 
@@ -662,76 +628,41 @@ fun! Trim(str)
     let out = system('run_function trim ', a:str)
     return out
 endfun
-call MyMapAction('Trim', '<leader>tr')
+call toop#mapFunction('Trim', '<leader>tr')
 
 fun! GoogleIt(str)
     execute 'AsyncRun run_function googleIt "'.a:str.'"'
 endfunc
 
-call MyMapAction('GoogleIt', '<leader>gi')
+call toop#mapFunction('GoogleIt', '<leader>gi')
 
 "render a html chunk on the browser
 fun! BCat(str)
     :'<,'>AsyncRun browser-cat
 endfunc
-call MyMapAction('BCat', '<leader>bc')
+call toop#mapFunction('BCat', '<leader>bc')
 
-fun! Decode(str)
-    let out = system('url-decode ', a:str)
-    return out
-endfunc
-call MyMapAction('Decode', '<leader>d')
+call toop#mapShell('url-decode ', '<leader>d')
 
-fun! ToCamelCase(str)
-    let out = ChompedSystemCall('run_function toCamelCase', a:str)
-    return out
-endfunc
-call MyMapAction('ToCamelCase', '<leader>tcc')
+call toop#mapShell('run_function toCamelCase', '<leader>tcc')
 
-fun! ToSnakeCase(str)
-    let out = ChompedSystemCall('run_function toSnakeCase', a:str)
-    return out
-endfunc
-call MyMapAction('ToSnakeCase', '<leader>tcs')
+call toop#mapShell('run_function toSnakeCase', '<leader>tcs')
 
-fun! JsonBeautifier(str)
-    let out = system('run_function json_beautifier ', a:str)
-    return out
-endfunc
-call MyMapAction('JsonBeautifier', '<leader>jb')
-
-fun! UrlToJson(str)
-    let out = system('url-to-json ', a:str)
-    return out
-endfunc
-call MyMapAction('UrlToJson', '<leader>ju')
+call toop#mapShell('jq .', '<leader>jb')
+call toop#mapFunction('url-to-json', '<leader>ju')
 
 
-fun! Alnum(str)
-    let out = system('run_function alnum ', a:str)
-    return out
-endfunc
-call MyMapAction('Alnum', '<leader>a')
+call toop#mapShell('run_function alnum ', '<leader>a')
+"unescape
+call toop#mapFunction('sed "s/\\\//g" ', '<leader>u')
+call toop#mapShell('run_function sql_format', '<leader>sb')
 
-fun! Unescape(str)
-    let out = system('sed "s/\\\//g" ', a:str)
-    return out
-endfunc
-call MyMapAction('Unescape', '<leader>u')
-
-
-fun! SqlBeautifier(str)
-    let out = system('run_function sql_format', a:str)
-    return out
-endfunc
-call MyMapAction('SqlBeautifier', '<leader>sb')
-
-call MyMapAction('XmlBeautifier', '<leader>x')
+call toop#mapFunction('XmlBeautifier', '<leader>x')
 fun! XmlBeautifier(str)
     let out = system('run_function xml_beautifier ', a:str)
     return out
 endfunc
-call MyMapAction('XmlBeautifier', '<leader>xb')
+call toop#mapFunction('XmlBeautifier', '<leader>xb')
 "}}}
 
 " markdown {{{
@@ -801,25 +732,21 @@ function! MarkdownLevel()
     endif
     return "="
 endfunc
-fun! Italic(str)
-    return '*'.a:str.'*'
-endfunc
-call MyMapAction('Italic', '<leader>it')
 
-fun! Bold(str)
-    return '**'.a:str.'**'
-endfunc
-call MyMapAction('Bold', '<leader>bo')
+"markdown italic
+call toop#mapAround('*', '<leader>it')
+"markdown bold
+call toop#mapAround('**', '<leader>bo')
 
 fun! Highlight(str)
     return '***'."\n".a:str.'***'
 endfunc
-call MyMapAction('Highlight', '<leader>hl')
+call toop#mapFunction('Highlight', '<leader>hl')
 
 fun! CodeBlock(str)
     return "```sh\n".a:str."\n```"
 endfunc
-call MyMapAction('CodeBlock', '<leader>c')
+call toop#mapFunction('CodeBlock', '<leader>c')
 "}}}
 
 " fold {{{
@@ -874,14 +801,14 @@ fun! FoldSomething(str)
     return l:comment[0]." {{{\n".a:str."\n".l:comment[1]."}}}"
 endfun
 
-call MyMapAction('FoldSomething', '<leader>fo')
+call toop#mapFunction('FoldSomething', '<leader>fo')
 "}}}
 
 "eval {{{
 fun! Eval(str)
     :VimuxRunCommand(a:str."\n")
 endfunc
-call MyMapAction('Eval', '<leader>ev')
+call toop#mapFunction('Eval', '<leader>ev')
 
 nmap <Leader>els :VimuxRunCommand("\n")<CR>
 nmap <Leader>el :VimuxRunLastCommand<CR>
@@ -891,7 +818,7 @@ fun! Subs(str)
     let out = ChompedSystemCall('subs -p '.my_filetype, a:str."\n")
     return out
 endfunc
-call MyMapAction('Subs', '<leader>o')
+call toop#mapFunction('Subs', '<leader>o')
 "}}}
 
 " journal, diary {{{
@@ -904,7 +831,7 @@ fun! PdfFile(str)
         call ShowStringOnNewWindow(out)
     endif
 endfunc
-call MyMapAction('PdfFile', '<leader>pdf')
+call toop#mapFunction('PdfFile', '<leader>pdf')
 
 fun! WeekReport()
     echom "Generating report"
@@ -1156,18 +1083,9 @@ command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
 "}}}
 
 "PHP {{{
-fun! JsonEncode(str)
-    let out = system('json_encode_from_php', a:str)
-    return out
-endfunc
+call toop#mapShell('json_encode_from_php', '<leader>pj')
 
-call MyMapAction('JsonEncode', '<leader>pj')
-
-fun! JsonToPhp(str)
-    let out = system('json-to-php ', a:str)
-    return out
-endfun
-call MyMapAction('JsonToPhp', '<leader>jp')
+call toop#mapShell('json-to-php', '<leader>jp')
 "}}}
  
 " gvim {{{
@@ -1418,7 +1336,7 @@ fun! Dit(str)
 endfunc
 
 nmap <leader>dcw  "zyiw:exe "call Documentation('".@z."')"<cr>
-call MyMapAction('Dit', '<leader>dci')
+call toop#mapFunction('Dit', '<leader>dci')
 "}}}
 
 " windows management {{{

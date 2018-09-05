@@ -467,7 +467,7 @@ fun! FoldSomething(str)
     return l:comment[0]." {{{\n".a:str."\n".l:comment[1]."}}}"
 endfun
 
-call toop#mapFunction('FoldSomething', '<leader>fo')
+call toop#mapFunction('FoldSomething', ',fo')
 
 " ctrlsf {{{
 
@@ -528,6 +528,7 @@ fun! ToSingleQuote(str)
     let out = system("tr '\"' \"'\"", a:str)
     return out
 endfun
+
 call toop#mapFunction('ToSingleQuote', '<leader>tsq')
 
 fun! ComputeMD5(str)

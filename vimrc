@@ -523,21 +523,9 @@ fun! OnlyTextSelection(str)
     call append(0, split(Chomp(a:str), '\v\n'))
 endfun
 call toop#mapFunction('OnlyTextSelection', '<leader>ts')
-
-fun! ToSingleQuote(str)
-    let out = system("tr '\"' \"'\"", a:str)
-    return out
-endfun
-
-call toop#mapFunction('ToSingleQuote', '<leader>tsq')
-
-fun! ComputeMD5(str)
-    let out = system('md5sum |cut -b 1-32', a:str)
-    " Remove trailing newline.
-    let out = substitute(out, '\n$', '', '')
-    return out
-endfun
-call toop#mapFunction('ComputeMD5', '<leader>md5')
+"to single quote
+call toop#mapShell("tr '\"' \"'\"", '<leader>tsq')
+call toop#mapShell('md5sum | cut -d " " -f1 ', '<leader>md5')
 
 function! Chomp(string)
     return substitute(a:string, '\n\+$', '', '')
@@ -547,65 +535,32 @@ function! ChompedSystemCall( ... )
     return substitute(call('system', a:000), '\n\+$', '', '')
 endfun
 
-fun! ReverseString(str)
-    let out = join(reverse(split(a:str, '\zs')), '')
-    " Remove a trailing newline that reverse() moved to the front.
-    let out = substitute(out, '^\n', '', '')
-    return out
-endfun
-call toop#mapFunction('ReverseString', '<leader>i')
-
 "strike through
 call toop#mapAround('~~', '<leader>st')
 
 
 "math block
 call toop#mapAround('$', '<leader>mb')
-
-fun! Backtick(str)
-    return "`".a:str."`"
-endfun
-call toop#mapFunction('Backtick', "<leader>`")
-
-"double quote
+call toop#mapAround('`', "<leader>`")
 call toop#mapAround("'", "<leader>'")
-"single quote
 call toop#mapAround('"', '<leader>"')
 
 fun! Tag(str)
     return '<'.a:str.'>'
 endfun
 call toop#mapFunction('Tag', '<leader><')
-
-fun! MakeList(str)
-    let out = system('run_function prepend " - " ', a:str)
-    return out
-endfun
-call toop#mapFunction('MakeList', '<leader>ml')
-
+"make list
+call toop#mapShell('run_function prepend " - " ', '<leader>ml')
 call toop#mapShell('translate.sh', '<leader>le')
-
 call toop#mapShell('run_function translateGerman ', '<leader>lg')
 "english german
 call toop#mapShell('translate.sh en de', '<leader>eg')
-
-fun! MakeNumberedList(str)
-    let out = system('echo "'.a:str.'" | nl -s". " -w1')
-    return out
-endfun
-call toop#mapFunction('MakeNumberedList', '<leader>mnl')
-
-fun! MakeGraph(str)
-    let out = system('graph-easy', a:str)
-    return a:str . "\n" . out
-endfun
-call toop#mapFunction('MakeGraph', '<leader>mg')
+"make numbered list
+call toop#mapShell('nl -s". " -w1', '<leader>mnl')
+call toop#mapShell('graph-easy', '<leader>mg')
 
 " special characters surrounding {{{
-fun! Star(str)
-    return '*'.a:str.'*'
-endfun
-call toop#mapFunction('Star', '<leader>*')
+call toop#mapAround('*', '<leader>*')
 
 fun! Parenthesis(str)
     return '('.a:str.')'
@@ -623,13 +578,8 @@ fun! Brackets(str)
 endfun
 call toop#mapFunction('Brackets', '<leader>[')
 "}}}
- 
 
-fun! Trim(str)
-    let out = system('run_function trim ', a:str)
-    return out
-endfun
-call toop#mapFunction('Trim', '<leader>tr')
+call toop#mapShell('run_function trim ', '<leader>tr')
 
 fun! GoogleIt(str)
     execute 'AsyncRun run_function googleIt "'.a:str.'"'
@@ -644,26 +594,16 @@ endfunc
 call toop#mapFunction('BCat', '<leader>bc')
 
 call toop#mapShell('url-decode ', '<leader>d')
-
 call toop#mapShell('run_function toCamelCase', '<leader>tcc')
-
 call toop#mapShell('run_function toSnakeCase', '<leader>tcs')
-
 call toop#mapShell('jq .', '<leader>jb')
 call toop#mapFunction('url-to-json', '<leader>ju')
-
-
 call toop#mapShell('run_function alnum ', '<leader>a')
 "unescape
 call toop#mapFunction('sed "s/\\\//g" ', '<leader>u')
 call toop#mapShell('run_function sql_format', '<leader>sb')
-
-call toop#mapFunction('XmlBeautifier', '<leader>x')
-fun! XmlBeautifier(str)
-    let out = system('run_function xml_beautifier ', a:str)
-    return out
-endfunc
-call toop#mapFunction('XmlBeautifier', '<leader>xb')
+call toop#mapShell('run_function xml_beautifier', '<leader>x')
+call toop#mapShell('run_function xml_beautifier', '<leader>xb')
 "}}}
 
 " markdown {{{
@@ -1085,7 +1025,6 @@ command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
 
 "PHP {{{
 call toop#mapShell('json_encode_from_php', '<leader>pj')
-
 call toop#mapShell('json-to-php', '<leader>jp')
 "}}}
  
@@ -1322,6 +1261,7 @@ let test#strategy = "vimux"
 "}}}
 
 "docummentation {{{
+nmap <leader>dcw  "zyiw:exe "call Documentation('".@z."')"<cr>
 fun! Documentation(str)
     if (&filetype == 'scala')
         let url = 'https://www.scala-lang.org/api/current/?search='.a:str
@@ -1332,12 +1272,7 @@ fun! Documentation(str)
     execute ":DevDocsAll ".a:str
 endfunc
 
-fun! Dit(str)
-    call Documentation(a:str)
-endfunc
-
-nmap <leader>dcw  "zyiw:exe "call Documentation('".@z."')"<cr>
-call toop#mapFunction('Dit', '<leader>dci')
+call toop#mapFunction('Documentation', '<leader>dci')
 "}}}
 
 " windows management {{{
@@ -1368,5 +1303,6 @@ function! ToggleWindowHorizontalVerticalSplit()
 endfun
 nnoremap <silent> <leader>wt :call ToggleWindowHorizontalVerticalSplit()<cr>
 "}}}
+
 
 

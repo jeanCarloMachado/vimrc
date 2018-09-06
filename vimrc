@@ -338,6 +338,42 @@ map <Leader>tt :TagbarToggle<cr>
 autocmd filetype php,vimscript,python,swift  :TagbarOpen
 "}}}
 
+" ctrlsf {{{
+" let g:ctrlsf_default_root = 'project'
+let g:ctrlsf_ackprg='rg'
+let g:ctrlsf_auto_close = {
+    \ "normal" : 0,
+    \ "compact": 0
+    \}
+
+" let g:ctrlsf_mapping = {
+"     \ "openb"    : ["<CR>", "o", "<2-LeftMouse>"],
+"     \ "open"   : "O",
+"     \ }
+
+let g:ctrlsf_default_view_mode = 'compact'
+" let g:ctrlsf_winsize = '30%'
+" " or
+" let g:ctrlsf_winsize = '100'
+
+"find word under cursor
+noremap <leader>fw :CtrlSF <C-r><C-w>
+fun! FindIt(str)
+    :AsyncRun ':CtrlSF "'.a:str.'"<cr>'
+    return a:str;
+endfun
+
+nnoremap <leader>fi :CtrlSF
+
+function! FindStringWiki()
+    let curline = getline('.')
+    call inputsave()
+    let name = input('Find on wiki: ')
+    call inputrestore()
+    execute ":CtrlSF ".name." ".$WIKI_PATH
+endfunction
+"}}}
+
 "custom text objects{{{
 call textobj#user#plugin('line', {
   \   '-': {
@@ -451,13 +487,59 @@ endfun
 inoremap ;<cr> <end>;<cr>
 "}}}
 
-" custom text actions {{{
-fun! ShowStringOnNewWindow(content)
-    split _output_
-    normal! ggdG
-    setlocal buftype=nofile
-    call append(0, split(a:content, '\v\n'))
+" toop -  custom text actions {{{
+
+"to single quote
+call toop#mapShell("tr '\"' \"'\"", '<leader>tsq')
+call toop#mapShell('md5sum | cut -d " " -f1 ', '<leader>md5')
+call toop#mapShell('mycopy', '<leader>mc')
+call toop#mapShell('run_function trim ', '<leader>tr')
+call toop#mapShell('url-decode ', '<leader>d')
+call toop#mapShell('run_function toCamelCase', '<leader>tcc')
+call toop#mapShell('run_function toSnakeCase', '<leader>tcs')
+call toop#mapShell('jq .', '<leader>jb')
+call toop#mapShell('url-to-json', '<leader>ju')
+call toop#mapShell('run_function alnum ', '<leader>a')
+"unescape
+call toop#mapShell('sed "s/\\\//g" ', '<leader>u')
+call toop#mapShell('run_function sql_format', '<leader>sb')
+call toop#mapShell('run_function xml_beautifier', '<leader>x')
+call toop#mapShell('run_function xml_beautifier', '<leader>xb')
+
+"make list
+call toop#mapShell('run_function prepend " - " ', '<leader>ml')
+call toop#mapShell('translate.sh', '<leader>le')
+call toop#mapShell('run_function translateGerman ', '<leader>lg')
+"english german
+call toop#mapShell('translate.sh en de', '<leader>eg')
+"make numbered list
+call toop#mapShell('nl -s". " -w1', '<leader>mnl')
+call toop#mapShell('graph-easy', '<leader>mg')
+
+"strike through
+call toop#mapAround('~~', '~~', '<leader>st')
+"math block
+call toop#mapAround('$', '$', '<leader>mb')
+call toop#mapAround('`', '`', "<leader>`")
+call toop#mapAround("'", "'", "<leader>'")
+call toop#mapAround('"', '"', '<leader>"')
+call toop#mapAround('*', '*', '<leader>*')
+call toop#mapAround('(', ')', '<leader>(')
+call toop#mapAround('[', ']', '<leader>[')
+call toop#mapAround('{', '}', '<leader>{')
+call toop#mapAround('$', '$', '<leader>$')
+call toop#mapAround('<', '>', '<leader><')
+"markdown italic
+call toop#mapAround('*', '*', '<leader>it')
+"markdown bold
+call toop#mapAround('**', '**', '<leader>bo')
+call toop#mapAround("***\n", '***', '<leader>hl')
+call toop#mapAround("```sh\n", "\n```", '<leader>c')
+
+function! Duplicate(string)
+    return a:string.a:string
 endfun
+call toop#mapFunction('Duplicate', "<leader>2x")
 
 fun! FoldSomething(str)
     let comment=split(&commentstring, '%s')
@@ -469,63 +551,12 @@ endfun
 
 call toop#mapFunction('FoldSomething', ',fo')
 
-" ctrlsf {{{
-
-" let g:ctrlsf_default_root = 'project'
-let g:ctrlsf_ackprg='rg'
-let g:ctrlsf_auto_close = {
-    \ "normal" : 0,
-    \ "compact": 0
-    \}
-
-" let g:ctrlsf_mapping = {
-"     \ "openb"    : ["<CR>", "o", "<2-LeftMouse>"],
-"     \ "open"   : "O",
-"     \ }
-
-let g:ctrlsf_default_view_mode = 'compact'
-" let g:ctrlsf_winsize = '30%'
-" " or
-" let g:ctrlsf_winsize = '100'
-
-"find word under cursor
-noremap <leader>fw :CtrlSF <C-r><C-w>
-
-fun! FindIt(str)
-    :AsyncRun ':CtrlSF "'.a:str.'"<cr>'
-    return a:str;
-endfun
-call toop#mapFunction('FindIt', '<leader>fit')
-
-nnoremap <leader>fi :CtrlSF
-
-fun! FindLocal(str)
-    let path = expand('%:p:h')
-    exec ':CtrlSF "'.a:str.'"  "'.path.'" <cr>'
-    return a:str
-endfun
-call toop#mapFunction('FindLocal', '<leader>fl')
-
-
-function! FindStringWiki()
-    let curline = getline('.')
-    call inputsave()
-    let name = input('Find on wiki: ')
-    call inputrestore()
-    execute ":CtrlSF ".name." ".$WIKI_PATH
-endfunction
-
-"}}}
-
 fun! OnlyTextSelection(str)
     normal! ggVGx
     set noreadonly
     call append(0, split(Chomp(a:str), '\v\n'))
 endfun
 call toop#mapFunction('OnlyTextSelection', '<leader>ts')
-"to single quote
-call toop#mapShell("tr '\"' \"'\"", '<leader>tsq')
-call toop#mapShell('md5sum | cut -d " " -f1 ', '<leader>md5')
 
 function! Chomp(string)
     return substitute(a:string, '\n\+$', '', '')
@@ -535,56 +566,9 @@ function! ChompedSystemCall( ... )
     return substitute(call('system', a:000), '\n\+$', '', '')
 endfun
 
-"strike through
-call toop#mapAround('~~', '<leader>st')
-
-
-"math block
-call toop#mapAround('$', '<leader>mb')
-call toop#mapAround('`', "<leader>`")
-call toop#mapAround("'", "<leader>'")
-call toop#mapAround('"', '<leader>"')
-
-fun! Tag(str)
-    return '<'.a:str.'>'
-endfun
-call toop#mapFunction('Tag', '<leader><')
-"make list
-call toop#mapShell('run_function prepend " - " ', '<leader>ml')
-call toop#mapShell('translate.sh', '<leader>le')
-call toop#mapShell('run_function translateGerman ', '<leader>lg')
-"english german
-call toop#mapShell('translate.sh en de', '<leader>eg')
-"make numbered list
-call toop#mapShell('nl -s". " -w1', '<leader>mnl')
-call toop#mapShell('graph-easy', '<leader>mg')
-
-" special characters surrounding {{{
-call toop#mapAround('*', '<leader>*')
-
-fun! Parenthesis(str)
-    return '('.a:str.')'
-endfun
-call toop#mapFunction('Parenthesis', '<leader>(')
-
-fun! Braces(str)
-    return '{'.a:str.'}'
-endfun
-call toop#mapFunction('Braces', '<leader>{')
-call toop#mapAround('$', '<leader>$')
-
-fun! Brackets(str)
-    return '['.a:str.']'
-endfun
-call toop#mapFunction('Brackets', '<leader>[')
-"}}}
-
-call toop#mapShell('run_function trim ', '<leader>tr')
-
 fun! GoogleIt(str)
     execute 'AsyncRun run_function googleIt "'.a:str.'"'
 endfunc
-
 call toop#mapFunction('GoogleIt', '<leader>gi')
 
 "render a html chunk on the browser
@@ -592,18 +576,17 @@ fun! BCat(str)
     :'<,'>AsyncRun browser-cat
 endfunc
 call toop#mapFunction('BCat', '<leader>bc')
+call toop#mapFunction('FindIt', '<leader>fit')
 
-call toop#mapShell('url-decode ', '<leader>d')
-call toop#mapShell('run_function toCamelCase', '<leader>tcc')
-call toop#mapShell('run_function toSnakeCase', '<leader>tcs')
-call toop#mapShell('jq .', '<leader>jb')
-call toop#mapFunction('url-to-json', '<leader>ju')
-call toop#mapShell('run_function alnum ', '<leader>a')
-"unescape
-call toop#mapFunction('sed "s/\\\//g" ', '<leader>u')
-call toop#mapShell('run_function sql_format', '<leader>sb')
-call toop#mapShell('run_function xml_beautifier', '<leader>x')
-call toop#mapShell('run_function xml_beautifier', '<leader>xb')
+
+fun! FindLocal(str)
+    let path = expand('%:p:h')
+    exec ':CtrlSF "'.a:str.'"  "'.path.'" <cr>'
+    return a:str
+endfun
+call toop#mapFunction('FindLocal', '<leader>fl')
+
+
 "}}}
 
 " markdown {{{
@@ -674,20 +657,6 @@ function! MarkdownLevel()
     return "="
 endfunc
 
-"markdown italic
-call toop#mapAround('*', '<leader>it')
-"markdown bold
-call toop#mapAround('**', '<leader>bo')
-
-fun! Highlight(str)
-    return '***'."\n".a:str.'***'
-endfunc
-call toop#mapFunction('Highlight', '<leader>hl')
-
-fun! CodeBlock(str)
-    return "```sh\n".a:str."\n```"
-endfunc
-call toop#mapFunction('CodeBlock', '<leader>c')
 "}}}
 
 " fold {{{

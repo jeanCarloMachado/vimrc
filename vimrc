@@ -497,6 +497,7 @@ call toop#mapShell('run_function trim ', '<leader>tr')
 call toop#mapShell('url-decode ', '<leader>d')
 call toop#mapShell('run_function toCamelCase', '<leader>tcc')
 call toop#mapShell('run_function toSnakeCase', '<leader>tcs')
+call toop#mapShell('jq .', 'jq')
 call toop#mapShell('jq .', '<leader>jb')
 call toop#mapShell('url-to-json', '<leader>ju')
 call toop#mapShell('run_function alnum ', '<leader>a')
@@ -508,13 +509,23 @@ call toop#mapShell('run_function xml_beautifier', '<leader>xb')
 
 "make list
 call toop#mapShell('run_function prepend " - " ', '<leader>ml')
-call toop#mapShell('translate.sh', '<leader>le')
-call toop#mapShell('run_function translateGerman ', '<leader>lg')
-"english german
-call toop#mapShell('translate.sh en de', '<leader>eg')
+fun! GoogleIt(str)
+    execute 'AsyncRun $BROWSER "'.a:str.'"'
+endfunc
+
+
+call toop#mapShell('trans -b  -no-theme -no-auto -no-ansi en:pt', '<leader>ep')
+call toop#mapShell('trans -b  -no-theme -no-auto -no-ansi pt:en', '<leader>pe')
+call toop#mapShell('trans -b  -no-theme -no-auto -no-ansi pt:de', '<leader>pd')
+call toop#mapShell('trans -b  -no-theme -no-auto -no-ansi en:de', '<leader>ed')
+call toop#mapShell('trans -b  -no-theme -no-auto -no-ansi de:en', '<leader>de')
+call toop#mapShell('trans -b  -no-theme -no-auto -no-ansi de:pt', '<leader>dp')
+
 "make numbered list
 call toop#mapShell('nl -s". " -w1', '<leader>mnl')
 call toop#mapShell('graph-easy', '<leader>mg')
+call toop#mapShell('runFunction yml2json', '<leader>yj')
+call toop#mapShell('runFunction toggleQuote', '<leader>tq')
 
 "strike through
 call toop#mapAround('~~', '~~', '<leader>st')
@@ -732,7 +743,6 @@ call toop#mapFunction('Subs', '<leader>o')
 "}}}
 
 " journal, diary {{{
-"
 fun! PdfFile(str)
     echom "Starting to create pdf"
     let fileName = expand("%:p")
@@ -943,8 +953,6 @@ fun! CopyFile()
     endif
 endfunc
 map <Leader>cp :call CopyFile()<cr>
-map <leader>rl :edit!<cr>
-map <leader>ed :edit!<cr>
 map <leader>ee :edit!<cr>
 map <leader>ck :!git checkout %<cr>
 "}}}
@@ -1161,7 +1169,8 @@ let g:repls = {
 \   'python': 'python',
 \   'haskell': 'ghc',
 \   'php': 'boris',
-\   'default': 'irb'
+\   'default': 'irb',
+\   'scala': 'sbt'
 \}
 
 fun! RunRepl()
@@ -1272,6 +1281,4 @@ function! ToggleWindowHorizontalVerticalSplit()
 endfun
 nnoremap <silent> <leader>wt :call ToggleWindowHorizontalVerticalSplit()<cr>
 "}}}
-
-
 

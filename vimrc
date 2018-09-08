@@ -96,7 +96,6 @@ set backspace=indent,eol,start "make the backspace work like in most other progr
 " set cot+=menuone "Use the popup menu also when there is only one match
 set number "show numbers
 set hidden "hides buffers instead of closing them, don't give warnings on unsaved things
-set relativenumber
 set shell=$SHELL
 set encoding=utf-8
 set showmode "If in Insert, Replace or Visual mode put a message on the last line

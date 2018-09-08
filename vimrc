@@ -1282,3 +1282,8 @@ endfun
 nnoremap <silent> <leader>wt :call ToggleWindowHorizontalVerticalSplit()<cr>
 "}}}
 
+fun! RepeatAndNext()
+    let @q ="n."
+    normal! @q
+endfun
+nnoremap <leader>. :call RepeatAndNext()<cr>

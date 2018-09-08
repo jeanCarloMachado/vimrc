@@ -114,7 +114,7 @@ setlocal formatoptions=1
 set formatprg=par "The name of an external program that will be used to format the lines selected with the |gq| operator.
 " vimrc per project
 set exrc "enable vimrc per project
-set secure "disable unsecure options
+" set secure "disable unsecure options
 " Move to word
 if has("clipboard")
     set clipboard=unnamed " copy to the system clipboard
@@ -213,15 +213,9 @@ let g:deoplete#enable_at_startup = 1
 "}}}
 
 "Concealing {{{
-" autocmd FileType php call matchadd('Conceal', '!=', 999, -1, {'conceal': '≠'})
-" autocmd FileType php call matchadd('Conceal', '->', 999, -1, {'conceal': '➞'})
-" autocmd FileType php call matchadd('Conceal', '=>', 999, -1, {'conceal': '➞'})
-
-autocmd FileType markdown call matchadd('Conceal', '# ', 999, -1, {'conceal': ''})
 autocmd FileType markdown call matchadd('Conceal', '## ', 999, -1, {'conceal': ''})
 autocmd FileType markdown call matchadd('Conceal', '### ', 999, -1, {'conceal': ''})
 autocmd FileType markdown call matchadd('Conceal', '#### ', 999, -1, {'conceal': ''})
-
 set conceallevel=2 "show pretty latex formulas
 "}}}
 
@@ -496,7 +490,7 @@ call toop#mapShell('run_function trim ', '<leader>tr')
 call toop#mapShell('url-decode ', '<leader>d')
 call toop#mapShell('run_function toCamelCase', '<leader>tcc')
 call toop#mapShell('run_function toSnakeCase', '<leader>tcs')
-call toop#mapShell('jq .', 'jq')
+call toop#mapShell('jq .', '<leader>jq')
 call toop#mapShell('jq .', '<leader>jb')
 call toop#mapShell('url-to-json', '<leader>ju')
 call toop#mapShell('run_function alnum ', '<leader>a')
@@ -513,15 +507,19 @@ fun! GoogleIt(str)
 endfunc
 
 
-call toop#mapShell('trans -b  -no-theme -no-auto -no-ansi en:pt', '<leader>ep')
-call toop#mapShell('trans -b  -no-theme -no-auto -no-ansi pt:en', '<leader>pe')
-call toop#mapShell('trans -b  -no-theme -no-auto -no-ansi pt:de', '<leader>pd')
-call toop#mapShell('trans -b  -no-theme -no-auto -no-ansi en:de', '<leader>ed')
-call toop#mapShell('trans -b  -no-theme -no-auto -no-ansi de:en', '<leader>de')
-call toop#mapShell('trans -b  -no-theme -no-auto -no-ansi de:pt', '<leader>dp')
+"translate
+call toop#mapShell('translate.sh en pt', 'tep')
+call toop#mapShell('translate.sh pt en', 'tpe')
+call toop#mapShell('translate.sh pt de', 'tpd')
+call toop#mapShell('translate.sh en de', 'ted')
+call toop#mapShell('translate.sh de en', 'tde')
+call toop#mapShell('translate.sh de pt', 'tdp')
+call toop#mapShell('translate.sh en fr', 'tef')
+call toop#mapShell('translate.sh en la', 'tel')
+call toop#mapShell('translate.sh la en', 'tle')
 
 "make numbered list
-call toop#mapShell('nl -s". " -w1', '<leader>mnl')
+call toop#mapShell("awk 'BEGIN { c=1 } // { print c\". \"$0; c = c+1 }'", '<leader>nl')
 call toop#mapShell('graph-easy', '<leader>mg')
 call toop#mapShell('runFunction yml2json', '<leader>yj')
 call toop#mapShell('runFunction toggleQuote', '<leader>tq')
@@ -774,6 +772,8 @@ command! -nargs=* Diary call Diary( '<args>' )
 nnoremap <Leader>now :Today<cr>
 command! -nargs=* Tomorrow call Diary( 'tomorrow' )
 nnoremap <Leader>to :Tomorrow<cr>
+command! -nargs=* Monday call Diary( 'monday' )
+nnoremap <Leader>mon :Monday<cr>
 command! -nargs=* Yesterday call Diary( 'yesterday' )
 nnoremap <Leader>yes :Yesterday<cr>
 command! -nargs=* Today call Diary( 'today' )

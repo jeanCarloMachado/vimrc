@@ -84,12 +84,13 @@ Plug 'majutsushi/tagbar'
 call plug#end()
 "}}}
 
+runtime macros/matchit.vim "Enable extended % matching
+
 " {{{ generic sets, let's
+set nocompatible
 let g:abolish_save_file = $HOME."/Dropbox/projects/vimrc/vim/abbreviations.vim"
 set wildignore+=*\\dist\\**
-set nocompatible
 let mapleader = "\<space>"
-runtime macros/matchit.vim "Enable extended % matching
 set tags+=/usr/include/tags,./tags,./.git/tags,../.git/tags
 " set mouse=a "enable mouse on normal,visual,inter,command-line modes
 set backspace=indent,eol,start "make the backspace work like in most other programs
@@ -108,8 +109,7 @@ set scrolloff=0 " Minimum lines to keep above and below cursor"
 set autoread "automaically read a file again when it's changed outside vim
 set history=1000 "the quantity of normal commands recorded
 set title "When on, the title of the window will be set to the value of 'titlestring'
-" For regular expressions turn magic on
-set magic
+set magic " For regular expressions turn magic on
 setlocal formatoptions=1
 set formatprg=par "The name of an external program that will be used to format the lines selected with the |gq| operator.
 " vimrc per project
@@ -126,10 +126,9 @@ let g:conceal_php_disable_ligature=1
 "}}}
 
 "Generic mappings{{{
-" visual mode
 "Allow using the repeat operator with a visual selection
 vnoremap . :normal .<CR>
-" insert filname in insert mode
+"insert filname in insert mode
 inoremap ,fn <C-R>=expand("%:t:r")<CR>
 
 nnoremap <leader>; :normal!mtA;<esc>`t
@@ -140,9 +139,8 @@ nnoremap + ddp
 nnoremap _ dd2kp
 nnoremap <Leader>le :noh<cr>
 nnoremap <Leader>dt :r ! date<cr>
-
-map <leader>pu :PlugUpdate<cr>
-map <leader>pc :PlugClean<cr>
+nnoremap <leader>pu :PlugUpdate<cr>
+nnoremap <leader>pc :PlugClean<cr>
 nnoremap cwi ciw
 map <leader>i mmgg=G`m
 map <leader>x :w<','> !bash<cr>
@@ -338,16 +336,7 @@ let g:ctrlsf_auto_close = {
     \ "normal" : 0,
     \ "compact": 0
     \}
-
-" let g:ctrlsf_mapping = {
-"     \ "openb"    : ["<CR>", "o", "<2-LeftMouse>"],
-"     \ "open"   : "O",
-"     \ }
-
 let g:ctrlsf_default_view_mode = 'compact'
-" let g:ctrlsf_winsize = '30%'
-" " or
-" let g:ctrlsf_winsize = '100'
 
 "find word under cursor
 noremap <leader>fw :CtrlSF <C-r><C-w>
@@ -481,7 +470,6 @@ inoremap ;<cr> <end>;<cr>
 "}}}
 
 " toop -  custom text actions {{{
-
 "to single quote
 call toop#mapShell("tr '\"' \"'\"", '<leader>tsq')
 call toop#mapShell('md5sum | cut -d " " -f1 ', '<leader>md5')
@@ -499,12 +487,8 @@ call toop#mapShell('sed "s/\\\//g" ', '<leader>u')
 call toop#mapShell('run_function sql_format', '<leader>sb')
 call toop#mapShell('run_function xml_beautifier', '<leader>x')
 call toop#mapShell('run_function xml_beautifier', '<leader>xb')
-
-"make list
-call toop#mapShell('run_function prepend " - " ', '<leader>ml')
-fun! GoogleIt(str)
-    execute 'AsyncRun $BROWSER "'.a:str.'"'
-endfunc
+call toop#mapShell('base64', '<leader>e64')
+call toop#mapShell('base64 --decode ', '<leader>d64')
 
 
 "translate
@@ -517,9 +501,14 @@ call toop#mapShell('translate.sh de pt', 'tdp')
 call toop#mapShell('translate.sh en fr', 'tef')
 call toop#mapShell('translate.sh en la', 'tel')
 call toop#mapShell('translate.sh la en', 'tle')
+call toop#mapShell('translate.sh de en', '<leader>ge')
+"translate English to German
+call toop#mapShell('translate.sh en de', '<leader>eg')
 
 "make numbered list
 call toop#mapShell("awk 'BEGIN { c=1 } // { print c\". \"$0; c = c+1 }'", '<leader>nl')
+"make list
+call toop#mapShell("awk '// { print \"- \"$0 }'", '<leader>ml')
 call toop#mapShell('graph-easy', '<leader>mg')
 call toop#mapShell('runFunction yml2json', '<leader>yj')
 call toop#mapShell('runFunction toggleQuote', '<leader>tq')
@@ -544,6 +533,10 @@ call toop#mapAround('**', '**', '<leader>bo')
 call toop#mapAround("***\n", '***', '<leader>hl')
 call toop#mapAround("```sh\n", "\n```", '<leader>c')
 
+fun! GoogleIt(str)
+    execute 'AsyncRun run_function googleIt "'.a:str.'"'
+endfunc
+call toop#mapFunction('GoogleIt', '<leader>gi')
 function! Duplicate(string)
     return a:string.a:string
 endfun
@@ -574,10 +567,6 @@ function! ChompedSystemCall( ... )
     return substitute(call('system', a:000), '\n\+$', '', '')
 endfun
 
-fun! GoogleIt(str)
-    execute 'AsyncRun run_function googleIt "'.a:str.'"'
-endfunc
-call toop#mapFunction('GoogleIt', '<leader>gi')
 
 "render a html chunk on the browser
 fun! BCat(str)
@@ -901,7 +890,9 @@ endfun
 command! -nargs=* RemoveFile call RemoveFile()
 noremap <silent> <leader>rmrf :RemoveFile<cr>
 
-nmap <leader>xo :!xdg-open % &<cr>
+"open directory
+command! -nargs=* OpenDirectory :!open %:p:h &<cr>
+nmap <leader>od :!open %:p:h &<cr>
 "copy path name
 nmap <leader>cpn :!mycopy %:p<cr>
 "copy only name
@@ -1117,7 +1108,6 @@ autocmd filetype crontab setlocal nobackup nowritebackup
 let g:elm_format_autosave = 0
 let g:elm_make_show_warnings = 0
 let g:elm_detailed_complete = 0
-autocmd FileType elm map <Leader>fmt :ElmFormat<cr>
 "}}}
 
 "fzf {{{

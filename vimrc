@@ -88,7 +88,6 @@ runtime macros/matchit.vim "Enable extended % matching
 
 " {{{ generic sets, let's
 set nocompatible
-let g:abolish_save_file = $HOME."/Dropbox/projects/vimrc/vim/abbreviations.vim"
 set wildignore+=*\\dist\\**
 let mapleader = "\<space>"
 set tags+=/usr/include/tags,./tags,./.git/tags,../.git/tags
@@ -130,10 +129,6 @@ let g:conceal_php_disable_ligature=1
 vnoremap . :normal .<CR>
 "insert filname in insert mode
 inoremap ,fn <C-R>=expand("%:t:r")<CR>
-
-nnoremap <leader>; :normal!mtA;<esc>`t
-nnoremap <leader>: :normal!mtA:<esc>`t
-nnoremap <leader>, :normal!mtA,<esc>`t
 nnoremap <BS> :Rex<cr>
 nnoremap + ddp
 nnoremap _ dd2kp
@@ -164,8 +159,13 @@ nnoremap <leader>cf :!filefy-clippboard<cr>
 nmap <Leader>em <Plug>(easymotion-overwin-w)
 "fast normal mode access through , instead of :
 nmap , :
-" nmap <leader>fim :!runFunction fileManager %:h<cr> command! FileManager execute "!runFunction fileManager %:h"
+"make appending this punctuation chars easy
+nnoremap <leader>; :normal!mtA;<esc>`t
+nnoremap <leader>: :normal!mtA:<esc>`t
+nnoremap <leader>, :normal!mtA,<esc>`t
+" plugin specific
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
+let g:abolish_save_file = $HOME."/Dropbox/projects/vimrc/vim/abbreviations.vim"
 "}}}
 
 "ale config {{{
@@ -1009,7 +1009,7 @@ command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
 call toop#mapShell('json_encode_from_php', '<leader>pj')
 call toop#mapShell('json-to-php', '<leader>jp')
 "}}}
- 
+
 " gvim {{{
 nnoremap <leader>gv  :! gvim %:p<cr>
 set guioptions+=m  "remove menu bar

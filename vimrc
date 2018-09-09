@@ -43,21 +43,6 @@ Plug 'tpope/vim-surround'
 "shows a git diff in the gutter (sign column) and stages/undoes hunks.
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-commentary'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'lervag/vimtex', { 'for': ['latex'] }
-Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
-Plug 'fatih/vim-go', { 'for': ['go'] }
-Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
-Plug 'derekwyatt/vim-scala', { 'for': ['scala'] }
-Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
-Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
-Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
-Plug 'vim-vdebug/vdebug', {'for': ['php'] }
-Plug 'jeanCarloMachado/vim-php-conceal', { 'for': ['php'] }
-Plug 'fatih/vim-go', { 'for': ['go'] }
-Plug 'kballard/vim-swift', { 'for': ['swift'] }
-Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
-Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
 " visualizing marks
 Plug 'kshenoy/vim-signature'
 " this plugin is slow when the project is too big
@@ -74,13 +59,28 @@ Plug 'tpope/vim-sleuth'
 Plug 'breuckelen/vim-resize'
 Plug 'tpope/vim-fugitive'
 Plug 'nathanaelkane/vim-indent-guides'
+Plug 'majutsushi/tagbar'
 "autocomplete
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'jeanCarloMachado/vim-toop'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'lervag/vimtex', { 'for': ['latex'] }
+Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
+Plug 'fatih/vim-go', { 'for': ['go'] }
+Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
+Plug 'derekwyatt/vim-scala', { 'for': ['scala'] }
+Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
+Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
+Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
+Plug 'vim-vdebug/vdebug', {'for': ['php'] }
+Plug 'jeanCarloMachado/vim-php-conceal', { 'for': ['php'] }
+Plug 'fatih/vim-go', { 'for': ['go'] }
+Plug 'kballard/vim-swift', { 'for': ['swift'] }
+Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
+Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
 "hides links paths, and other small niceties
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'junegunn/goyo.vim', { 'for': ['markdown'] }
-Plug 'majutsushi/tagbar'
 call plug#end()
 "}}}
 

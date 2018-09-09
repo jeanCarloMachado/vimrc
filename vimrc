@@ -284,6 +284,21 @@ command! -nargs=* LatestPost call LatestPost()
 
 "}}}
 
+"cursor{{{
+"save the previous cursor position
+augroup resCur
+  autocmd!
+  autocmd BufReadPost * call setpos(".", getpos("'\""))
+augroup END
+
+fun! CursorToggle()
+    set cursorline!
+    set cursorcolumn!
+endfun
+command! -nargs=* CursorToggle call CursorToggle()
+nnoremap <leader>ct  :call CursorToggle()<cr>
+"}}}
+
 "performance {{{
 set ttyfast "Improves smoothness of redrawing when there are multiple windows
 " autocmd BufEnter * :syn sync maxlines=500
@@ -544,7 +559,7 @@ call toop#mapFunction('Duplicate', "<leader>2x")
 
 fun! FoldSomething(str)
     let comment=split(&commentstring, '%s')
-    if len(l:comment)==1
+    if len(l:comment) == 1
         call add(comment, l:comment[0])
     endif
     return l:comment[0]." {{{\n".a:str."\n".l:comment[1]."}}}"
@@ -1201,14 +1216,6 @@ endfun
 fun! NotifySend(content)
     :Asyncrun notify-send '".a:content."'"
 endfun
-
-"}}}
-
-"{{{ save the previous cursor position
-augroup resCur
-  autocmd!
-  autocmd BufReadPost * call setpos(".", getpos("'\""))
-augroup END
 "}}}
 
 "tags {{{
@@ -1243,7 +1250,6 @@ call toop#mapFunction('Documentation', '<leader>dci')
 "}}}
 
 " windows management {{{
-
 nmap <leader>vn :vnew<cr>
 nnoremap <leader>on :only<cr>
 set splitright "split new windows to the right
@@ -1276,3 +1282,4 @@ fun! RepeatAndNext()
     normal! @q
 endfun
 nnoremap <leader>. :call RepeatAndNext()<cr>
+

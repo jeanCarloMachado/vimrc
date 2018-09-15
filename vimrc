@@ -602,84 +602,11 @@ fun! FindLocal(str)
     return a:str
 endfun
 call toop#mapFunction('FindLocal', '<leader>fl')
-
-
-"}}}
-
-" markdown {{{
-let g:vim_markdown_no_extensions_in_markdown = 1
-autocmd Filetype markdown call MarkdownDefaultConfigs()
-highlight Folded ctermfg=DarkYellow
-
-fun! MarkdownDefaultConfigs()
-    " set tw=80 "80 columns are more than enough
-    set syntax=markdown
-    set spell spelllang=en_us
-endfunc
-
-"this feature is from vim and it supports the latex syntax so look at the
-"latex reference to know how to use it
-let g:vim_markdown_math = 1
-"syntax highlight for markdown
-let g:vim_markdown_fenced_languages = [
-    \'html',
-    \'py=python',
-    \'bash=sh',
-    \'c',
-    \'php=PHP',
-    \'hs=haskell',
-    \'elm',
-    \'li=lisp'
-\]
-
-fun! UnderlineHeading(level)
-    if a:level == 1
-        normal! I# 
-    elseif a:level == 2
-        normal! I## 
-    elseif a:level == 3
-        normal! I### 
-    elseif a:level == 4
-        normal! I#### 
-    elseif a:level == 5
-        normal! I##### 
-    endif
-endfunc
-
-nnoremap <leader>h1 :call UnderlineHeading(1)<cr>
-nnoremap <leader>h2 :call UnderlineHeading(2)<cr>
-nnoremap <leader>h3 :call UnderlineHeading(3)<cr>
-nnoremap <leader>h4 :call UnderlineHeading(4)<cr>
-nnoremap <leader>h5 :call UnderlineHeading(5)<cr>
-
-function! MarkdownLevel()
-    if getline(v:lnum) =~ '^# .*$'
-        return ">1"
-    endif
-    if getline(v:lnum) =~ '^## .*$'
-        return ">2"
-    endif
-    if getline(v:lnum) =~ '^### .*$'
-        return ">3"
-    endif
-    if getline(v:lnum) =~ '^#### .*$'
-        return ">4"
-    endif
-    if getline(v:lnum) =~ '^##### .*$'
-        return ">5"
-    endif
-    if getline(v:lnum) =~ '^###### .*$'
-        return ">6"
-    endif
-    return "="
-endfunc
-
 "}}}
 
 " fold {{{
 "enter fold giving a list of options on conflicts
 nnoremap <C-]> g<C-]>
-
 let g:markdown_folding = 1
 
 fun FoldFiletypeSpecific()
@@ -983,11 +910,6 @@ endfunc
 command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
 "}}}
 
-"PHP {{{
-call toop#mapShell('json_encode_from_php', '<leader>pj')
-call toop#mapShell('json-to-php', '<leader>jp')
-"}}}
-
 " gvim {{{
 nnoremap <leader>gv  :! gvim %:p<cr>
 set guioptions+=m  "remove menu bar
@@ -997,16 +919,6 @@ set guioptions-=L  "remove left-hand scroll bar
 if has('gui_running')
   set guifont=DejaVu\ Sans\ Mono\ Book\ 13
 endif
-"}}}
-
-" {{{ C lang
-fun! CFiletypeConfigs()
-    "compile through gcc when there's no makefile
-    if !filereadable(expand("%:p:h")."/Makefile")
-        setlocal makeprg=gcc\ -Wall\ -Wextra\ -o\ %<\ %
-    endif
-endfun
-autocmd filetype c call CFiletypeConfigs()
 "}}}
 
 "theme, colors, highlights {{{
@@ -1095,12 +1007,6 @@ vnoremap <silent> # :<C-U>
 au BufRead,BufNewFile *.jar,*.war,*.ear,*.sar,*.rar set filetype=zip
 autocmd BufNewFile,BufRead *.es6 set filetype=javascript
 autocmd filetype crontab setlocal nobackup nowritebackup
-"}}}
-
-" elm {{{
-let g:elm_format_autosave = 0
-let g:elm_make_show_warnings = 0
-let g:elm_detailed_complete = 0
 "}}}
 
 "fzf {{{
@@ -1263,10 +1169,102 @@ endfun
 nnoremap <silent> <leader>wt :call ToggleWindowHorizontalVerticalSplit()<cr>
 "}}}
 
+" macros {{{
 fun! RepeatAndNext()
     let @q ="n."
     normal! @q
 endfun
 nnoremap <leader>. :call RepeatAndNext()<cr>
+"}}}
 
+" language specific {{{
+" markdown {{{
+let g:vim_markdown_no_extensions_in_markdown = 1
+autocmd Filetype markdown call MarkdownDefaultConfigs()
+
+fun! MarkdownDefaultConfigs()
+    " set tw=80 "80 columns are more than enough
+    set spell spelllang=en_us
+    nnoremap <leader>h1 :call UnderlineHeading(1)<cr>
+    nnoremap <leader>h2 :call UnderlineHeading(2)<cr>
+    nnoremap <leader>h3 :call UnderlineHeading(3)<cr>
+    nnoremap <leader>h4 :call UnderlineHeading(4)<cr>
+    nnoremap <leader>h5 :call UnderlineHeading(5)<cr>
+endfunc
+
+"this feature is from vim and it supports the latex syntax so look at the
+"latex reference to know how to use it
+let g:vim_markdown_math = 1
+"syntax highlight for markdown
+let g:vim_markdown_fenced_languages = [
+    \'html',
+    \'py=python',
+    \'bash=sh',
+    \'c',
+    \'php=PHP',
+    \'hs=haskell',
+    \'elm',
+    \'li=lisp'
+\]
+
+fun! UnderlineHeading(level)
+    if a:level == 1
+        normal! I# 
+    elseif a:level == 2
+        normal! I## 
+    elseif a:level == 3
+        normal! I### 
+    elseif a:level == 4
+        normal! I#### 
+    elseif a:level == 5
+        normal! I##### 
+    endif
+endfunc
+
+
+function! MarkdownLevel()
+    if getline(v:lnum) =~ '^# .*$'
+        return ">1"
+    endif
+    if getline(v:lnum) =~ '^## .*$'
+        return ">2"
+    endif
+    if getline(v:lnum) =~ '^### .*$'
+        return ">3"
+    endif
+    if getline(v:lnum) =~ '^#### .*$'
+        return ">4"
+    endif
+    if getline(v:lnum) =~ '^##### .*$'
+        return ">5"
+    endif
+    if getline(v:lnum) =~ '^###### .*$'
+        return ">6"
+    endif
+    return "="
+endfunc
+
+"}}}
+
+"PHP {{{
+call toop#mapShell('json_encode_from_php', '<leader>pj')
+call toop#mapShell('json-to-php', '<leader>jp')
+"}}}
+
+" {{{ C lang
+fun! CFiletypeConfigs()
+    "compile through gcc when there's no makefile
+    if !filereadable(expand("%:p:h")."/Makefile")
+        setlocal makeprg=gcc\ -Wall\ -Wextra\ -o\ %<\ %
+    endif
+endfun
+autocmd filetype c call CFiletypeConfigs()
+"}}}
+
+" elm {{{
+let g:elm_format_autosave = 0
+let g:elm_make_show_warnings = 0
+let g:elm_detailed_complete = 0
+"}}}
+"}}}
 

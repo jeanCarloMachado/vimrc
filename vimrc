@@ -63,6 +63,7 @@ Plug 'majutsushi/tagbar'
 "autocomplete
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'jeanCarloMachado/vim-toop'
+Plug 'raimondi/delimitmate'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'lervag/vimtex', { 'for': ['latex'] }
 Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
@@ -81,6 +82,7 @@ Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
 "hides links paths, and other small niceties
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'junegunn/goyo.vim', { 'for': ['markdown'] }
+Plug 'yegappan/mru'
 call plug#end()
 "}}}
 
@@ -262,7 +264,6 @@ fun! OpenQuickly(fname)
 endfun
 
 command! -nargs=* Talk call OpenQuickly('talks')
-map <Leader>sn :call OpenQuickly('snippet')<cr>
 command! -nargs=* Productivity call OpenQuickly('productivity')
 map <Leader>pro :call OpenQuickly('productivity')<cr>
 command! -nargs=* Glossary call OpenQuickly('glossary')
@@ -291,6 +292,9 @@ augroup resCur
   autocmd BufReadPost * call setpos(".", getpos("'\""))
 augroup END
 
+set cursorline
+set cursorcolumn
+
 fun! CursorToggle()
     set cursorline!
     set cursorcolumn!
@@ -308,7 +312,7 @@ set lazyredraw "don't redraw screend when running macros
 "disables syntax for files going over a certain size
 " autocmd BufReadPre * if getfsize(expand("%")) > 10000000 | syntax off | endif
 
-set nocursorline "highlighting of the current line is a big deal for vim, probably the most important setting
+" set nocursorline "highlighting of the current line is a big deal for vim, probably the most important setting
 " set synmaxcol=128
 "}}}
 
@@ -341,7 +345,7 @@ autocmd filetype html,tpl :IndentGuidesEnable
 
 " tagbar {{{
 map <Leader>tt :TagbarToggle<cr>
-autocmd filetype php,vimscript,python,swift  :TagbarOpen
+autocmd filetype php,vimscript,python  :TagbarOpen
 "}}}
 
 " ctrlsf {{{
@@ -520,8 +524,9 @@ call toop#mapShell('translate.sh de en', '<leader>ge')
 "translate English to German
 call toop#mapShell('translate.sh en de', '<leader>eg')
 
+call toop#mapShell('tr " " "\n"', '<leader>sn')
 "make numbered list
-call toop#mapShell("awk 'BEGIN { c=1 } // { print c\". \"$0; c = c+1 }'", '<leader>nl')
+call toop#mapShell("runFunction makeNumberedList", '<leader>nl')
 "make list
 call toop#mapShell("awk '// { print \"- \"$0 }'", '<leader>ml')
 call toop#mapShell('graph-easy', '<leader>mg')
@@ -744,26 +749,6 @@ call toop#mapFunction('Subs', '<leader>o')
 "}}}
 
 " journal, diary {{{
-fun! PdfFile(str)
-    echom "Starting to create pdf"
-    let fileName = expand("%:p")
-    let out = system('md2pdf.sh '.fileName)
-    if v:shell_error
-        call ShowStringOnNewWindow(out)
-    endif
-endfunc
-call toop#mapFunction('PdfFile', '<leader>pdf')
-
-fun! WeekReport()
-    echom "Generating report"
-    let out = system('journalReport.sh & ')
-    if v:shell_error
-        call ShowStringOnNewWindow(out)
-    endif
-endfun
-command! -nargs=* WeekReport call WeekReport()
-map <Leader>wr :call WeekReport()<cr>
-"
 fun! Diary( arg )
     let out = system('run_function diary_file "' . a:arg . '"')
     execute "edit " . out
@@ -971,6 +956,7 @@ fun! GitLog()
     :normal gg
 endfunc
 nmap <leader>gk :call GitLog()<cr>
+nmap <leader>gl :call GitLog()<cr>
 
 fun! GitDiff()
     let path = resolve(expand('%:p'))
@@ -979,16 +965,8 @@ endfunc
 nmap <leader>gdf :call GitDiff()<cr>
 
 map <leader>gck :!git checkout %<cr>
-fun! Blame(arg)
-    let current_line = line(".") + 1
-    let file_name = expand('%')
-    let out = system('git blame '.file_name.' > /tmp/blame.blame')
-    execute "vsplit +".current_line." /tmp/blame.blame"
-    setlocal nospell
-    set filetype=fugitiveblame
-endfunc
-command! -nargs=* Blame call Blame( '<args>' )
-map <leader>bl :call Blame( '<args>' )<cr>
+command! -nargs=* Blame :Gblame<cr>
+map <leader>bl :Gblame<cr>
 
 fun! CheckoutFile(arg)
     let file_name = expand('%')
@@ -1149,13 +1127,21 @@ nnoremap <silent> <Leader>ls :call fzf#run({
 \ })<CR>
 
 
-nnoremap <leader>mru :FZFMru<cr>
-command! FZFMru call fzf#run({
-\  'source':  v:oldfiles,
-\  'sink':    'e',
-\  'options': '-m -x +s',
-\  'down':    '40%'})
+nnoremap <leader>mru :call MRU()<cr>
 
+function! EditNumberedFile(file)
+    let fileList =split(a:file)
+    execute ":e ".fileList[1]
+endfun
+command! -nargs=* EditNumberedFile call EditNumberedFile( '<args>' )
+
+fun! MRU()
+    call fzf#run({
+        \ 'source': "cat ".$HOME."/.vim_mru_files | grep -v private | tail -n +2 | runFunction makeNumberedList",
+        \   'sink': 'EditNumberedFile',
+        \   'down':    '60%'
+        \})
+endfun
 "}}}
 
 " repl, eval, tmux integration {{{
@@ -1246,7 +1232,7 @@ fun! Documentation(str)
     execute ":DevDocsAll ".a:str
 endfunc
 
-call toop#mapFunction('Documentation', '<leader>dci')
+call toop#mapFunction('Documentation', '<leader>doc')
 "}}}
 
 " windows management {{{
@@ -1282,4 +1268,5 @@ fun! RepeatAndNext()
     normal! @q
 endfun
 nnoremap <leader>. :call RepeatAndNext()<cr>
+
 

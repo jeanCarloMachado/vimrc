@@ -86,8 +86,6 @@ Plug 'yegappan/mru'
 call plug#end()
 "}}}
 
-runtime macros/matchit.vim "Enable extended % matching
-
 " {{{ generic sets, let's
 set nocompatible
 set wildignore+=*\\dist\\**
@@ -124,6 +122,7 @@ if has("clipboard")
     endif
 endif
 let g:conceal_php_disable_ligature=1
+runtime macros/matchit.vim "Enable extended % matching
 "}}}
 
 "Generic mappings{{{
@@ -283,37 +282,6 @@ fun! LatestPost()
 endfun
 command! -nargs=* LatestPost call LatestPost()
 
-"}}}
-
-"cursor{{{
-"save the previous cursor position
-augroup resCur
-  autocmd!
-  autocmd BufReadPost * call setpos(".", getpos("'\""))
-augroup END
-
-set cursorline
-set cursorcolumn
-
-fun! CursorToggle()
-    set cursorline!
-    set cursorcolumn!
-endfun
-command! -nargs=* CursorToggle call CursorToggle()
-nnoremap <leader>ct  :call CursorToggle()<cr>
-"}}}
-
-"performance {{{
-set ttyfast "Improves smoothness of redrawing when there are multiple windows
-" autocmd BufEnter * :syn sync maxlines=500
-set lazyredraw "don't redraw screend when running macros
-" syntax sync minlines=256
-
-"disables syntax for files going over a certain size
-" autocmd BufReadPre * if getfsize(expand("%")) > 10000000 | syntax off | endif
-
-" set nocursorline "highlighting of the current line is a big deal for vim, probably the most important setting
-" set synmaxcol=128
 "}}}
 
 "undo {{{
@@ -921,43 +889,6 @@ if has('gui_running')
 endif
 "}}}
 
-"theme, colors, highlights {{{
-syntax enable
-augroup VimrcColors
-    au!
-    autocmd ColorScheme * highlight WordsToAvoid ctermfg=DarkBlue cterm=underline
-    autocmd ColorScheme * highlight HardWords ctermfg=DarkBlue cterm=underline
-    autocmd ColorScheme * highlight Whitespace ctermbg=Grey
-    autocmd ColorScheme * highlight Overlength ctermbg=DarkGrey
-    autocmd ColorScheme * highlight SpellBad ctermfg=Brown
-    "makes a underline on the current cursor line
-augroup END
-
-autocmd Syntax * call matchadd('WordsToAvoid', '\c\<\(obviously\|basically\|simply\|of\scourse\|clearly\|just\|little\|quite\|everyone\knows\|however\|easy\|obviamente\|basicamente\|simplesmente\|com\certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então\|fácil\|bem\)\>')
-"words that need to be revised
-autocmd Syntax * call matchadd('HardWords', '\c\<\(porquê\|porque\|por\sque\|its\)\>')
-autocmd Syntax * call matchadd('Whitespace', '\s\+$')
-autocmd Syntax * call matchadd('Overlength', '\%81v')
-
-let g:solarized_termtrans = 1
-let g:airline_theme='solarized'
-" set background=light
-set background=dark
-
-if has('nvim')
-    " Neovim specific commands
-else
-    "not nvim commands
-    set term=screen-256color
-endif
-
-colorscheme solarized
-let g:solarized_bold=1
-set t_Co=256
-" color 0 is the dark background and 15 is the light one
-hi StatusLine ctermfg=12 ctermbg=0 cterm=NONE
-"}}}
-
 " {{{ writer mode
 let writer_mode=$WRITER_MODE
 fun! WritingMode()
@@ -1268,3 +1199,70 @@ let g:elm_detailed_complete = 0
 "}}}
 "}}}
 
+"theme, colors, highlights {{{
+syntax enable
+augroup VimrcColors
+    au!
+    autocmd ColorScheme * highlight WordsToAvoid ctermfg=DarkBlue cterm=underline
+    autocmd ColorScheme * highlight HardWords ctermfg=DarkBlue cterm=underline
+    autocmd ColorScheme * highlight Whitespace ctermbg=Grey
+    autocmd ColorScheme * highlight Overlength ctermbg=DarkGrey
+    autocmd ColorScheme * highlight SpellBad ctermfg=Brown
+    "makes a underline on the current cursor line
+augroup END
+
+autocmd Syntax * call matchadd('WordsToAvoid', '\c\<\(obviously\|basically\|simply\|of\scourse\|clearly\|just\|little\|quite\|everyone\knows\|however\|easy\|obviamente\|basicamente\|simplesmente\|com\certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então\|fácil\|bem\)\>')
+"words that need to be revised
+autocmd Syntax * call matchadd('HardWords', '\c\<\(porquê\|porque\|por\sque\|its\)\>')
+autocmd Syntax * call matchadd('Whitespace', '\s\+$')
+autocmd Syntax * call matchadd('Overlength', '\%81v')
+
+let g:solarized_termtrans = 1
+let g:airline_theme='solarized'
+" set background=light
+set background=dark
+
+if has('nvim')
+    " Neovim specific commands
+else
+    "not nvim commands
+    set term=screen-256color
+endif
+
+colorscheme solarized
+let g:solarized_bold=1
+set t_Co=256
+" color 0 is the dark background and 15 is the light one
+hi StatusLine ctermfg=12 ctermbg=0 cterm=NONE
+"}}}
+
+"cursor{{{
+"save the previous cursor position
+augroup resCur
+  autocmd!
+  autocmd BufReadPost * call setpos(".", getpos("'\""))
+augroup END
+
+set cursorline
+set cursorcolumn
+
+fun! CursorToggle()
+    set cursorline!
+    set cursorcolumn!
+endfun
+command! -nargs=* CursorToggle call CursorToggle()
+nnoremap <leader>ct  :call CursorToggle()<cr>
+"}}}
+
+"performance {{{
+set ttyfast "Improves smoothness of redrawing when there are multiple windows
+" autocmd BufEnter * :syn sync maxlines=500
+set lazyredraw "don't redraw screend when running macros
+" syntax sync minlines=256
+
+"disables syntax for files going over a certain size
+" autocmd BufReadPre * if getfsize(expand("%")) > 10000000 | syntax off | endif
+
+" set nocursorline "highlighting of the current line is a big deal for vim, probably the most important setting
+" set synmaxcol=128
+"}}}

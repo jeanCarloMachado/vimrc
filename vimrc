@@ -5,7 +5,6 @@
 " Userspace dependencies
 " - par
 " - rg
-"
 " Each new supported language should have configured the following features
 " - linters and fixer
 " - default template for empty files
@@ -121,7 +120,6 @@ if has("clipboard")
         set clipboard+=unnamedplus
     endif
 endif
-let g:conceal_php_disable_ligature=1
 runtime macros/matchit.vim "Enable extended % matching
 "}}}
 
@@ -216,6 +214,7 @@ autocmd FileType markdown call matchadd('Conceal', '## ', 999, -1, {'conceal': '
 autocmd FileType markdown call matchadd('Conceal', '### ', 999, -1, {'conceal': ''})
 autocmd FileType markdown call matchadd('Conceal', '#### ', 999, -1, {'conceal': ''})
 set conceallevel=2 "show pretty latex formulas
+let g:conceal_php_disable_ligature=1
 "}}}
 
 "{{{ grep
@@ -344,6 +343,43 @@ endfunction
 "}}}
 
 "custom text objects{{{
+
+call textobj#user#plugin('fold', {
+\   'code': {
+\     'pattern': ['{{{', '}}}'],
+\     'select-a': 'aF',
+\     'select-i': 'iF',
+\   },
+\ })
+
+call textobj#user#plugin('markdownsection', {
+\   'code': {
+\     'select-a-function': 'CurrentMarkdownBlock',
+\     'select-a': 'a#',
+\     'select-i-function': 'CurrentMarkdownBlock',
+\     'select-i': 'i#',
+\   },
+\ })
+
+fun! CurrentMarkdownBlock()
+    :?#
+    let head_pos = getpos('.')
+    normal! 0j
+
+
+    "if there's any block below go to it otherwise go to the end of the file
+    if search("#", "ncWz") > 0
+        :/#
+        normal! k
+    else
+        normal! G
+    endif
+
+    let tail_pos = getpos('.')
+    return ['v', head_pos, tail_pos]
+endfun
+
+" line object {{{
 call textobj#user#plugin('line', {
   \   '-': {
   \     'select-a-function': 'CurrentLineA',
@@ -373,6 +409,9 @@ fun! CurrentLineI()
                 \ : 0
 endfun
 
+"}}}
+
+"between bars / {{{
 call textobj#user#plugin('bar', {
             \   '-': {
             \     'select-a-function': 'CurrentBarA',
@@ -397,6 +436,9 @@ fun! CurrentBarI()
     return ['v', head_pos, tail_pos]
 endfun
 
+"}}}
+
+"between pipes {{{
 call textobj#user#plugin('pipe', {
             \   '-': {
             \     'select-a-function': 'CurrentPipeA',
@@ -422,13 +464,9 @@ fun! CurrentPipeI()
     return ['v', head_pos, tail_pos]
 endfun
 
-call textobj#user#plugin('datetime', {
-            \   'date': {
-            \     'pattern': '\<\d\d\d\d-\d\d-\d\d\>',
-            \     'select': ['ad', 'id'],
-            \   },
-            \ })
+"}}}
 
+" a/i document {{{
 call textobj#user#plugin('document', {
             \   '-': {
             \     'select-a-function': 'CurrentDocumentA',
@@ -454,6 +492,8 @@ fun! CurrentDocumentI()
     return ['v', head_pos, tail_pos]
 endfun
 inoremap ;<cr> <end>;<cr>
+
+"}}}
 "}}}
 
 " toop -  custom text actions {{{
@@ -812,6 +852,7 @@ fun! CopyCurrentRelativePath()
     let path = RelativePath(expand("%:p"))
     let result = system('mycopy ', path)
 endfunc
+
 fun! RelativePath(filename)
     let cwd = getcwd()
     let s = substitute(a:filename, l:cwd . "/" , "", "")
@@ -879,17 +920,17 @@ command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
 "}}}
 
 " gvim {{{
-nnoremap <leader>gv  :! gvim %:p<cr>
-set guioptions+=m  "remove menu bar
-set guioptions-=T  "remove toolbar
-set guioptions-=r  "remove right-hand scroll bar
-set guioptions-=L  "remove left-hand scroll bar
-if has('gui_running')
-  set guifont=DejaVu\ Sans\ Mono\ Book\ 13
-endif
+" nnoremap <leader>gv  :! gvim %:p<cr>
+" set guioptions+=m  "remove menu bar
+" set guioptions-=T  "remove toolbar
+" set guioptions-=r  "remove right-hand scroll bar
+" set guioptions-=L  "remove left-hand scroll bar
+" if has('gui_running')
+"   set guifont=DejaVu\ Sans\ Mono\ Book\ 13
+" endif
 "}}}
 
-" {{{ writer mode
+"writer mode {{{
 let writer_mode=$WRITER_MODE
 fun! WritingMode()
     :Goyo
@@ -956,16 +997,16 @@ function! s:bufopen(e)
   execute 'buffer' matchstr(a:e, '^[ 0-9]*')
 endfunction
 
-nnoremap <silent> <Leader>ls :call fzf#run({
+nnoremap <silent> <Leader>ls :call fzf#run(fzf#wrap({
 \   'source':  reverse(<sid>buflist()),
 \   'sink':    function('<sid>bufopen'),
 \   'options': '+m',
 \   'down':    len(<sid>buflist()) + 2
-\ })<CR>
+\ }))<CR>
 
 
+" MRU {{{
 nnoremap <leader>mru :call MRU()<cr>
-
 function! EditNumberedFile(file)
     let fileList =split(a:file)
     execute ":e ".fileList[1]
@@ -973,12 +1014,14 @@ endfun
 command! -nargs=* EditNumberedFile call EditNumberedFile( '<args>' )
 
 fun! MRU()
-    call fzf#run({
+    call fzf#run(fzf#wrap({
         \ 'source': "cat ".$HOME."/.vim_mru_files | grep -v private | tail -n +2 | runFunction makeNumberedList",
         \   'sink': 'EditNumberedFile',
         \   'down':    '60%'
-        \})
+        \}))
 endfun
+
+"}}}
 "}}}
 
 " repl, eval, tmux integration {{{
@@ -1057,7 +1100,7 @@ noremap <silent> <leader>tg :TestVisit<CR>   " t Ctrl+g
 let test#strategy = "vimux"
 "}}}
 
-"docummentation {{{
+"docummentation search {{{
 nmap <leader>dcw  "zyiw:exe "call Documentation('".@z."')"<cr>
 fun! Documentation(str)
     if (&filetype == 'scala')
@@ -1199,43 +1242,6 @@ let g:elm_detailed_complete = 0
 "}}}
 "}}}
 
-"theme, colors, highlights {{{
-syntax enable
-augroup VimrcColors
-    au!
-    autocmd ColorScheme * highlight WordsToAvoid ctermfg=DarkBlue cterm=underline
-    autocmd ColorScheme * highlight HardWords ctermfg=DarkBlue cterm=underline
-    autocmd ColorScheme * highlight Whitespace ctermbg=Grey
-    autocmd ColorScheme * highlight Overlength ctermbg=DarkGrey
-    autocmd ColorScheme * highlight SpellBad ctermfg=Brown
-    "makes a underline on the current cursor line
-augroup END
-
-autocmd Syntax * call matchadd('WordsToAvoid', '\c\<\(obviously\|basically\|simply\|of\scourse\|clearly\|just\|little\|quite\|everyone\knows\|however\|easy\|obviamente\|basicamente\|simplesmente\|com\certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então\|fácil\|bem\)\>')
-"words that need to be revised
-autocmd Syntax * call matchadd('HardWords', '\c\<\(porquê\|porque\|por\sque\|its\)\>')
-autocmd Syntax * call matchadd('Whitespace', '\s\+$')
-autocmd Syntax * call matchadd('Overlength', '\%81v')
-
-let g:solarized_termtrans = 1
-let g:airline_theme='solarized'
-" set background=light
-set background=dark
-
-if has('nvim')
-    " Neovim specific commands
-else
-    "not nvim commands
-    set term=screen-256color
-endif
-
-colorscheme solarized
-let g:solarized_bold=1
-set t_Co=256
-" color 0 is the dark background and 15 is the light one
-hi StatusLine ctermfg=12 ctermbg=0 cterm=NONE
-"}}}
-
 "cursor{{{
 "save the previous cursor position
 augroup resCur
@@ -1258,7 +1264,9 @@ nnoremap <leader>ct  :call CursorToggle()<cr>
 set ttyfast "Improves smoothness of redrawing when there are multiple windows
 " autocmd BufEnter * :syn sync maxlines=500
 set lazyredraw "don't redraw screend when running macros
-" syntax sync minlines=256
+syntax sync minlines=256
+"increase redraw time, useful for big files
+set redrawtime=10000
 
 "disables syntax for files going over a certain size
 " autocmd BufReadPre * if getfsize(expand("%")) > 10000000 | syntax off | endif
@@ -1266,3 +1274,39 @@ set lazyredraw "don't redraw screend when running macros
 " set nocursorline "highlighting of the current line is a big deal for vim, probably the most important setting
 " set synmaxcol=128
 "}}}
+
+"theme, colors, highlights {{{
+"the later syntax is applied the better
+"since something might override it
+syntax enable
+augroup VimrcColors
+    au!
+    autocmd ColorScheme * highlight WordsToAvoid ctermfg=DarkBlue cterm=underline
+    autocmd ColorScheme * highlight HardWords ctermfg=DarkBlue cterm=underline
+    autocmd ColorScheme * highlight Whitespace ctermbg=Grey
+    autocmd ColorScheme * highlight Overlength ctermbg=DarkGrey
+    autocmd ColorScheme * highlight SpellBad ctermfg=Brown
+    "makes a underline on the current cursor line
+augroup END
+
+autocmd Syntax * call matchadd('WordsToAvoid', '\c\<\(obviously\|basically\|simply\|of\scourse\|clearly\|just\|little\|quite\|everyone\knows\|however\|easy\|obviamente\|basicamente\|simplesmente\|com\certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então\|fácil\|bem\)\>')
+"words that need to be revised
+autocmd Syntax * call matchadd('HardWords', '\c\<\(porquê\|porque\|por\sque\|its\)\>')
+autocmd Syntax * call matchadd('Whitespace', '\s\+$')
+autocmd Syntax * call matchadd('Overlength', '\%81v')
+
+let g:solarized_termtrans = 1
+let g:airline_theme='solarized'
+" set background=light
+set background=dark
+
+colorscheme solarized
+let g:solarized_bold=1
+set t_Co=256
+" color 0 is the dark background and 15 is the light one hi StatusLine ctermfg=12 ctermbg=0 cterm=NONE
+
+"reapplies the sytanx when it's broken
+noremap <F12> <Esc>:syntax sync fromstart<CR>
+inoremap <F12> <C-o>:syntax sync fromstart<CR>
+"}}}
+

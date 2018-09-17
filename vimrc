@@ -390,6 +390,27 @@ fun! CurrentStarBlock()
     return ['v', head_pos, tail_pos]
 endfun
 
+call textobj#user#plugin('strike', {
+\   'code': {
+\     'select-a-function': 'CurrentStrikeBlock',
+\     'select-a': 'a-',
+\     'select-i-function': 'CurrentStrikeBlock',
+\     'select-i': 'i-',
+\   },
+\ })
+
+
+fun! CurrentStrikeBlock()
+    let save_pos = getpos(".")
+    ?---
+    let head_pos = getpos('.')
+    call setpos('.', save_pos)
+    /---
+    normal! $
+    let tail_pos = getpos('.')
+    return ['v', head_pos, tail_pos]
+endfun
+
 call textobj#user#plugin('markdownsection', {
 \   'code': {
 \     'select-a-function': 'CurrentMarkdownBlock',

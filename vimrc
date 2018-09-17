@@ -23,7 +23,6 @@ Plug 'altercation/vim-colors-solarized'
 Plug 'w0rp/ale'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'vim-utils/vim-man' "view manuals inside vim
-" custom text objects
 Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
 "text object for a function: enables af and if
 Plug 'kana/vim-textobj-function'
@@ -73,7 +72,6 @@ Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
 Plug 'vim-vdebug/vdebug', {'for': ['php'] }
-Plug 'jeanCarloMachado/vim-php-conceal', { 'for': ['php'] }
 Plug 'fatih/vim-go', { 'for': ['go'] }
 Plug 'kballard/vim-swift', { 'for': ['swift'] }
 Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
@@ -179,8 +177,8 @@ let g:ale_lint_on_enter = 0
 let g:ale_lint_on_save = 1
 let g:ale_lint_on_text_changed = 0
 let g:ale_writegood_options = ' --so --illusion --adverb --tooWordy --cliches'
-let g:ale_sign_error = '⤫'
 let g:ale_sign_warning = '⚠'
+let g:ale_sign_error = '✖'
 
 
 let g:ale_linters = {
@@ -210,9 +208,23 @@ let g:deoplete#enable_at_startup = 1
 "}}}
 
 "Concealing {{{
-autocmd FileType markdown call matchadd('Conceal', '## ', 999, -1, {'conceal': ''})
-autocmd FileType markdown call matchadd('Conceal', '### ', 999, -1, {'conceal': ''})
-autocmd FileType markdown call matchadd('Conceal', '#### ', 999, -1, {'conceal': ''})
+autocmd FileType markdown call matchadd('Conceal', '# ', 999, -1, {'conceal': ''}) |
+    \ call matchadd('Conceal', '## ', 999, -1, {'conceal': ''}) |
+    \ call matchadd('Conceal', '### ', 999, -1, {'conceal': ''}) |
+    \ call matchadd('Conceal', '#### ', 999, -1, {'conceal': ''})
+
+" autocmd FileType swift call matchadd('Conceal', "{\\n", 999, -1, {'conceal': ''}) |
+"     \ call matchadd('Conceal', "}\\n", 999, -1, {'conceal': ''})
+
+
+autocmd FileType php call matchadd('Conceal', '"', 999, -1, {'conceal': ''}) |
+    \ call matchadd('Conceal', "'", 999, -1, {'conceal': ''}) |
+    \ call matchadd('Conceal', 'class ', 999, -1, {'conceal': ''}) |
+    \ call matchadd('Conceal', ';', 999, -1, {'conceal': ''}) |
+    \ call matchadd('Conceal', '\$', 999, -1, {'conceal': ''}) |
+    \ call matchadd('Conceal', 'function ', 999, -1, {'conceal': ''}) |
+    \ call matchadd('Conceal', 'public ', 999, -1, {'conceal': ''})
+
 set conceallevel=2 "show pretty latex formulas
 let g:conceal_php_disable_ligature=1
 "}}}
@@ -352,6 +364,32 @@ call textobj#user#plugin('fold', {
 \   },
 \ })
 
+call textobj#user#plugin('star', {
+\   'code': {
+\     'select-a-function': 'CurrentStarBlock',
+\     'select-a': 'a*',
+\     'select-i-function': 'CurrentStarBlock',
+\     'select-i': 'i*',
+\   },
+\ })
+
+
+fun! CurrentStarBlock()
+    let save_pos = getpos(".")
+    normal! F*
+    if (getpos(".") == save_pos)
+        ?\*
+    endif
+    let head_pos = getpos('.')
+    call setpos('.', save_pos)
+    normal! f*
+    if (getpos(".") == save_pos)
+        /\*
+    endif
+    let tail_pos = getpos('.')
+    return ['v', head_pos, tail_pos]
+endfun
+
 call textobj#user#plugin('markdownsection', {
 \   'code': {
 \     'select-a-function': 'CurrentMarkdownBlock',
@@ -465,35 +503,6 @@ fun! CurrentPipeI()
 endfun
 
 "}}}
-
-" a/i document {{{
-call textobj#user#plugin('document', {
-            \   '-': {
-            \     'select-a-function': 'CurrentDocumentA',
-            \     'select-a': "a\*",
-            \     'select-i-function': 'CurrentDocumentI',
-            \     'select-i': "i\*",
-            \   },
-            \ })
-
-fun! CurrentDocumentA()
-    normal! gg
-    let head_pos = getpos('.')
-    normal! G$
-    let tail_pos = getpos('.')
-    return ['v', head_pos, tail_pos]
-endfun
-
-fun! CurrentDocumentI()
-    normal! ggj
-    let head_pos = getpos('.')
-    normal! G$k
-    let tail_pos = getpos('.')
-    return ['v', head_pos, tail_pos]
-endfun
-inoremap ;<cr> <end>;<cr>
-
-"}}}
 "}}}
 
 " toop -  custom text actions {{{
@@ -547,6 +556,8 @@ call toop#mapAround('~~', '~~', '<leader>st')
 call toop#mapAround('$', '$', '<leader>mb')
 call toop#mapAround('`', '`', "<leader>`")
 call toop#mapAround("'", "'", "<leader>'")
+call toop#mapAround("'", "'", "<leader>qs")
+call toop#mapAround('"', '"', '<leader>qd')
 call toop#mapAround('"', '"', '<leader>"')
 call toop#mapAround('*', '*', '<leader>*')
 call toop#mapAround('(', ')', '<leader>(')
@@ -560,6 +571,7 @@ call toop#mapAround('*', '*', '<leader>it')
 call toop#mapAround('**', '**', '<leader>bo')
 call toop#mapAround("***\n", '***', '<leader>hl')
 call toop#mapAround("```sh\n", "\n```", '<leader>c')
+call toop#mapAround("\n---\n", "\n---\n", '<leader>-')
 
 fun! GoogleIt(str)
     execute 'AsyncRun run_function googleIt "'.a:str.'"'
@@ -1101,7 +1113,6 @@ let test#strategy = "vimux"
 "}}}
 
 "docummentation search {{{
-nmap <leader>dcw  "zyiw:exe "call Documentation('".@z."')"<cr>
 fun! Documentation(str)
     if (&filetype == 'scala')
         let url = 'https://www.scala-lang.org/api/current/?search='.a:str
@@ -1109,10 +1120,17 @@ fun! Documentation(str)
         return
     endif
 
+    if (&filetype == 'swift')
+        let url = 'https://developer.apple.com/search/?q='.a:str
+        let out = system("open '" . url . "' ")
+        return
+    endif
     execute ":DevDocsAll ".a:str
 endfunc
 
 call toop#mapFunction('Documentation', '<leader>doc')
+call toop#mapFunction('Documentation', '<leader>dc')
+nmap <leader>dw  "zyiw:exe "call Documentation('".@z."')"<cr>
 "}}}
 
 " windows management {{{
@@ -1264,9 +1282,13 @@ nnoremap <leader>ct  :call CursorToggle()<cr>
 set ttyfast "Improves smoothness of redrawing when there are multiple windows
 " autocmd BufEnter * :syn sync maxlines=500
 set lazyredraw "don't redraw screend when running macros
-syntax sync minlines=256
+" if the 256 is a command things will break
+" so I'll disable this thing for now
+" syntax sync minlines=256
 "increase redraw time, useful for big files
 set redrawtime=10000
+syntax sync fromstart
+
 
 "disables syntax for files going over a certain size
 " autocmd BufReadPre * if getfsize(expand("%")) > 10000000 | syntax off | endif
@@ -1294,6 +1316,8 @@ autocmd Syntax * call matchadd('WordsToAvoid', '\c\<\(obviously\|basically\|simp
 autocmd Syntax * call matchadd('HardWords', '\c\<\(porquê\|porque\|por\sque\|its\)\>')
 autocmd Syntax * call matchadd('Whitespace', '\s\+$')
 autocmd Syntax * call matchadd('Overlength', '\%81v')
+highlight ALEErrorSign ctermbg=NONE ctermfg=red
+highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
 
 let g:solarized_termtrans = 1
 let g:airline_theme='solarized'

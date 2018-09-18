@@ -24,8 +24,6 @@ Plug 'w0rp/ale'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'vim-utils/vim-man' "view manuals inside vim
 Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
-"text object for a function: enables af and if
-Plug 'kana/vim-textobj-function'
 "same indentation text object
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'vim-scripts/argtextobj.vim'
@@ -73,6 +71,7 @@ Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
 Plug 'vim-vdebug/vdebug', {'for': ['php'] }
 Plug 'fatih/vim-go', { 'for': ['go'] }
+"filetype only * (for swift)
 Plug 'kballard/vim-swift', { 'for': ['swift'] }
 Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
 Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
@@ -352,297 +351,6 @@ function! FindStringWiki()
     call inputrestore()
     execute ":CtrlSF ".name." ".$WIKI_PATH
 endfunction
-"}}}
-
-"custom text objects{{{
-
-call textobj#user#plugin('fold', {
-\   'code': {
-\     'pattern': ['{{{', '}}}'],
-\     'select-a': 'aF',
-\     'select-i': 'iF',
-\   },
-\ })
-
-call textobj#user#plugin('star', {
-\   'code': {
-\     'select-a-function': 'CurrentStarBlock',
-\     'select-a': 'a*',
-\     'select-i-function': 'CurrentStarBlock',
-\     'select-i': 'i*',
-\   },
-\ })
-
-
-fun! CurrentStarBlock()
-    let save_pos = getpos(".")
-    normal! F*
-    if (getpos(".") == save_pos)
-        ?\*
-    endif
-    let head_pos = getpos('.')
-    call setpos('.', save_pos)
-    normal! f*
-    if (getpos(".") == save_pos)
-        /\*
-    endif
-    let tail_pos = getpos('.')
-    return ['v', head_pos, tail_pos]
-endfun
-
-call textobj#user#plugin('strike', {
-\   'code': {
-\     'select-a-function': 'CurrentStrikeBlock',
-\     'select-a': 'a-',
-\     'select-i-function': 'CurrentStrikeBlock',
-\     'select-i': 'i-',
-\   },
-\ })
-
-
-fun! CurrentStrikeBlock()
-    let save_pos = getpos(".")
-    ?---
-    let head_pos = getpos('.')
-    call setpos('.', save_pos)
-    /---
-    normal! $
-    let tail_pos = getpos('.')
-    return ['v', head_pos, tail_pos]
-endfun
-
-call textobj#user#plugin('markdownsection', {
-\   'code': {
-\     'select-a-function': 'CurrentMarkdownBlock',
-\     'select-a': 'a#',
-\     'select-i-function': 'CurrentMarkdownBlock',
-\     'select-i': 'i#',
-\   },
-\ })
-
-fun! CurrentMarkdownBlock()
-    :?#
-    let head_pos = getpos('.')
-    normal! 0j
-
-
-    "if there's any block below go to it otherwise go to the end of the file
-    if search("#", "ncWz") > 0
-        :/#
-        normal! k
-    else
-        normal! G
-    endif
-
-    let tail_pos = getpos('.')
-    return ['v', head_pos, tail_pos]
-endfun
-
-" line object {{{
-call textobj#user#plugin('line', {
-  \   '-': {
-  \     'select-a-function': 'CurrentLineA',
-  \     'select-a': 'al',
-  \     'select-i-function': 'CurrentLineI',
-  \     'select-i': 'il',
-  \   },
-  \ })
-
-fun! CurrentLineA()
-    normal! 0
-    let head_pos = getpos('.')
-    normal! $
-    let tail_pos = getpos('.')
-    return ['v', head_pos, tail_pos]
-endfun
-
-fun! CurrentLineI()
-    normal! ^
-    let head_pos = getpos('.')
-    normal! g_
-    let tail_pos = getpos('.')
-    let non_blank_char_exists_p = getline('.')[head_pos[2] - 1] !~# '\s'
-    return
-                \ non_blank_char_exists_p
-                \ ? ['v', head_pos, tail_pos]
-                \ : 0
-endfun
-
-"}}}
-
-"between bars / {{{
-call textobj#user#plugin('bar', {
-            \   '-': {
-            \     'select-a-function': 'CurrentBarA',
-            \     'select-a': "a\/",
-            \     'select-i-function': 'CurrentBarI',
-            \     'select-i': "i\/",
-            \   },
-            \ })
-
-fun! CurrentBarA()
-    normal! F/
-    let head_pos = getpos('.')
-    normal! f/
-    let tail_pos = getpos('.')
-    return ['v', head_pos, tail_pos]
-endfun
-fun! CurrentBarI()
-    normal! T/
-    let head_pos = getpos('.')
-    normal! f/
-    let tail_pos = getpos('.')
-    return ['v', head_pos, tail_pos]
-endfun
-
-"}}}
-
-"between pipes {{{
-call textobj#user#plugin('pipe', {
-            \   '-': {
-            \     'select-a-function': 'CurrentPipeA',
-            \     'select-a': "a\\|",
-            \     'select-i-function': 'CurrentPipeI',
-            \     'select-i': "i\\|",
-            \   },
-            \ })
-
-fun! CurrentPipeA()
-    normal! F|
-    let head_pos = getpos('.')
-    normal! f|
-    let tail_pos = getpos('.')
-    return ['v', head_pos, tail_pos]
-endfun
-
-fun! CurrentPipeI()
-    normal! T|
-    let head_pos = getpos('.')
-    normal! f|
-    let tail_pos = getpos('.')
-    return ['v', head_pos, tail_pos]
-endfun
-
-"}}}
-"}}}
-
-" toop -  custom text actions {{{
-"to single quote
-call toop#mapShell("tr '\"' \"'\"", '<leader>tsq')
-call toop#mapShell('md5sum | cut -d " " -f1 ', '<leader>md5')
-call toop#mapShell('mycopy', '<leader>mc')
-call toop#mapShell('run_function trim ', '<leader>tr')
-call toop#mapShell('url-decode ', '<leader>d')
-call toop#mapShell('run_function toCamelCase', '<leader>tcc')
-call toop#mapShell('run_function toSnakeCase', '<leader>tcs')
-call toop#mapShell('jq .', '<leader>jq')
-call toop#mapShell('jq .', '<leader>jb')
-call toop#mapShell('url-to-json', '<leader>ju')
-call toop#mapShell('run_function alnum ', '<leader>a')
-"unescape
-call toop#mapShell('sed "s/\\\//g" ', '<leader>u')
-call toop#mapShell('run_function sql_format', '<leader>sb')
-call toop#mapShell('run_function xml_beautifier', '<leader>x')
-call toop#mapShell('run_function xml_beautifier', '<leader>xb')
-call toop#mapShell('base64', '<leader>e64')
-call toop#mapShell('base64 --decode ', '<leader>d64')
-
-
-"translate
-call toop#mapShell('translate.sh en pt', 'tep')
-call toop#mapShell('translate.sh pt en', 'tpe')
-call toop#mapShell('translate.sh pt de', 'tpd')
-call toop#mapShell('translate.sh en de', 'ted')
-call toop#mapShell('translate.sh de en', 'tde')
-call toop#mapShell('translate.sh de pt', 'tdp')
-call toop#mapShell('translate.sh en fr', 'tef')
-call toop#mapShell('translate.sh en la', 'tel')
-call toop#mapShell('translate.sh la en', 'tle')
-call toop#mapShell('translate.sh de en', '<leader>ge')
-"translate English to German
-call toop#mapShell('translate.sh en de', '<leader>eg')
-
-call toop#mapShell('tr " " "\n"', '<leader>sn')
-"make numbered list
-call toop#mapShell("runFunction makeNumberedList", '<leader>nl')
-"make list
-call toop#mapShell("awk '// { print \"- \"$0 }'", '<leader>ml')
-call toop#mapShell('graph-easy', '<leader>mg')
-call toop#mapShell('runFunction yml2json', '<leader>yj')
-call toop#mapShell('runFunction toggleQuote', '<leader>tq')
-
-"strike through
-call toop#mapAround('~~', '~~', '<leader>st')
-"math block
-call toop#mapAround('$', '$', '<leader>mb')
-call toop#mapAround('`', '`', "<leader>`")
-call toop#mapAround("'", "'", "<leader>'")
-call toop#mapAround("'", "'", "<leader>qs")
-call toop#mapAround('"', '"', '<leader>qd')
-call toop#mapAround('"', '"', '<leader>"')
-call toop#mapAround('*', '*', '<leader>*')
-call toop#mapAround('(', ')', '<leader>(')
-call toop#mapAround('[', ']', '<leader>[')
-call toop#mapAround('{', '}', '<leader>{')
-call toop#mapAround('$', '$', '<leader>$')
-call toop#mapAround('<', '>', '<leader><')
-"markdown italic
-call toop#mapAround('*', '*', '<leader>it')
-"markdown bold
-call toop#mapAround('**', '**', '<leader>bo')
-call toop#mapAround("***\n", '***', '<leader>hl')
-call toop#mapAround("```sh\n", "\n```", '<leader>c')
-call toop#mapAround("\n---\n", "\n---\n", '<leader>-')
-
-fun! GoogleIt(str)
-    execute 'AsyncRun run_function googleIt "'.a:str.'"'
-endfunc
-call toop#mapFunction('GoogleIt', '<leader>gi')
-function! Duplicate(string)
-    return a:string.a:string
-endfun
-call toop#mapFunction('Duplicate', "<leader>2x")
-
-fun! FoldSomething(str)
-    let comment=split(&commentstring, '%s')
-    if len(l:comment) == 1
-        call add(comment, l:comment[0])
-    endif
-    return l:comment[0]." {{{\n".a:str."\n".l:comment[1]."}}}"
-endfun
-
-call toop#mapFunction('FoldSomething', ',fo')
-
-fun! OnlyTextSelection(str)
-    normal! ggVGx
-    set noreadonly
-    call append(0, split(Chomp(a:str), '\v\n'))
-endfun
-call toop#mapFunction('OnlyTextSelection', '<leader>ts')
-
-function! Chomp(string)
-    return substitute(a:string, '\n\+$', '', '')
-endfun
-
-function! ChompedSystemCall( ... )
-    return substitute(call('system', a:000), '\n\+$', '', '')
-endfun
-
-
-"render a html chunk on the browser
-fun! BCat(str)
-    :'<,'>AsyncRun browser-cat
-endfunc
-call toop#mapFunction('BCat', '<leader>bc')
-call toop#mapFunction('FindIt', '<leader>fit')
-
-
-fun! FindLocal(str)
-    let path = expand('%:p:h')
-    exec ':CtrlSF "'.a:str.'"  "'.path.'" <cr>'
-    return a:str
-endfun
-call toop#mapFunction('FindLocal', '<leader>fl')
 "}}}
 
 " fold {{{
@@ -1146,6 +854,13 @@ fun! Documentation(str)
         let out = system("open '" . url . "' ")
         return
     endif
+
+    if (&filetype == 'vim')
+        execute ":help ".a:str
+        return
+    endif
+
+
     execute ":DevDocsAll ".a:str
 endfunc
 
@@ -1279,6 +994,337 @@ let g:elm_format_autosave = 0
 let g:elm_make_show_warnings = 0
 let g:elm_detailed_complete = 0
 "}}}
+"}}}
+
+"custom text objects{{{
+
+call textobj#user#plugin('function', {
+\   'code': {
+\     'select-a-function': 'AFunction',
+\     'select-a': 'af',
+\     'select-i-function': 'IFunction',
+\     'select-i': 'if',
+\   },
+\ })
+
+
+fun! AFunction()
+    let backup_pos = getpos(".")
+    ?func
+    normal! 0w
+    let head_pos = getpos('.')
+    /{
+    normal! %
+    let tail_pos = getpos('.')
+    return ['v', head_pos, tail_pos]
+endfun
+
+fun! IFunction()
+    let backup_pos = getpos(".")
+    ?func
+    /{
+    let tmp_head = getpos('.')
+    normal! %
+    let tmp_tail = getpos('.')
+    call setpos('.', tmp_head)
+    normal! w
+    let head_pos = getpos('.')
+    call setpos('.', tmp_tail)
+    normal! b
+    let tail_pos = getpos('.')
+
+    return ['v', head_pos, tail_pos]
+endfun
+
+
+call textobj#user#plugin('fold', {
+\   'code': {
+\     'pattern': ['{{{', '}}}'],
+\     'select-a': 'aF',
+\     'select-i': 'iF',
+\   },
+\ })
+
+call textobj#user#plugin('star', {
+\   'code': {
+\     'select-a-function': 'CurrentStarBlock',
+\     'select-a': 'a*',
+\     'select-i-function': 'CurrentStarBlock',
+\     'select-i': 'i*',
+\   },
+\ })
+
+
+fun! CurrentStarBlock()
+    let backup_pos = getpos(".")
+    normal! F*
+    if (getpos(".") == backup_pos)
+        ?\*
+    endif
+    let head_pos = getpos('.')
+    call setpos('.', backup_pos)
+    normal! f*
+    if (getpos(".") == backup_pos)
+        /\*
+    endif
+    let tail_pos = getpos('.')
+    return ['v', head_pos, tail_pos]
+endfun
+
+
+call textobj#user#plugin('strike', {
+\   'code': {
+\     'select-a-function': 'CurrentStrikeBlock',
+\     'select-a': 'a-',
+\     'select-i-function': 'CurrentStrikeBlock',
+\     'select-i': 'i-',
+\   },
+\ })
+
+
+fun! CurrentStrikeBlock()
+    let backup_pos = getpos(".")
+    ?---
+    let head_pos = getpos('.')
+    call setpos('.', backup_pos)
+    /---
+    normal! $
+    let tail_pos = getpos('.')
+    return ['v', head_pos, tail_pos]
+endfun
+
+call textobj#user#plugin('markdownsection', {
+\   'code': {
+\     'select-a-function': 'CurrentMarkdownBlock',
+\     'select-a': 'a#',
+\     'select-i-function': 'CurrentMarkdownBlock',
+\     'select-i': 'i#',
+\   },
+\ })
+
+fun! CurrentMarkdownBlock()
+    :?#
+    let head_pos = getpos('.')
+    normal! 0j
+
+
+    "if there's any block below go to it otherwise go to the end of the file
+    if search("#", "ncWz") > 0
+        :/#
+        normal! k
+    else
+        normal! G
+    endif
+
+    let tail_pos = getpos('.')
+    return ['v', head_pos, tail_pos]
+endfun
+
+" line object {{{
+call textobj#user#plugin('line', {
+  \   '-': {
+  \     'select-a-function': 'CurrentLineA',
+  \     'select-a': 'al',
+  \     'select-i-function': 'CurrentLineI',
+  \     'select-i': 'il',
+  \   },
+  \ })
+
+fun! CurrentLineA()
+    normal! 0
+    let head_pos = getpos('.')
+    normal! $
+    let tail_pos = getpos('.')
+    return ['v', head_pos, tail_pos]
+endfun
+
+fun! CurrentLineI()
+    normal! ^
+    let head_pos = getpos('.')
+    normal! g_
+    let tail_pos = getpos('.')
+    let non_blank_char_exists_p = getline('.')[head_pos[2] - 1] !~# '\s'
+    return
+                \ non_blank_char_exists_p
+                \ ? ['v', head_pos, tail_pos]
+                \ : 0
+endfun
+
+"}}}
+
+"between bars / {{{
+call textobj#user#plugin('bar', {
+            \   '-': {
+            \     'select-a-function': 'CurrentBarA',
+            \     'select-a': "a\/",
+            \     'select-i-function': 'CurrentBarI',
+            \     'select-i': "i\/",
+            \   },
+            \ })
+
+fun! CurrentBarA()
+    normal! F/
+    let head_pos = getpos('.')
+    normal! f/
+    let tail_pos = getpos('.')
+    return ['v', head_pos, tail_pos]
+endfun
+fun! CurrentBarI()
+    normal! T/
+    let head_pos = getpos('.')
+    normal! f/
+    let tail_pos = getpos('.')
+    return ['v', head_pos, tail_pos]
+endfun
+
+"}}}
+
+"between pipes {{{
+call textobj#user#plugin('pipe', {
+            \   '-': {
+            \     'select-a-function': 'CurrentPipeA',
+            \     'select-a': "a\\|",
+            \     'select-i-function': 'CurrentPipeI',
+            \     'select-i': "i\\|",
+            \   },
+            \ })
+
+fun! CurrentPipeA()
+    normal! F|
+    let head_pos = getpos('.')
+    normal! f|
+    let tail_pos = getpos('.')
+    return ['v', head_pos, tail_pos]
+endfun
+
+fun! CurrentPipeI()
+    normal! T|
+    let head_pos = getpos('.')
+    normal! f|
+    let tail_pos = getpos('.')
+    return ['v', head_pos, tail_pos]
+endfun
+
+"}}}
+"}}}
+
+" toop -  custom text actions {{{
+"to single quote
+call toop#mapShell("tr '\"' \"'\"", '<leader>tsq')
+call toop#mapShell('md5sum | cut -d " " -f1 ', '<leader>md5')
+call toop#mapShell('mycopy', '<leader>mc')
+call toop#mapShell('run_function trim ', '<leader>tr')
+call toop#mapShell('url-decode ', '<leader>d')
+call toop#mapShell('run_function toCamelCase', '<leader>tcc')
+call toop#mapShell('run_function toSnakeCase', '<leader>tcs')
+call toop#mapShell('jq .', '<leader>jq')
+call toop#mapShell('jq .', '<leader>jb')
+call toop#mapShell('url-to-json', '<leader>ju')
+call toop#mapShell('run_function alnum ', '<leader>a')
+"unescape
+call toop#mapShell('sed "s/\\\//g" ', '<leader>u')
+call toop#mapShell('run_function sql_format', '<leader>sb')
+call toop#mapShell('run_function xml_beautifier', '<leader>x')
+call toop#mapShell('run_function xml_beautifier', '<leader>xb')
+call toop#mapShell('base64', '<leader>e64')
+call toop#mapShell('base64 --decode ', '<leader>d64')
+
+
+"translate
+call toop#mapShell('translate.sh en pt', 'tep')
+call toop#mapShell('translate.sh pt en', 'tpe')
+call toop#mapShell('translate.sh pt de', 'tpd')
+call toop#mapShell('translate.sh en de', 'ted')
+call toop#mapShell('translate.sh de en', 'tde')
+call toop#mapShell('translate.sh de pt', 'tdp')
+call toop#mapShell('translate.sh en fr', 'tef')
+call toop#mapShell('translate.sh en la', 'tel')
+call toop#mapShell('translate.sh la en', 'tle')
+call toop#mapShell('translate.sh de en', '<leader>ge')
+"translate English to German
+call toop#mapShell('translate.sh en de', '<leader>eg')
+
+call toop#mapShell('tr " " "\n"', '<leader>sn')
+"make numbered list
+call toop#mapShell("runFunction makeNumberedList", '<leader>nl')
+"make list
+call toop#mapShell("awk '// { print \"- \"$0 }'", '<leader>ml')
+call toop#mapShell('graph-easy', '<leader>mg')
+call toop#mapShell('runFunction yml2json', '<leader>yj')
+call toop#mapShell('runFunction toggleQuote', '<leader>tq')
+
+"strike through
+call toop#mapAround('~~', '~~', '<leader>st')
+"math block
+call toop#mapAround('$', '$', '<leader>mb')
+call toop#mapAround('`', '`', "<leader>`")
+call toop#mapAround("'", "'", "<leader>'")
+call toop#mapAround("'", "'", "<leader>qs")
+call toop#mapAround('"', '"', '<leader>qd')
+call toop#mapAround('"', '"', '<leader>"')
+call toop#mapAround('*', '*', '<leader>*')
+call toop#mapAround('(', ')', '<leader>(')
+call toop#mapAround('[', ']', '<leader>[')
+call toop#mapAround('{', '}', '<leader>{')
+call toop#mapAround('$', '$', '<leader>$')
+call toop#mapAround('<', '>', '<leader><')
+"markdown italic
+call toop#mapAround('*', '*', '<leader>it')
+"markdown bold
+call toop#mapAround('**', '**', '<leader>bo')
+call toop#mapAround("***\n", '***', '<leader>hl')
+call toop#mapAround("```sh\n", "\n```", '<leader>c')
+call toop#mapAround("\n---\n", "\n---\n", '<leader>-')
+
+fun! GoogleIt(str)
+    execute 'AsyncRun run_function googleIt "'.a:str.'"'
+endfunc
+call toop#mapFunction('GoogleIt', '<leader>gi')
+function! Duplicate(string)
+    return a:string.a:string
+endfun
+call toop#mapFunction('Duplicate', "<leader>2x")
+
+fun! FoldSomething(str)
+    let comment=split(&commentstring, '%s')
+    if len(l:comment) == 1
+        call add(comment, l:comment[0])
+    endif
+    return l:comment[0]." {{{\n".a:str."\n".l:comment[1]."}}}"
+endfun
+
+call toop#mapFunction('FoldSomething', ',fo')
+
+fun! OnlyTextSelection(str)
+    normal! ggVGx
+    set noreadonly
+    call append(0, split(Chomp(a:str), '\v\n'))
+endfun
+call toop#mapFunction('OnlyTextSelection', '<leader>ts')
+
+function! Chomp(string)
+    return substitute(a:string, '\n\+$', '', '')
+endfun
+
+function! ChompedSystemCall( ... )
+    return substitute(call('system', a:000), '\n\+$', '', '')
+endfun
+
+
+"render a html chunk on the browser
+fun! BCat(str)
+    :'<,'>AsyncRun browser-cat
+endfunc
+call toop#mapFunction('BCat', '<leader>bc')
+call toop#mapFunction('FindIt', '<leader>fit')
+
+
+fun! FindLocal(str)
+    let path = expand('%:p:h')
+    exec ':CtrlSF "'.a:str.'"  "'.path.'" <cr>'
+    return a:str
+endfun
+call toop#mapFunction('FindLocal', '<leader>fl')
 "}}}
 
 "cursor{{{

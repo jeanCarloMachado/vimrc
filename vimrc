@@ -780,8 +780,8 @@ let g:repls = {
 \   'python': 'python',
 \   'haskell': 'ghc',
 \   'php': 'boris',
+\   'scala': 'sbt',
 \   'default': 'irb',
-\   'scala': 'sbt'
 \}
 
 fun! RunRepl()
@@ -1008,12 +1008,29 @@ call textobj#user#plugin('function', {
 \ })
 
 
+let g:functionKeywordByFiletype = {
+\   "swift": "func",
+\   "c": "function",
+\   "vim": "fun",
+\   "php": "function",
+\   "rust": "fn",
+\   "go": "func",
+\   "fallback": "fun",
+\}
+
+fun! GetFiletypeFuncKeyword()
+    if (has_key(g:functionKeywordByFiletype, &filetype))
+        return get(g:functionKeywordByFiletype, &filetype)
+    endif
+    return get(g:functionKeywordByFiletype, 'fallback')
+endfun
+
 fun! AFunction()
-    let backup_pos = getpos(".")
-    ?func
+    let funcKeyword = GetFiletypeFuncKeyword()
+    execute "?".funcKeyword
     normal! 0w
     let head_pos = getpos('.')
-    /{
+    call SearchLineOrDocument("{")
     normal! %
     let tail_pos = getpos('.')
     return ['v', head_pos, tail_pos]
@@ -1021,8 +1038,11 @@ endfun
 
 fun! IFunction()
     let backup_pos = getpos(".")
-    ?func
-    /{
+
+    let funcKeyword = GetFiletypeFuncKeyword()
+    execute "?".funcKeyword
+
+    call SearchLineOrDocument("{")
     let tmp_head = getpos('.')
     normal! %
     let tmp_tail = getpos('.')
@@ -1063,14 +1083,19 @@ fun! CurrentStarBlock()
     endif
     let head_pos = getpos('.')
     call setpos('.', backup_pos)
-    normal! f*
-    if (getpos(".") == backup_pos)
-        /\*
-    endif
+    call SearchLineOrDocument("*")
     let tail_pos = getpos('.')
     return ['v', head_pos, tail_pos]
 endfun
 
+
+fun! SearchLineOrDocument(char)
+    let backup_pos = getpos(".")
+    execute "normal! f".a:char
+    if (getpos(".") == backup_pos)
+        execute "/".a:char
+    endif
+endfunc
 
 call textobj#user#plugin('strike', {
 \   'code': {

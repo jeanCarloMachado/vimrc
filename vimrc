@@ -123,8 +123,6 @@ runtime macros/matchit.vim "Enable extended % matching
 "Generic mappings{{{
 "Allow using the repeat operator with a visual selection
 vnoremap . :normal .<CR>
-"insert filname in insert mode
-inoremap ,fn <C-R>=expand("%:t:r")<CR>
 nnoremap <BS> :Rex<cr>
 nnoremap + ddp
 nnoremap _ dd2kp
@@ -549,7 +547,7 @@ autocmd BufNewFile */diary/*.md 0r $TEMPLATES_DIR/diary.md
 autocmd BufNewFile */posts/*.md 0r $TEMPLATES_DIR/post.md
 "}}}
 
-" generic actions relative to current file {{{
+" relative to current file {{{
 "reload vim
 if !exists('*ReloadVim')
     fun! ReloadVim()
@@ -563,32 +561,10 @@ endif
 fun! RemoveFile()
     execute "!rm -rf %:p"
 endfun
-command! -nargs=* RemoveFile call RemoveFile()
-noremap <silent> <leader>rmrf :RemoveFile<cr>
-
-"open directory
-command! -nargs=* OpenDirectory :!open %:p:h &<cr>
-nmap <leader>od :!open %:p:h &<cr>
-"copy path name
-nmap <leader>cpn :!mycopy %:p<cr>
-"copy only name
-nmap <leader>con :!mycopy %:t<cr>
-"copy full name
-nmap <leader>cfn :!mycopy %:p<cr>
-"copy the current directoy
-nmap <leader>ccd :!mycopy %:p:h<cr>
-nmap <leader>cdn :!mycopy %:p:h<cr>
-nmap <leader>ccp :!mycopy %:p:h<cr>
-nmap <leader>cdcd :cd %:p:h<cr>
 
 fun! SaveForcing()
     execute "w !sudo tee > /dev/null %"
 endfunc
-
-command! -nargs=* ForceSave call SaveForcing()
-command! -nargs=* SaveForce call SaveForcing()
-
-nmap <leader>crn :call CopyCurrentRelativePath()<cr>
 fun! CopyCurrentRelativePath()
     let path = RelativePath(expand("%:p"))
     let result = system('mycopy ', path)
@@ -609,7 +585,6 @@ fun! RenameFile()
         redraw!
     endif
 endfunc
-map <Leader>rn :call RenameFile()<cr>
 
 fun! CopyFile()
     let old_name = expand('%')
@@ -619,9 +594,34 @@ fun! CopyFile()
         redraw!
     endif
 endfunc
+
+
+command! -nargs=* ForceSave call SaveForcing()
+command! -nargs=* SaveForce call SaveForcing()
+command! -nargs=* RemoveFile call RemoveFile()
+"open directory
+command! -nargs=* OpenDirectory :!open %:p:h &<cr>
+
+noremap <silent> <leader>rmrf :RemoveFile<cr>
+nmap <leader>od :!open %:p:h &<cr>
+"copy path name
+nmap <leader>cpn :!mycopy %:p<cr>
+"copy only name
+nmap <leader>con :!mycopy %:t<cr>
+"copy full name
+nmap <leader>cfn :!mycopy %:p<cr>
+"copy the current directoy
+nmap <leader>ccd :!mycopy %:p:h<cr>
+nmap <leader>cdn :!mycopy %:p:h<cr>
+nmap <leader>ccp :!mycopy %:p:h<cr>
+nmap <leader>cdcd :cd %:p:h<cr>
+map <Leader>rn :call RenameFile()<cr>
 map <Leader>cp :call CopyFile()<cr>
 map <leader>ee :edit!<cr>
 map <leader>ck :!git checkout %<cr>
+nmap <leader>crn :call CopyCurrentRelativePath()<cr>
+"insert filname in insert mode
+inoremap <C-f> <C-R>=expand("%:t:r")<CR>
 "}}}
 
 "git {{{
@@ -1261,6 +1261,7 @@ call toop#mapShell('translate.sh pt en', 'tpe')
 call toop#mapShell('translate.sh pt de', 'tpd')
 call toop#mapShell('translate.sh en de', 'ted')
 call toop#mapShell('translate.sh de en', 'tde')
+call toop#mapShell('translate.sh de en', 'tge')
 call toop#mapShell('translate.sh de pt', 'tdp')
 call toop#mapShell('translate.sh en fr', 'tef')
 call toop#mapShell('translate.sh en la', 'tel')

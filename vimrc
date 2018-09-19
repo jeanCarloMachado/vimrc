@@ -460,12 +460,6 @@ endfunc
 command! -nargs=* GrepDiary call GrepDiary( '<args>' )
 command! -nargs=* DiaryGrep call GrepDiary( '<args>' )
 
-fun! BottomDiary( arg )
-    let out = system("run_function diary_file " . a:arg )
-    execute "split" . out
-    res 10
-endfunc
-command! -nargs=* BottomDiary call BottomDiary( '<args>' )
 "}}}
 
 " wiki {{{
@@ -487,8 +481,9 @@ fun! GetUrl()
     normal! $F(vi("cy
     return @c
 endfunc
-fun! GetLine()
-    normal! "cyy
+
+fun! GetCurrentLineContent()
+    normal! 0v$h"cy
     return @c
 endfunc
 
@@ -498,8 +493,8 @@ fun! OpenMarkdown()
     execute 'edit ' . path . '/' . url . '.md'
 endfunc
 
-fun! OpenFile()
-    let line = GetLine()
+fun! OpenFileForMarkdown()
+    let line = GetCurrentLineContent()
     if ( line =~ "^http" )
         let url = GetUrl()
         :call OpenUrl(url)
@@ -514,7 +509,7 @@ fun! OpenFile()
         :call OpenMarkdown()
     endif
 endfun
-autocmd FileType markdown nnoremap <CR> :call OpenFile()<cr>
+autocmd FileType markdown nnoremap <CR> :call OpenFileForMarkdown()<cr>
 autocmd CmdwinEnter * nnoremap <CR> <CR>
 autocmd BufReadPost quickfix nnoremap <CR> <CR>
 
@@ -548,6 +543,35 @@ autocmd BufNewFile */posts/*.md 0r $TEMPLATES_DIR/post.md
 "}}}
 
 " relative to current file {{{
+
+command! -nargs=* ForceSave call SaveForcing()
+command! -nargs=* SaveForce call SaveForcing()
+command! -nargs=* RemoveFile call RemoveFile()
+"open directory
+command! -nargs=* OpenDirectory :!open %:p:h &<cr>
+
+noremap <silent> <leader>rmrf :RemoveFile<cr>
+nmap <leader>od :!open %:p:h &<cr>
+"copy path name
+nmap <leader>cpn :!mycopy %:p<cr>
+"copy only name
+nmap <leader>con :!mycopy %:t<cr>
+"copy full name
+nmap <leader>cfn :!mycopy %:p<cr>
+"copy the current directoy
+nmap <leader>ccd :!mycopy %:p:h<cr>
+nmap <leader>cdn :!mycopy %:p:h<cr>
+nmap <leader>ccp :!mycopy %:p:h<cr>
+nmap <leader>cdcd :cd %:p:h<cr>
+map <Leader>rn :call RenameFile()<cr>
+map <Leader>cp :call CopyFile()<cr>
+map <leader>ee :edit!<cr>
+map <leader>ck :!git checkout %<cr>
+nmap <leader>crn :call CopyCurrentRelativePath()<cr>
+"insert filname in insert mode
+inoremap <C-f> <C-R>=expand("%:t:r")<CR>
+
+
 "reload vim
 if !exists('*ReloadVim')
     fun! ReloadVim()
@@ -595,33 +619,6 @@ fun! CopyFile()
     endif
 endfunc
 
-
-command! -nargs=* ForceSave call SaveForcing()
-command! -nargs=* SaveForce call SaveForcing()
-command! -nargs=* RemoveFile call RemoveFile()
-"open directory
-command! -nargs=* OpenDirectory :!open %:p:h &<cr>
-
-noremap <silent> <leader>rmrf :RemoveFile<cr>
-nmap <leader>od :!open %:p:h &<cr>
-"copy path name
-nmap <leader>cpn :!mycopy %:p<cr>
-"copy only name
-nmap <leader>con :!mycopy %:t<cr>
-"copy full name
-nmap <leader>cfn :!mycopy %:p<cr>
-"copy the current directoy
-nmap <leader>ccd :!mycopy %:p:h<cr>
-nmap <leader>cdn :!mycopy %:p:h<cr>
-nmap <leader>ccp :!mycopy %:p:h<cr>
-nmap <leader>cdcd :cd %:p:h<cr>
-map <Leader>rn :call RenameFile()<cr>
-map <Leader>cp :call CopyFile()<cr>
-map <leader>ee :edit!<cr>
-map <leader>ck :!git checkout %<cr>
-nmap <leader>crn :call CopyCurrentRelativePath()<cr>
-"insert filname in insert mode
-inoremap <C-f> <C-R>=expand("%:t:r")<CR>
 "}}}
 
 "git {{{
@@ -724,7 +721,6 @@ autocmd filetype crontab setlocal nobackup nowritebackup
 
 "fzf {{{
 let g:fzf_buffers_jump = 1
-" let g:fzf_layout = { 'window': 'split enew' }
 map <c-p> :FZF<cr>
 
 function! s:buflist()
@@ -747,19 +743,41 @@ nnoremap <silent> <Leader>ls :call fzf#run(fzf#wrap({
 
 
 " MRU {{{
-nnoremap <leader>mru :call MRU()<cr>
-function! EditNumberedFile(file)
-    let fileList =split(a:file)
-    execute ":e ".fileList[1]
-endfun
+nnoremap <leader>fru :call FzfMru()<cr>
+nnoremap <leader>mru :call MRUSplit()<cr>
 command! -nargs=* EditNumberedFile call EditNumberedFile( '<args>' )
 
-fun! MRU()
+let mruCmd="cat ".$HOME."/.vim_mru_files | grep -v private | tail -n +2 "
+
+fun! MRUSplit()
+    setlocal splitbelow
+    setlocal buftype=nofile
+    split
+    res -19
+
+    let out = system(g:mruCmd)
+    call append(0, split(out, '\v\n'))
+    setlocal nomodifiable
+    normal! gg
+    nnoremap <buffer> <CR> :call OpenFile()<cr>
+endfun
+
+fun! OpenFile()
+    let line = GetCurrentLineContent()
+    :wincmd w
+    execute 'edit' line
+endfun
+
+fun! FzfMru()
     call fzf#run(fzf#wrap({
-        \ 'source': "cat ".$HOME."/.vim_mru_files | grep -v private | tail -n +2 | runFunction makeNumberedList",
+        \ 'source': g:mruCmd." | runFunction makeNumberedList",
         \   'sink': 'EditNumberedFile',
         \   'down':    '60%'
         \}))
+endfun
+function! EditNumberedFile(file)
+    let fileList =split(a:file)
+    execute ":e ".fileList[1]
 endfun
 "}}}
 

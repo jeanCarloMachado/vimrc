@@ -552,6 +552,7 @@ command! -nargs=* OpenDirectory :!open %:p:h &<cr>
 
 noremap <silent> <leader>rmrf :RemoveFile<cr>
 nmap <leader>od :VimuxRunCommand("cd ".expand('%:p:h'))<cr>
+nmap <leader>ls :VimuxRunCommand("cd ".expand('%:p:h'))<cr>
 "copy path name
 nmap <leader>cpn :!mycopy %:p<cr>
 "copy only name
@@ -611,20 +612,24 @@ fun! RenameFile()
 endfunc
 
 fun! CopyFile()
-    let old_name = expand('%:p')
+    let old_name = expand('%:t')
+    let old_dir = expand('%:p:h')
 
     setlocal splitbelow
     execute "split" $HOME."/tmp/vimcommands"
-    res -19
+    res -15
 
-    let out = 'cp '.old_name.' '.old_name
+    let out = 'cd '.old_dir.' ; cp '.old_name.' '.old_name
     call append(0, split(out, '\v\n'))
-    normal! gg
+    normal! gg$
+    :set syntax=sh
     nnoremap <buffer> <CR> :call RunLine()<cr>
+    imap <buffer> <CR> :call RunLine()<cr>
 endfunc
 fun! RunLine()
     :w
     let line = GetCurrentLineContent()
+    :VimuxCloseRunner
     :VimuxRunCommand(line."\n")
     :q
 endfun
@@ -747,7 +752,7 @@ function! s:bufopen(e)
   execute 'buffer' matchstr(a:e, '^[ 0-9]*')
 endfunction
 
-nnoremap <silent> <Leader>ls :call fzf#run(fzf#wrap({
+nnoremap <silent> <Leader>bl :call fzf#run(fzf#wrap({
 \   'source':  reverse(<sid>buflist()),
 \   'sink':    function('<sid>bufopen'),
 \   'options': '+m',

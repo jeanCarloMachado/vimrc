@@ -551,7 +551,7 @@ command! -nargs=* RemoveFile call RemoveFile()
 command! -nargs=* OpenDirectory :!open %:p:h &<cr>
 
 noremap <silent> <leader>rmrf :RemoveFile<cr>
-nmap <leader>od :!open %:p:h &<cr>
+nmap <leader>od :VimuxRunCommand("cd ".expand('%:p:h'))<cr>
 "copy path name
 nmap <leader>cpn :!mycopy %:p<cr>
 "copy only name
@@ -611,13 +611,23 @@ fun! RenameFile()
 endfunc
 
 fun! CopyFile()
-    let old_name = expand('%')
-    let new_name = input('New file name: ', expand('%'), 'file')
-    if new_name != '' && new_name != old_name
-        exec ':saveas ' . new_name
-        redraw!
-    endif
+    let old_name = expand('%:p')
+
+    setlocal splitbelow
+    execute "split" $HOME."/tmp/vimcommands"
+    res -19
+
+    let out = 'cp '.old_name.' '.old_name
+    call append(0, split(out, '\v\n'))
+    normal! gg
+    nnoremap <buffer> <CR> :call RunLine()<cr>
 endfunc
+fun! RunLine()
+    :w
+    let line = GetCurrentLineContent()
+    :VimuxRunCommand(line."\n")
+    :q
+endfun
 
 "}}}
 
@@ -633,8 +643,11 @@ nmap <leader>gk :call GitLog()<cr>
 nmap <leader>gl :call GitLog()<cr>
 
 fun! GitDiff()
-    let path = resolve(expand('%:p'))
-    execute '!cd $(dirname '.path.') ; git diff '.path.' '
+    let path = expand('%:p')
+    let cmd='cd $(dirname '.path.') ; git diff '.path
+    :execute 'vnew | 0read ! '.cmd
+    :set syntax=git
+    :normal gg
 endfunc
 nmap <leader>gdf :call GitDiff()<cr>
 
@@ -743,42 +756,7 @@ nnoremap <silent> <Leader>ls :call fzf#run(fzf#wrap({
 
 
 " MRU {{{
-nnoremap <leader>fru :call FzfMru()<cr>
-nnoremap <leader>mru :call MRUSplit()<cr>
-command! -nargs=* EditNumberedFile call EditNumberedFile( '<args>' )
-
-let mruCmd="cat ".$HOME."/.vim_mru_files | grep -v private | tail -n +2 "
-
-fun! MRUSplit()
-    setlocal splitbelow
-    setlocal buftype=nofile
-    split
-    res -19
-
-    let out = system(g:mruCmd)
-    call append(0, split(out, '\v\n'))
-    setlocal nomodifiable
-    normal! gg
-    nnoremap <buffer> <CR> :call OpenFile()<cr>
-endfun
-
-fun! OpenFile()
-    let line = GetCurrentLineContent()
-    :wincmd w
-    execute 'edit' line
-endfun
-
-fun! FzfMru()
-    call fzf#run(fzf#wrap({
-        \ 'source': g:mruCmd." | runFunction makeNumberedList",
-        \   'sink': 'EditNumberedFile',
-        \   'down':    '60%'
-        \}))
-endfun
-function! EditNumberedFile(file)
-    let fileList =split(a:file)
-    execute ":e ".fileList[1]
-endfun
+nnoremap <leader>mru :Mru<cr>
 "}}}
 
 let g:fzf_buffers_jump = 1

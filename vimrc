@@ -79,6 +79,7 @@ Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'junegunn/goyo.vim', { 'for': ['markdown'] }
 Plug 'yegappan/mru'
+Plug 'scrooloose/nerdtree'
 call plug#end()
 "}}}
 
@@ -235,12 +236,16 @@ endfun
 command! -nargs=* Grepr call Grepr( '<args>' )
 "}}}
 
-" netrw {{{
-nnoremap <leader>k :Vexplore<cr>
-let g:netrw_winsize = 25 "window width
-let g:netrw_altv=1 "open vertical splits on the right
-let g:netrw_liststyle=3
-let g:netrw_winsize = 0
+" sidemenu {{{
+" nnoremap <leader>k :Vexplore<cr>
+" let g:netrw_winsize = 25 "window width
+" let g:netrw_altv=1 "open vertical splits on the right
+" let g:netrw_liststyle=3
+" let g:netrw_winsize = 0
+
+nnoremap <leader>k :NERDTreeToggle<CR>
+nnoremap <leader>nf :NERDTreeFind<CR>
+
 "}}}
 
 "spelling {{{
@@ -865,6 +870,10 @@ fun! Documentation(str)
     if (&filetype == 'scala')
         let url = 'https://www.scala-lang.org/api/current/?search='.a:str
         let out = system("open '" . url . "' ")
+
+        let url = 'https://www.google.com/search?&q=spark+scala+'.a:str
+        let out = system("open '" . url . "' ")
+
         return
     endif
 
@@ -1320,6 +1329,7 @@ call toop#mapAround('**', '**', '<leader>bo')
 call toop#mapAround("***\n", '***', '<leader>hl')
 call toop#mapAround("```sh\n", "\n```", '<leader>c')
 call toop#mapAround("\n---\n", "\n---\n", '<leader>-')
+nnoremap <leader>- i---<esc>
 
 fun! GoogleIt(str)
     execute 'AsyncRun run_function googleIt "'.a:str.'"'

@@ -125,3 +125,5 @@ Abolish ive I've
 Abolish Jena Jean
 Abolish ti it
 Abolish ux UX
+Abolish ot to
+Abolish ofr for

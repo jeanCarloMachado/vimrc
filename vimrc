@@ -80,6 +80,8 @@ Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'junegunn/goyo.vim', { 'for': ['markdown'] }
 Plug 'yegappan/mru'
 Plug 'scrooloose/nerdtree'
+Plug 'mhinz/vim-startify'
+Plug 'dbakker/vim-projectroot'
 call plug#end()
 "}}}
 
@@ -161,6 +163,7 @@ nnoremap <leader>, :normal!mtA,<esc>`t
 " plugin specific
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
 let g:abolish_save_file = $HOME."/Dropbox/projects/vimrc/vim/abbreviations.vim"
+nnoremap <leader>cr :ProjectRootCD<cr>
 "}}}
 
 "ale config {{{
@@ -563,7 +566,6 @@ map <Leader>rn :call RenameFile()<cr>
 map <Leader>cp :call CopyFile()<cr>
 map <leader>ee :edit!<cr>
 map <leader>ck :!git checkout %<cr>
-nmap <leader>crn :call CopyCurrentRelativePath()<cr>
 "insert filname in insert mode
 inoremap <C-f> <C-R>=expand("%:t:r")<CR>
 

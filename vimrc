@@ -482,36 +482,27 @@ command! -nargs=* Quote :e $WIKI_PATH/src/quotes.md
 nnoremap <Leader>ww :Wiki<cr>
 nnoremap <Leader>ww :Wiki<cr>
 
-fun! GetUrl()
-    normal! $F(vi("cy
-    return @c
-endfunc
-
 fun! GetCurrentLineContent()
     normal! 0v$h"cy
     return @c
 endfunc
 
-fun! OpenMarkdown()
-    let url = GetUrl()
-    let path = expand('%:p:h')
-    execute 'edit ' . path . '/' . url . '.md'
+fun! GetLinkUri(str)
+    let result = system('sed "s/.*\[.*\](\(.*\)).*/\1/"', a:str)
+    let @c = result
+    return @c
 endfunc
 
 fun! OpenFileForMarkdown()
     let line = GetCurrentLineContent()
-    if ( line =~ "^http" )
-        let url = GetUrl()
-        :call OpenUrl(url)
-        return
-    elseif ( line =~ ".png" )
-        let url = GetUrl()
-        execute "!run_alias image ".url. " & "
-        return
-    endif
-
-    if ( line != "\n" )
-        :call OpenMarkdown()
+    if line =~ 'http'
+         let url = GetLinkUri(line)
+         :call OpenUrl(url)
+         return
+    elseif line =~ '\[.*\]\(.*\)'
+        let url = GetLinkUri(line)
+        let path = expand('%:p:h')
+        execute 'edit ' . path . '/' . url . '.md'
     endif
 endfun
 autocmd FileType markdown nnoremap <CR> :call OpenFileForMarkdown()<cr>

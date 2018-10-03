@@ -483,8 +483,7 @@ nnoremap <Leader>ww :Wiki<cr>
 nnoremap <Leader>ww :Wiki<cr>
 
 fun! GetCurrentLineContent()
-    normal! 0v$h"cy
-    return @c
+    return getline('.')
 endfunc
 
 fun! GetLinkUri(str)

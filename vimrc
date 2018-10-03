@@ -66,6 +66,7 @@ Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
 Plug 'fatih/vim-go', { 'for': ['go'] }
 Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
 Plug 'derekwyatt/vim-scala', { 'for': ['scala'] }
+Plug 'ensime/ensime-vim', { 'do': ':UpdateRemotePlugins' }
 Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
@@ -154,6 +155,7 @@ cnoremap <C-n> <Down>
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 nnoremap <leader>cf :!filefy-clippboard<cr>
 nmap <Leader>em <Plug>(easymotion-overwin-w)
+nmap <Leader>ff <Plug>(easymotion-overwin-w)
 "fast normal mode access through , instead of :
 nmap , :
 "make appending this punctuation chars easy

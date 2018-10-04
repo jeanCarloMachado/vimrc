@@ -492,7 +492,7 @@ fun! GetCurrentLineContent()
 endfunc
 
 fun! GetLinkUri(str)
-    let result = system('sed "s/.*\[.*\](\(.*\)).*/\1/"', a:str)
+    let result = matchstr(a:str, '\[.*\](\zs.*\ze)')
     let @c = result
     return @c
 endfunc

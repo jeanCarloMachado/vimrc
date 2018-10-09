@@ -22,7 +22,6 @@ Plug 'altercation/vim-colors-solarized'
 "inline errors, linting
 Plug 'w0rp/ale'
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'vim-utils/vim-man' "view manuals inside vim
 Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
 "same indentation text object
 Plug 'michaeljsmith/vim-indent-object'
@@ -31,9 +30,6 @@ Plug 'vim-scripts/argtextobj.vim'
 Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim'
 "grep like sublime one
 Plug 'dyng/ctrlsf.vim'
-Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
-"search for, substitute, and abbreviate multiple variants of a word
-Plug 'tpope/vim-abolish'
 "quoting/parenthesizing
 Plug 'tpope/vim-surround'
 "shows a git diff in the gutter (sign column) and stages/undoes hunks.
@@ -51,6 +47,7 @@ Plug 'ludovicchabant/vim-gutentags'
 Plug 'easymotion/vim-easymotion'
 Plug 'janko-m/vim-test'
 Plug 'rhysd/devdocs.vim'
+"adjust indenting
 Plug 'tpope/vim-sleuth'
 Plug 'breuckelen/vim-resize'
 Plug 'tpope/vim-fugitive'
@@ -59,30 +56,32 @@ Plug 'majutsushi/tagbar'
 "autocomplete
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'jeanCarloMachado/vim-toop'
+"autocomplete pairs chars
 Plug 'raimondi/delimitmate'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'lervag/vimtex', { 'for': ['latex'] }
-Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
-Plug 'fatih/vim-go', { 'for': ['go'] }
-Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
-Plug 'derekwyatt/vim-scala', { 'for': ['scala'] }
-Plug 'ensime/ensime-vim', { 'do': ':UpdateRemotePlugins' }
-Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
-Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
-Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
-Plug 'vim-vdebug/vdebug', {'for': ['php'] }
-Plug 'fatih/vim-go', { 'for': ['go'] }
-"filetype only * (for swift)
-Plug 'kballard/vim-swift', { 'for': ['swift'] }
-Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
-Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
-"hides links paths, and other small niceties
-Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
-Plug 'junegunn/goyo.vim', { 'for': ['markdown'] }
 Plug 'yegappan/mru'
 Plug 'scrooloose/nerdtree'
 Plug 'mhinz/vim-startify'
 Plug 'dbakker/vim-projectroot'
+Plug 'easymotion/vim-easymotion'
+Plug 'tpope/vim-abolish'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+" Plug 'lervag/vimtex', { 'for': ['latex'] }
+" Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
+Plug 'fatih/vim-go', { 'for': ['go'] }
+" Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
+Plug 'derekwyatt/vim-scala', { 'for': ['scala'] }
+Plug 'ensime/ensime-vim', { 'do': ':UpdateRemotePlugins' }
+" Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
+Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
+Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
+Plug 'vim-vdebug/vdebug', {'for': ['php'] }
+"filetype only * (for swift)
+Plug 'kballard/vim-swift', { 'for': ['swift'] }
+" Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
+Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
+"hides links paths, and other small niceties
+Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
+Plug 'junegunn/goyo.vim', { 'for': ['markdown'] }
 call plug#end()
 "}}}
 
@@ -171,7 +170,6 @@ nnoremap <leader>cr :ProjectRootCD<cr>
 "ale config {{{
 nnoremap <leader>fmt :ALEFix<cr>
 
-let g:airline#extensions#ale#enabled = 1
 let g:ale_set_highlights = 1
 let g:ale_php_phpcs_standard = $CLIPP_PATH."/Backend/ruleset.xml"
 let g:ale_lint_on_text_changed = 0
@@ -492,7 +490,7 @@ fun! GetCurrentLineContent()
 endfunc
 
 fun! GetLinkUri(str)
-    let result = matchstr(a:str, '\[.*\](\zs.*\ze)')
+    let result = system('sed "s/.*\[.*\](\(.*\)).*/\1/"', a:str)
     let @c = result
     return @c
 endfunc
@@ -509,7 +507,7 @@ fun! OpenFileForMarkdown()
         execute 'edit ' . path . '/' . url . '.md'
     endif
 endfun
-autocmd FileType markdown nnoremap <CR> :call OpenFileForMarkdown()<cr>
+autocmd FileType markdown nnoremap <buffer> <CR> :call OpenFileForMarkdown()<cr>
 autocmd CmdwinEnter * nnoremap <CR> <CR>
 autocmd BufReadPost quickfix nnoremap <CR> <CR>
 
@@ -518,7 +516,7 @@ fun! OpenUrl(url)
 endfunc
 nnoremap gx :call OpenUrl()<cr>
 
-fun! GrepWiki( arg )
+fun! GrepWiki( rg )
     let old_path = $pwd
     exec "cd " . $WIKI_PATH
     execute "grep " . a:arg . "  "
@@ -601,13 +599,18 @@ fun! RelativePath(filename)
 endfunc
 
 fun! RenameFile()
-    let old_name = expand('%')
-    let new_name = input('New file name: ', expand('%'), 'file')
-    if new_name != '' && new_name != old_name
-        exec ':saveas ' . new_name
-        exec ':silent !rm ' . old_name
-        redraw!
-    endif
+    let old_name = expand('%:t')
+    let old_dir = expand('%:p:h')
+
+    setlocal splitbelow
+    execute "split" $HOME."/tmp/vimcommands"
+    res -15
+
+    let out = 'cd '.old_dir.' ; mv '.old_name.' '.old_name
+    call append(0, split(out, '\v\n'))
+    normal! gg$
+    :set syntax=sh
+    nnoremap <buffer> <CR> :call RunLine()<cr>
 endfunc
 
 fun! CopyFile()
@@ -623,10 +626,10 @@ fun! CopyFile()
     normal! gg$
     :set syntax=sh
     nnoremap <buffer> <CR> :call RunLine()<cr>
-    imap <buffer> <CR> :call RunLine()<cr>
 endfunc
+
 fun! RunLine()
-    :w
+    :echom "gandalf"
     let line = GetCurrentLineContent()
     :VimuxCloseRunner
     :VimuxRunCommand(line."\n")
@@ -895,7 +898,7 @@ nmap <leader>dw  "zyiw:exe "call Documentation('".@z."')"<cr>
 nmap <leader>vn :vnew<cr>
 nnoremap <leader>on :only<cr>
 set splitright "split new windows to the right
-let g:resize_count = 12
+let g:resize_count = 19
 let g:vim_resize_disable_auto_mappings = 1
 nnoremap <leader>H :CmdResizeLeft<cr>
 nnoremap <leader>L :CmdResizeRight<cr>
@@ -1436,7 +1439,6 @@ highlight ALEErrorSign ctermbg=NONE ctermfg=red
 highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
 
 let g:solarized_termtrans = 1
-let g:airline_theme='solarized'
 " set background=light
 set background=dark
 

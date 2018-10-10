@@ -62,7 +62,6 @@ Plug 'yegappan/mru'
 Plug 'scrooloose/nerdtree'
 Plug 'mhinz/vim-startify'
 Plug 'dbakker/vim-projectroot'
-Plug 'easymotion/vim-easymotion'
 Plug 'tpope/vim-abolish'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 " Plug 'lervag/vimtex', { 'for': ['latex'] }

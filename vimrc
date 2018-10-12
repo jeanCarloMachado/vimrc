@@ -67,7 +67,7 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 " Plug 'lervag/vimtex', { 'for': ['latex'] }
 " Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
 Plug 'fatih/vim-go', { 'for': ['go'] }
-" Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
+Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
 Plug 'derekwyatt/vim-scala', { 'for': ['scala'] }
 Plug 'ensime/ensime-vim', { 'do': ':UpdateRemotePlugins' }
 " Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
@@ -88,7 +88,6 @@ call plug#end()
 set nocompatible
 set wildignore+=*\\dist\\**
 let mapleader = "\<space>"
-set tags+=/usr/include/tags,./tags,./.git/tags,../.git/tags
 " set mouse=a "enable mouse on normal,visual,inter,command-line modes
 set backspace=indent,eol,start "make the backspace work like in most other programs
 " set cot+=menuone "Use the popup menu also when there is only one match
@@ -162,7 +161,7 @@ nnoremap <leader>: :normal!mtA:<esc>`t
 nnoremap <leader>, :normal!mtA,<esc>`t
 " plugin specific
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
-let g:abolish_save_file = $HOME."/Dropbox/projects/vimrc/vim/abbreviations.vim"
+let g:abolish_save_file = $HOME."/projects/vimrc/vim/abbreviations.vim"
 nnoremap <leader>cr :ProjectRootCD<cr>
 "}}}
 
@@ -847,9 +846,9 @@ endfun
 
 "tags {{{
 set tags=./tags;
-let g:easytags_dynamic_files = 1
-let g:easytags_async =  1
-let g:easytags_autorecurse = 0
+set tags+=/usr/include/tags,./tags,./.git/tags,../.git/tags
+" let g:gutentags_ctags_extra_args=["--fields=+laimS"]
+
 "}}}
 
 " run tests {{{

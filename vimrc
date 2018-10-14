@@ -20,7 +20,7 @@ call plug#begin()
 "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
 Plug 'altercation/vim-colors-solarized'
 "inline errors, linting
-Plug 'w0rp/ale'
+Plug 'w0rp/ale', { 'for': ['php', 'python', 'ruby', 'markdown', 'sh', 'scala', 'javascript'] }
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
 "same indentation text object
@@ -43,13 +43,15 @@ Plug 'git@github.com:skywind3000/asyncrun.vim.git'
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 Plug 'wakatime/vim-wakatime'
 Plug 'benmills/vimux'
+"better tags management
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'easymotion/vim-easymotion'
-Plug 'janko-m/vim-test'
+Plug 'janko-m/vim-test', { 'for': ['php', 'python', 'ruby'] }
 Plug 'rhysd/devdocs.vim'
 "adjust indenting
 Plug 'tpope/vim-sleuth'
 Plug 'breuckelen/vim-resize'
+"seeing git log and git diff
 Plug 'tpope/vim-fugitive'
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'majutsushi/tagbar'
@@ -61,11 +63,13 @@ Plug 'raimondi/delimitmate'
 Plug 'yegappan/mru'
 Plug 'scrooloose/nerdtree'
 Plug 'mhinz/vim-startify'
+"easily go back to project root
 Plug 'dbakker/vim-projectroot'
 Plug 'tpope/vim-abolish'
+Plug 'vim-syntastic/syntastic'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-" Plug 'lervag/vimtex', { 'for': ['latex'] }
-" Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
+Plug 'lervag/vimtex', { 'for': ['latex'] }
+Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
 Plug 'fatih/vim-go', { 'for': ['go'] }
 Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
 Plug 'derekwyatt/vim-scala', { 'for': ['scala'] }
@@ -75,7 +79,7 @@ Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
 Plug 'vim-vdebug/vdebug', {'for': ['php'] }
 "filetype only * (for swift)
-Plug 'kballard/vim-swift', { 'for': ['swift'] }
+Plug 'keith/swift.vim'
 " Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
 Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
 "hides links paths, and other small niceties
@@ -165,8 +169,10 @@ let g:abolish_save_file = $HOME."/projects/vimrc/vim/abbreviations.vim"
 nnoremap <leader>cr :ProjectRootCD<cr>
 "}}}
 
-"ale config {{{
+"linting, fixing - ale config {{{
+let g:syntastic_swift_checkers = ['swiftlint', 'swiftpm'] 
 nnoremap <leader>fmt :ALEFix<cr>
+
 
 let g:ale_set_highlights = 1
 let g:ale_php_phpcs_standard = $CLIPP_PATH."/Backend/ruleset.xml"

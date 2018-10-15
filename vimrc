@@ -66,7 +66,7 @@ Plug 'mhinz/vim-startify'
 "easily go back to project root
 Plug 'dbakker/vim-projectroot'
 Plug 'tpope/vim-abolish'
-Plug 'vim-syntastic/syntastic'
+Plug 'vim-syntastic/syntastic', { 'for': ['swift'] }
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'lervag/vimtex', { 'for': ['latex'] }
 Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
@@ -235,7 +235,7 @@ let g:conceal_php_disable_ligature=1
 "}}}
 
 "{{{ grep
-set grepprg=rg\ --vimgrep
+set grepprg=rg\ --vimgrep\ --hidden\ --no-ignore 
 set grepformat=%f:%l:%c:%m
 fun! Grepr( arg )
     execute "grep " . a:arg . " %:p:h/*"
@@ -746,6 +746,9 @@ autocmd filetype crontab setlocal nobackup nowritebackup
 "fzf {{{
 let g:fzf_buffers_jump = 1
 map <c-p> :FZF<cr>
+nnoremap <silent> <c-a> :call fzf#run(fzf#wrap({
+\    'source': 'find .'
+\ }))<CR>
 
 function! s:buflist()
   redir => ls

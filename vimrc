@@ -41,10 +41,10 @@ Plug 'kshenoy/vim-signature'
 "most recently used files list
 Plug 'git@github.com:skywind3000/asyncrun.vim.git'
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
-Plug 'wakatime/vim-wakatime'
+" Plug 'wakatime/vim-wakatime'
 Plug 'benmills/vimux'
 "better tags management
-Plug 'ludovicchabant/vim-gutentags'
+" Plug 'ludovicchabant/vim-gutentags'
 Plug 'easymotion/vim-easymotion'
 Plug 'janko-m/vim-test', { 'for': ['php', 'python', 'ruby'] }
 Plug 'rhysd/devdocs.vim'
@@ -56,7 +56,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'majutsushi/tagbar'
 "autocomplete
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'jeanCarloMachado/vim-toop'
 "autocomplete pairs chars
 Plug 'raimondi/delimitmate'
@@ -73,14 +73,14 @@ Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
 Plug 'fatih/vim-go', { 'for': ['go'] }
 Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
 Plug 'derekwyatt/vim-scala', { 'for': ['scala'] }
-Plug 'ensime/ensime-vim', { 'do': ':UpdateRemotePlugins' }
-" Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
+Plug 'ensime/ensime-vim', { 'do': ':UpdateRemotePlugins', 'for': ['scala'] }
+Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
 Plug 'vim-vdebug/vdebug', {'for': ['php'] }
 "filetype only * (for swift)
 Plug 'keith/swift.vim'
-" Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
+Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
 Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
 "hides links paths, and other small niceties
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
@@ -97,7 +97,7 @@ set backspace=indent,eol,start "make the backspace work like in most other progr
 " set cot+=menuone "Use the popup menu also when there is only one match
 set number "show numbers
 set hidden "hides buffers instead of closing them, don't give warnings on unsaved things
-set shell=$SHELL
+set shell=/bin/zsh
 set encoding=utf-8
 set showmode "If in Insert, Replace or Visual mode put a message on the last line
 set showcmd "Show (partial) command in the last line of the screen
@@ -1446,8 +1446,11 @@ highlight ALEErrorSign ctermbg=NONE ctermfg=red
 highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
 
 let g:solarized_termtrans = 1
-" set background=light
+
 set background=dark
+if $VIM_THEME == "light"
+    set background=light
+endif
 
 colorscheme solarized
 let g:solarized_bold=1
@@ -1458,4 +1461,6 @@ set t_Co=256
 noremap <F12> <Esc>:syntax sync fromstart<CR>
 inoremap <F12> <C-o>:syntax sync fromstart<CR>
 "}}}
+
+imap jk <Esc>
 

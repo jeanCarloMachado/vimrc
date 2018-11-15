@@ -127,3 +127,5 @@ Abolish ti it
 Abolish ux UX
 Abolish ot to
 Abolish ofr for
+Abolish thursday Thursday
+Abolish ahve have

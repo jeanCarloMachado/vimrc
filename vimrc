@@ -18,6 +18,7 @@ filetype on
 filetype plugin on "loading the plugin files for specific file types
 call plug#begin()
 "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
+Plug 'tpope/vim-abolish'
 Plug 'altercation/vim-colors-solarized'
 "inline errors, linting
 Plug 'w0rp/ale', { 'for': ['php', 'python', 'ruby', 'markdown', 'sh', 'scala', 'javascript'] }
@@ -44,7 +45,7 @@ Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 " Plug 'wakatime/vim-wakatime'
 Plug 'benmills/vimux'
 "better tags management
-" Plug 'ludovicchabant/vim-gutentags'
+Plug 'ludovicchabant/vim-gutentags'
 Plug 'easymotion/vim-easymotion'
 Plug 'janko-m/vim-test', { 'for': ['php', 'python', 'ruby'] }
 Plug 'rhysd/devdocs.vim'
@@ -65,7 +66,6 @@ Plug 'scrooloose/nerdtree'
 Plug 'mhinz/vim-startify'
 "easily go back to project root
 Plug 'dbakker/vim-projectroot'
-Plug 'tpope/vim-abolish'
 Plug 'vim-syntastic/syntastic', { 'for': ['swift'] }
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'lervag/vimtex', { 'for': ['latex'] }
@@ -97,7 +97,7 @@ set backspace=indent,eol,start "make the backspace work like in most other progr
 " set cot+=menuone "Use the popup menu also when there is only one match
 set number "show numbers
 set hidden "hides buffers instead of closing them, don't give warnings on unsaved things
-set shell=/bin/zsh
+set shell=/bin/bash
 set encoding=utf-8
 set showmode "If in Insert, Replace or Visual mode put a message on the last line
 set showcmd "Show (partial) command in the last line of the screen
@@ -146,7 +146,7 @@ nmap <leader>pn :!echo %<cr>
 nmap <leader>pfn :!echo %:p<cr>
 nmap <silent> <leader>ve :e $MY_VIMRC<cr>:lcd %:h<cr>
 nnoremap <leader>c :noh<cr>
-"set shellcmdflag=-ic "make vim :! behave like a normal prompt
+" set shellcmdflag=-ic "make vim :! behave like a normal prompt
 nnoremap <leader><space> :w<cr>
 "use C-p and C-n to browser normal mode commands history
 cnoremap <C-p> <Up>
@@ -165,7 +165,7 @@ nnoremap <leader>: :normal!mtA:<esc>`t
 nnoremap <leader>, :normal!mtA,<esc>`t
 " plugin specific
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
-let g:abolish_save_file = $HOME."/projects/vimrc/vim/abbreviations.vim"
+" let g:abolish_save_file = "/home/jeanmachado/.vim/abbreviations.vim"
 nnoremap <leader>cr :ProjectRootCD<cr>
 "}}}
 
@@ -663,6 +663,8 @@ endfunc
 nmap <leader>gdf :call GitDiff()<cr>
 
 map <leader>gck :!git checkout %<cr>
+
+map <leader>gckp :!git checkout HEAD~1 %<cr>
 command! -nargs=* Blame :Gblame<cr>
 map <leader>bl :Gblame<cr>
 

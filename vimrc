@@ -5,6 +5,8 @@
 " Userspace dependencies
 " - par
 " - rg
+"- ctags https://github.com/universal-ctags/ctags
+
 " Each new supported language should have configured the following features
 " - linters and fixer
 " - default template for empty files
@@ -14,6 +16,7 @@
 " - unit testing execution in single command
 
 " plugins load {{{
+set nocompatible
 filetype on
 filetype plugin on "loading the plugin files for specific file types
 call plug#begin()
@@ -51,11 +54,11 @@ Plug 'janko-m/vim-test', { 'for': ['php', 'python', 'ruby'] }
 Plug 'rhysd/devdocs.vim'
 "adjust indenting
 Plug 'tpope/vim-sleuth'
-Plug 'breuckelen/vim-resize'
+" Plug 'breuckelen/vim-resize'
 "seeing git log and git diff
 Plug 'tpope/vim-fugitive'
 Plug 'nathanaelkane/vim-indent-guides'
-Plug 'majutsushi/tagbar'
+" Plug 'majutsushi/tagbar'
 "autocomplete
 " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'jeanCarloMachado/vim-toop'
@@ -63,7 +66,7 @@ Plug 'jeanCarloMachado/vim-toop'
 Plug 'raimondi/delimitmate'
 Plug 'yegappan/mru'
 Plug 'scrooloose/nerdtree'
-Plug 'mhinz/vim-startify'
+" Plug 'mhinz/vim-startify'
 "easily go back to project root
 Plug 'dbakker/vim-projectroot'
 Plug 'vim-syntastic/syntastic', { 'for': ['swift'] }
@@ -88,8 +91,7 @@ Plug 'junegunn/goyo.vim', { 'for': ['markdown'] }
 call plug#end()
 "}}}
 
-" {{{ generic sets, let's
-set nocompatible
+" {{{ generic
 set wildignore+=*\\dist\\**
 let mapleader = "\<space>"
 " set mouse=a "enable mouse on normal,visual,inter,command-line modes
@@ -165,7 +167,7 @@ nnoremap <leader>: :normal!mtA:<esc>`t
 nnoremap <leader>, :normal!mtA,<esc>`t
 " plugin specific
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
-" let g:abolish_save_file = "/home/jeanmachado/.vim/abbreviations.vim"
+let g:abolish_save_file = "/home/jeanmachado/.vim/abbreviations.vim"
 nnoremap <leader>cr :ProjectRootCD<cr>
 "}}}
 
@@ -175,7 +177,13 @@ nnoremap <leader>fmt :ALEFix<cr>
 
 
 let g:ale_set_highlights = 1
-let g:ale_php_phpcs_standard = $CLIPP_PATH."/Backend/ruleset.xml"
+
+echom $pwd
+if ($pwd == "/home/jeanmachado/projects/fishfarm")
+    echom "gandalf"
+    let g:ale_php_phpcs_standard = "/home/jeanmachado/projects/activity-classifier/ruleset.xml"
+endif
+
 let g:ale_lint_on_text_changed = 0
 let g:ale_lint_on_save = 1
 let g:ale_lint_on_enter = 0
@@ -329,11 +337,6 @@ set autoindent
 
 map <Leader>id :IndentGuidesToggle<cr>
 autocmd filetype html,tpl :IndentGuidesEnable
-"}}}
-
-" tagbar {{{
-map <Leader>tt :TagbarToggle<cr>
-autocmd filetype php,vimscript,python  :TagbarOpen
 "}}}
 
 " ctrlsf {{{
@@ -856,10 +859,12 @@ endfun
 "}}}
 
 "tags {{{
-set tags=./tags;
-set tags+=/usr/include/tags,./tags,./.git/tags,../.git/tags
-" let g:gutentags_ctags_extra_args=["--fields=+laimS"]
-
+set tags=./tags
+let g:gutentags_ctags_extra_args=["--fields=+aimlS"]
+let g:gutentags_ctags_executable="myctags"
+" autocmd filetype php let g:gutentags_ctags_executable="phpctags"
+" let g:gutentags_exclude = ['*.css', '*.html', '*.js']
+" let g:gutentags_cache_dir = '~/.vim/gutentags'
 "}}}
 
 " run tests {{{
@@ -882,6 +887,13 @@ fun! Documentation(str)
 
         return
     endif
+
+    if (&filetype == 'php')
+        let url = 'http://php.net/search.php?q='.a:str
+        let out = system("open '" . url . "' ")
+        return
+    endif
+
 
     if (&filetype == 'swift')
         let url = 'https://developer.apple.com/search/?q='.a:str
@@ -1464,5 +1476,137 @@ noremap <F12> <Esc>:syntax sync fromstart<CR>
 inoremap <F12> <C-o>:syntax sync fromstart<CR>
 "}}}
 
-imap jk <Esc>
 
+" exec ":Abolish 4this $this" 
+" :Abolish COnfiguration Configuration
+" :Abolish Cleint Client
+" :Abolish Datetime DateTime
+" :Abolish dei die
+" :Abolish THe The
+" :Abolish THe The
+" :Abolish TYpe Type
+" :Abolish TYpe Type
+" :Abolish Thats That's
+" :Abolish URLS URL's
+" :Abolish urls url's
+" :Abolish aand and
+" :Abolish acessor accessor
+" :Abolish addCLient addClient
+" :Abolish addres address
+" :Abolish adn and
+" :Abolish adn and
+" :Abolish adqSql addSql
+" :Abolish ahve have
+" :Abolish apis api's
+" :Abolish arent aren't
+" :Abolish asmjs asm.js
+" :Abolish avaliable available
+" :Abolish belive believe
+" :Abolish calss class
+" :Abolish cant can't
+" :Abolish cant can't
+" :Abolish celar clear
+" :Abolish childrens children's
+" :Abolish coderockr Coderockr
+" :Abolish contemporaneos contemporâneos
+" :Abolish didnt didn't
+" :Abolish doctr doctrine
+" :Abolish doesnt doesn't
+" :Abolish dont don't
+" :Abolish dont don't
+" :Abolish dr Dr.
+" :Abolish mr Mr.
+" :Abolish ehco echo
+" :Abolish ehlp help
+" :Abolish ehlp help
+" :Abolish elmentos elementos
+" :Abolish entityM entityManager
+" :Abolish entty entity
+" :Abolish facotory factory
+" :Abolish fixt fixture
+" :Abolish fo of
+" :Abolish fro for
+" :Abolish fucntion function
+" :Abolish gamming gaming
+" :Abolish getService get
+" :Abolish grantes grandes
+" :Abolish grantes grandes
+" :Abolish guis GUI's
+" :Abolish havent haven't
+" :Abolish hte the
+" :Abolish HTTP2 HTTP/2
+" :Abolish ill I'll
+" :Abolish im I'm
+" :Abolish importancia importância
+" :Abolish indexdb IndexedDB
+" :Abolish isnt isn't
+" :Abolish its it's
+" :Abolish ive I've
+" :Abolish joinville Joinville
+" :Abolish knowl knowledge
+" :Abolish lenght length
+" :Abolish length length
+" :Abolish lets let's
+" :Abolish maek make
+" :Abolish mozilla Mozilla
+" :Abolish neeed need
+" :Abolish nwe new
+" :Abolish ones one's
+" :Abolish opengl OpenGL
+" :Abolish paly play
+" :Abolish parametros parâmetros
+" :Abolish paramter parameter
+" :Abolish pjr prj
+" :Abolish qeu que
+" :Abolish referencias referências
+" :Abolish resutl result
+" :Abolish reuslt result
+" :Abolish reuslt result
+" :Abolish shouldnt shouldn't
+" :Abolish substancia substância
+" :Abolish taht that
+" :Abolish teh the
+" :Abolish teh the
+" :Abolish texit textit
+" :Abolish textti textit
+" :Abolish ther their
+" :Abolish theres there's
+" :Abolish theyre they're
+" :Abolish theyve they've
+" :Abolish thougth thought
+" :Abolish w3c W3C
+" :Abolish webkit WebKit
+" :Abolish webvr WebVR
+" :Abolish wen when
+" :Abolish werent weren't
+" :Abolish weve we've
+" :Abolish whant want
+" :Abolish whats what's
+" :Abolish wheter whether
+" :Abolish wont won't
+" :Abolish youd you'd
+" :Abolish youll you'll
+" :Abolish youll you'll
+" :Abolish youre you're
+" :Abolish youre you're
+" :Abolish youre you're
+" :Abolish youve you've
+" :Abolish hes he's
+" :Abolish cleint client
+" :Abolish sevice service
+" :Abolish Modle Model
+" :Abolish retunr return
+" :Abolish lsit list
+" :Abolish TItle Title
+" :Abolish colleciton collection
+" :Abolish colleciton collection
+" :Abolish ive I've
+" :Abolish Jena Jean
+" :Abolish ti it
+" :Abolish ux UX
+" :Abolish ot to
+" :Abolish ofr for
+" :Abolish thursday Thursday
+" :Abolish ahve have
+" :Abolish im I'm
+" :Abolish im I'm

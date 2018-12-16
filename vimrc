@@ -6,6 +6,7 @@
 " - par
 " - rg
 "- ctags https://github.com/universal-ctags/ctags
+" - yaourt -S python-proselint write-good
 
 " Each new supported language should have configured the following features
 " - linters and fixer
@@ -21,7 +22,6 @@ filetype on
 filetype plugin on "loading the plugin files for specific file types
 call plug#begin()
 "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
-Plug 'tpope/vim-abolish'
 Plug 'altercation/vim-colors-solarized'
 "inline errors, linting
 Plug 'w0rp/ale', { 'for': ['php', 'python', 'ruby', 'markdown', 'sh', 'scala', 'javascript'] }
@@ -54,7 +54,6 @@ Plug 'janko-m/vim-test', { 'for': ['php', 'python', 'ruby'] }
 Plug 'rhysd/devdocs.vim'
 "adjust indenting
 Plug 'tpope/vim-sleuth'
-" Plug 'breuckelen/vim-resize'
 "seeing git log and git diff
 Plug 'tpope/vim-fugitive'
 Plug 'nathanaelkane/vim-indent-guides'
@@ -66,7 +65,7 @@ Plug 'jeanCarloMachado/vim-toop'
 Plug 'raimondi/delimitmate'
 Plug 'yegappan/mru'
 Plug 'scrooloose/nerdtree'
-" Plug 'mhinz/vim-startify'
+Plug 'mhinz/vim-startify'
 "easily go back to project root
 Plug 'dbakker/vim-projectroot'
 Plug 'vim-syntastic/syntastic', { 'for': ['swift'] }
@@ -88,6 +87,7 @@ Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
 "hides links paths, and other small niceties
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'junegunn/goyo.vim', { 'for': ['markdown'] }
+Plug 'tpope/vim-abolish'
 call plug#end()
 "}}}
 
@@ -169,12 +169,12 @@ nnoremap <leader>: :normal!mtA:<esc>`t
 nnoremap <leader>, :normal!mtA,<esc>`t
 " plugin specific
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
-let g:abolish_save_file = "/home/jean/.vim/abbreviations.vim"
+let g:abolish_save_file = "/home/jean/.vim/after/plugin/abolish.vim"
 nnoremap <leader>cr :ProjectRootCD<cr>
 "}}}
 
 "linting, fixing - ale config {{{
-let g:syntastic_swift_checkers = ['swiftlint', 'swiftpm'] 
+let g:syntastic_swift_checkers = ['swiftlint', 'swiftpm']
 nnoremap <leader>fmt :ALEFix<cr>
 
 

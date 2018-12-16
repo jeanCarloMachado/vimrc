@@ -646,7 +646,7 @@ endfun
 "git {{{
 fun! GitLog()
     let path = expand('%:p')
-    let cmd='cd $(dirname '.path.') ; git log -p --follow '.path
+    let cmd='export REALP=$(realpath '.path.') ; cd $(dirname $REALP) ; git log -p --follow $(realpath $REALP)'
     :execute 'vnew | 0read ! '.cmd
     :set syntax=git
     :normal gg
@@ -656,7 +656,7 @@ nmap <leader>gl :call GitLog()<cr>
 
 fun! GitDiff()
     let path = expand('%:p')
-    let cmd='cd $(dirname '.path.') ; git diff '.path
+    let cmd='export REALP=$(realpath '.path.') ; cd $(dirname $REALP) ; git diff $(realpath $REALP)'
     :execute 'vnew | 0read ! '.cmd
     :set syntax=git
     :normal gg

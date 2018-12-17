@@ -190,10 +190,14 @@ let g:ale_lint_on_text_changed = 0
 let g:ale_writegood_options = ' --so --illusion --adverb --tooWordy --cliches'
 let g:ale_sign_warning = '⚠'
 let g:ale_sign_error = '✖'
+" if ($pwd == "/home/jean/projects/fishfarm")
+"     echom "gandalf"
+"     let g:ale_php_phpcs_standard = "/home/jeanmachado/projects/activity-classifier/ruleset.xml"
+" endif
 
 
+" \   'php': ['php', 'phpcs'],
 let g:ale_linters = {
-\   'php': ['php', 'phpcs'],
 \   'python': ['flake8', 'pylint'],
 \   'javascript': ['eslint'],
 \   'sh': ['shell', 'shellcheck'],

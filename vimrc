@@ -24,7 +24,7 @@ call plug#begin()
 "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
 Plug 'altercation/vim-colors-solarized'
 "inline errors, linting
-Plug 'w0rp/ale', { 'for': ['php', 'python', 'ruby', 'markdown', 'sh', 'scala', 'javascript'] }
+Plug 'w0rp/ale', { 'for': ['php', 'python', 'ruby', 'markdown', 'sh', 'scala', 'javascript', 'elm'] }
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
 "same indentation text object
@@ -45,7 +45,7 @@ Plug 'kshenoy/vim-signature'
 "most recently used files list
 Plug 'git@github.com:skywind3000/asyncrun.vim.git'
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
-" Plug 'wakatime/vim-wakatime'
+Plug 'wakatime/vim-wakatime'
 Plug 'benmills/vimux'
 "better tags management
 Plug 'ludovicchabant/vim-gutentags'
@@ -59,7 +59,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'nathanaelkane/vim-indent-guides'
 " Plug 'majutsushi/tagbar'
 "autocomplete
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'jeanCarloMachado/vim-toop'
 "autocomplete pairs chars
 Plug 'raimondi/delimitmate'
@@ -88,8 +88,33 @@ Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'junegunn/goyo.vim', { 'for': ['markdown'] }
 Plug 'tpope/vim-abolish'
+Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
+Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs'}
+"requires nvim-completion-manager
+" assuming you're using vim-plug: https://github.com/junegunn/vim-plug
+Plug 'phpactor/phpactor' ,  {'do': 'composer install', 'for': 'php'}
+Plug 'ncm2/ncm2'
+Plug 'roxma/nvim-yarp'
+"enable ncm2 for all buffers
+autocmd BufEnter * call ncm2#enable_for_buffer()
+" IMPORTANTE: :help Ncm2PopupOpen for more information
+set completeopt=noinsert,menuone,noselect
+" NOTE: you need to install completion sources to get completions. Check
+" our wiki page for a list of sources: https://github.com/ncm2/ncm2/wiki
+Plug 'ncm2/ncm2-bufword'
+Plug 'ncm2/ncm2-tmux'
+Plug 'ncm2/ncm2-path'
+
+" Include Phpactor
+
+Plug 'roxma/nvim-yarp'
+Plug 'phpactor/ncm2-phpactor'
+
+
 call plug#end()
 "}}}
+
+let g:rootmarkers = ['.projectroot', 'docker-compose.yml', '.git', '.hg', '.svn', '.bzr','_darcs','build.xml']
 
 let g:deoplete#enable_at_startup = 1
 
@@ -180,8 +205,6 @@ nnoremap <leader>fmt :ALEFix<cr>
 
 let g:ale_set_highlights = 1
 
-echom $pwd
-
 let g:ale_lint_on_text_changed = 0
 let g:ale_lint_on_save = 1
 let g:ale_lint_on_enter = 0
@@ -190,20 +213,19 @@ let g:ale_lint_on_text_changed = 0
 let g:ale_writegood_options = ' --so --illusion --adverb --tooWordy --cliches'
 let g:ale_sign_warning = '⚠'
 let g:ale_sign_error = '✖'
-" if ($pwd == "/home/jean/projects/fishfarm")
-"     echom "gandalf"
-"     let g:ale_php_phpcs_standard = "/home/jeanmachado/projects/activity-classifier/ruleset.xml"
-" endif
 
+"change ruleset for fishfamr
+autocmd BufRead,BufNewFile */fishfarm/* let g:ale_php_phpcs_standard = "/home/jean/projects/activity-classifier/ruleset.xml"
 
-" \   'php': ['php', 'phpcs'],
 let g:ale_linters = {
+\   'php': ['php', 'phpcs'],
 \   'python': ['flake8', 'pylint'],
 \   'javascript': ['eslint'],
 \   'sh': ['shell', 'shellcheck'],
 \   'markdown': ['write-good', 'proselint'],
 \   'scala': ['fsc', 'scalac'],
-\   'swift': ['swiftlint']
+\   'swift': ['swiftlint'],
+\   'elm': ['elm-fomart', 'elm-make']
 \}
 
 let g:ale_fixers = {
@@ -211,7 +233,8 @@ let g:ale_fixers = {
 \   'php': ['php_cs_fixer', 'phpcbf'],
 \   'python': ['autopep8', 'yapf'],
 \   'scala': ['scalafmt'],
-\   'swift': ['swiftformat']
+\   'swift': ['swiftformat'],
+\   'elm': ['elm-format']
 \}
 "}}}
 
@@ -846,6 +869,12 @@ let g:vdebug_keymap = {
 \    "get_context" : "dx",
 \    "eval_under_cursor" : "<F12>",
 \    "eval_visual" : "<Leader>dv",
+\}
+
+let g:vdebug_options = {
+\       'path_maps': {
+\               '/var/www/getyourguide.com/current': '/home/jean/projects/fishfarm',
+\    }
 \}
 
 fun! ShowStringOnNewWindow(content)

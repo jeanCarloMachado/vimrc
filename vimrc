@@ -59,7 +59,6 @@ Plug 'tpope/vim-fugitive'
 Plug 'nathanaelkane/vim-indent-guides'
 " Plug 'majutsushi/tagbar'
 "autocomplete
-" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'jeanCarloMachado/vim-toop'
 "autocomplete pairs chars
 Plug 'raimondi/delimitmate'
@@ -89,6 +88,12 @@ Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'junegunn/goyo.vim', { 'for': ['markdown'] }
 Plug 'tpope/vim-abolish'
 Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
+
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
+
 Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs'}
 "requires nvim-completion-manager
 " assuming you're using vim-plug: https://github.com/junegunn/vim-plug
@@ -116,7 +121,6 @@ call plug#end()
 
 let g:rootmarkers = ['.projectroot', 'docker-compose.yml', '.git', '.hg', '.svn', '.bzr','_darcs','build.xml']
 
-let g:deoplete#enable_at_startup = 1
 
 " {{{ generic
 set wildignore+=*\\dist\\**
@@ -242,7 +246,6 @@ let g:ale_fixers = {
 " let g:ale_completion_enabled = 1
 " set completeopt=longest,menuone
 " set omnifunc=syntaxcomplete#Complete
-let g:deoplete#enable_at_startup = 1
 "}}}
 
 "Concealing {{{
@@ -1506,5 +1509,11 @@ set t_Co=256
 noremap <F12> <Esc>:syntax sync fromstart<CR>
 inoremap <F12> <C-o>:syntax sync fromstart<CR>
 "}}}
+
+nnoremap <leader>lc :call LanguageClient_contextMenu()<CR>
+" Or map each action separately
+nnoremap <silent> <leader>dco :call LanguageClient#textDocument_hover()<CR>
+nnoremap <silent> <leader>def :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> <leader>rnc :call LanguageClient#textDocument_rename()<CR>
 
 

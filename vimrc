@@ -697,7 +697,7 @@ map <leader>gck :!git checkout %<cr>
 
 map <leader>gckp :!git checkout HEAD~1 %<cr>
 command! -nargs=* Blame :Gblame<cr>
-map <leader>bl :Gblame<cr>
+map <leader>gb :Gblame<cr>
 
 fun! CheckoutFile(arg)
     let file_name = expand('%')

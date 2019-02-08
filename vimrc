@@ -88,16 +88,23 @@ Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'junegunn/goyo.vim', { 'for': ['markdown'] }
 Plug 'tpope/vim-abolish'
 Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
+Plug 'posva/vim-vue', {'for': ['vue']}
+Plug 'junegunn/gv.vim'
+
 
 Plug 'autozimu/LanguageClient-neovim', {
     \ 'branch': 'next',
     \ 'do': 'bash install.sh',
     \ }
+let g:LanguageClient_serverCommands = {
+    \'python' : ['pyls']
+    \ }
+
 
 Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs'}
 "requires nvim-completion-manager
 " assuming you're using vim-plug: https://github.com/junegunn/vim-plug
-Plug 'phpactor/phpactor' ,  {'do': 'composer install', 'for': 'php'}
+" Plug 'phpactoflake8r/phpactor' ,  {'do': 'composer install', 'for': 'php'}
 Plug 'ncm2/ncm2'
 Plug 'roxma/nvim-yarp'
 "enable ncm2 for all buffers
@@ -119,7 +126,7 @@ Plug 'phpactor/ncm2-phpactor'
 call plug#end()
 "}}}
 
-let g:rootmarkers = ['.projectroot', 'docker-compose.yml', '.git', '.hg', '.svn', '.bzr','_darcs','build.xml']
+let g:rootmarkers = ['.projectroot', 'docker-compose.yml', '.git', '.hg', '.svn', '.bzr','_darcs','build.xml', 'DESIGN.md', 'README.md']
 
 
 " {{{ generic
@@ -200,6 +207,7 @@ nnoremap <leader>, :normal!mtA,<esc>`t
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
 let g:abolish_save_file = "/home/jean/.vim/after/plugin/abolish.vim"
 nnoremap <leader>cr :ProjectRootCD<cr>
+nnoremap <leader>pr :ProjectRootCD<cr>
 "}}}
 
 "linting, fixing - ale config {{{
@@ -320,7 +328,7 @@ endfun
 
 command! -nargs=* Talk call OpenQuickly('talks')
 command! -nargs=* Productivity call OpenQuickly('productivity')
-map <Leader>pro :call OpenQuickly('productivity')<cr>
+map <Leader>prod :call OpenQuickly('productivity')<cr>
 command! -nargs=* Glossary call OpenQuickly('glossary')
 map <Leader>go :call OpenQuickly('glossary')<cr>
 command! -nargs=* Sql call OpenQuickly('sql')
@@ -772,7 +780,8 @@ vnoremap <silent> # :<C-U>
 
 " simple filetype configs {{{
 au BufRead,BufNewFile *.jar,*.war,*.ear,*.sar,*.rar set filetype=zip
-autocmd BufNewFile,BufRead *.es6 set filetype=javascript
+autocmd BufNewFile,BufRead *.es6,*.ts set filetype=javascript
+autocmd BufNewFile,BufRead *.thrift set syntax=c
 autocmd filetype crontab setlocal nobackup nowritebackup
 "}}}
 
@@ -1517,3 +1526,4 @@ nnoremap <silent> <leader>def :call LanguageClient#textDocument_definition()<CR>
 nnoremap <silent> <leader>rnc :call LanguageClient#textDocument_rename()<CR>
 
 
+" let g:go_mod_fmt_autosave = 0

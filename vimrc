@@ -6,7 +6,7 @@
 " - par
 " - rg
 "- ctags https://github.com/universal-ctags/ctags
-" - yaourt -S python-proselint write-good
+" - yaourt -S python-proselint write-good flake8
 
 " Each new supported language should have configured the following features
 " - linters and fixer
@@ -26,6 +26,7 @@ Plug 'altercation/vim-colors-solarized'
 "inline errors, linting
 Plug 'w0rp/ale', { 'for': ['php', 'python', 'ruby', 'markdown', 'sh', 'scala', 'javascript', 'elm'] }
 Plug 'christoomey/vim-tmux-navigator'
+Plug 'christoomey/vim-tmux-runner'
 Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
 "same indentation text object
 Plug 'michaeljsmith/vim-indent-object'
@@ -90,7 +91,8 @@ Plug 'tpope/vim-abolish'
 Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
 Plug 'posva/vim-vue', {'for': ['vue']}
 Plug 'junegunn/gv.vim'
-
+Plug 'tpope/vim-repeat'
+Plug 'elzr/vim-json'
 
 Plug 'autozimu/LanguageClient-neovim', {
     \ 'branch': 'next',
@@ -126,8 +128,7 @@ Plug 'phpactor/ncm2-phpactor'
 call plug#end()
 "}}}
 
-let g:rootmarkers = ['.projectroot', 'docker-compose.yml', '.git', '.hg', '.svn', '.bzr','_darcs','build.xml', 'DESIGN.md', 'README.md']
-
+let g:rootmarkers = ['.projectroot', 'docker-compose.yml', '.git', '.hg', '.svn', '.bzr','_darcs', 'build.xml', 'DESIGN.md', 'README.md']
 
 " {{{ generic
 set wildignore+=*\\dist\\**
@@ -137,7 +138,7 @@ set backspace=indent,eol,start "make the backspace work like in most other progr
 " set cot+=menuone "Use the popup menu also when there is only one match
 set number "show numbers
 set hidden "hides buffers instead of closing them, don't give warnings on unsaved things
-set shell=/bin/bash
+set shell=$SHELL
 set encoding=utf-8
 set showmode "If in Insert, Replace or Visual mode put a message on the last line
 set showcmd "Show (partial) command in the last line of the screen
@@ -734,10 +735,13 @@ command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
 "}}}
 
 "writer mode {{{
-let writer_mode=$WRITER_MODE
+
 fun! WritingMode()
     :Goyo
 endfun
+if $WRITER_MODE
+    call WritingMode()
+endif
 command! -nargs=* WritingMode call WritingMode()
 map <Leader>wm :call WritingMode()<cr>
 "}}}
@@ -780,6 +784,7 @@ vnoremap <silent> # :<C-U>
 
 " simple filetype configs {{{
 au BufRead,BufNewFile *.jar,*.war,*.ear,*.sar,*.rar set filetype=zip
+au BufRead,BufNewFile *.vue set filetype=vue
 autocmd BufNewFile,BufRead *.es6,*.ts set filetype=javascript
 autocmd BufNewFile,BufRead *.thrift set syntax=c
 autocmd filetype crontab setlocal nobackup nowritebackup
@@ -1526,4 +1531,10 @@ nnoremap <silent> <leader>def :call LanguageClient#textDocument_definition()<CR>
 nnoremap <silent> <leader>rnc :call LanguageClient#textDocument_rename()<CR>
 
 
+let g:gist_post_private = 1
+xnoremap p "_dP
+
 " let g:go_mod_fmt_autosave = 0
+let g:vim_json_syntax_concealcursor = 1
+
+runtime! ftplugin/man.vim

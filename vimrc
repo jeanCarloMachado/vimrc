@@ -86,10 +86,9 @@ Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
 Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
 "hides links paths, and other small niceties
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
-Plug 'junegunn/goyo.vim', { 'for': ['markdown'] }
+Plug 'junegunn/goyo.vim'
 Plug 'tpope/vim-abolish'
 Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
-Plug 'posva/vim-vue', {'for': ['vue']}
 Plug 'junegunn/gv.vim'
 Plug 'tpope/vim-repeat'
 Plug 'elzr/vim-json'
@@ -734,18 +733,6 @@ command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
 " endif
 "}}}
 
-"writer mode {{{
-
-fun! WritingMode()
-    :Goyo
-endfun
-if $WRITER_MODE
-    call WritingMode()
-endif
-command! -nargs=* WritingMode call WritingMode()
-map <Leader>wm :call WritingMode()<cr>
-"}}}
-
 " {{{ search
 set hlsearch " match while typing the search
 set incsearch "show the next match while entering a search
@@ -784,7 +771,7 @@ vnoremap <silent> # :<C-U>
 
 " simple filetype configs {{{
 au BufRead,BufNewFile *.jar,*.war,*.ear,*.sar,*.rar set filetype=zip
-au BufRead,BufNewFile *.vue set filetype=vue
+au BufRead,BufNewFile *.vue set syntax=javascript
 autocmd BufNewFile,BufRead *.es6,*.ts set filetype=javascript
 autocmd BufNewFile,BufRead *.thrift set syntax=c
 autocmd filetype crontab setlocal nobackup nowritebackup
@@ -1523,6 +1510,16 @@ set t_Co=256
 noremap <F12> <Esc>:syntax sync fromstart<CR>
 inoremap <F12> <C-o>:syntax sync fromstart<CR>
 "}}}
+
+"writer mode {{{
+
+fun! WritingMode()
+    :Goyo
+endfun
+command! -nargs=* WritingMode call WritingMode()
+map <Leader>wm :call WritingMode()<cr>
+"}}}
+
 
 nnoremap <leader>lc :call LanguageClient_contextMenu()<CR>
 " Or map each action separately

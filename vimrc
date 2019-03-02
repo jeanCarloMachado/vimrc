@@ -67,7 +67,7 @@ Plug 'yegappan/mru'
 Plug 'scrooloose/nerdtree'
 Plug 'mhinz/vim-startify'
 "easily go back to project root
-Plug 'dbakker/vim-projectroot'
+Plug 'airblade/vim-rooter'
 Plug 'vim-syntastic/syntastic', { 'for': ['swift'] }
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'lervag/vimtex', { 'for': ['latex'] }
@@ -101,7 +101,6 @@ let g:LanguageClient_serverCommands = {
     \'python' : ['pyls']
     \ }
 
-
 Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs'}
 "requires nvim-completion-manager
 " assuming you're using vim-plug: https://github.com/junegunn/vim-plug
@@ -119,7 +118,6 @@ Plug 'ncm2/ncm2-tmux'
 Plug 'ncm2/ncm2-path'
 
 " Include Phpactor
-
 Plug 'roxma/nvim-yarp'
 Plug 'phpactor/ncm2-phpactor'
 
@@ -127,7 +125,8 @@ Plug 'phpactor/ncm2-phpactor'
 call plug#end()
 "}}}
 
-let g:rootmarkers = ['.projectroot', 'docker-compose.yml', '.git', '.hg', '.svn', '.bzr','_darcs', 'build.xml', 'DESIGN.md', 'README.md']
+
+" let g:rooter_patterns = ['.projectroot', 'docker-compose.yml', '.git/', '.hg', '.svn', '.bzr','_darcs', 'build.xml', 'DESIGN.md', 'README.md']
 
 " {{{ generic
 set wildignore+=*\\dist\\**
@@ -206,8 +205,15 @@ nnoremap <leader>, :normal!mtA,<esc>`t
 " plugin specific
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
 let g:abolish_save_file = "/home/jean/.vim/after/plugin/abolish.vim"
-nnoremap <leader>cr :ProjectRootCD<cr>
-nnoremap <leader>pr :ProjectRootCD<cr>
+
+" nnoremap <leader>cr :ProjectRootCD<cr>
+" nnoremap <leader>pr :ProjectRootCD<cr>
+" fun! ProjectRootCd( arg )
+"     root = call FindRootDirectory()
+"     cd root
+" endfun
+" command! -nargs=* ProjectRootCd call ProjectRootCd( '<args>' )
+
 "}}}
 
 "linting, fixing - ale config {{{
@@ -288,15 +294,15 @@ command! -nargs=* Grepr call Grepr( '<args>' )
 "}}}
 
 " sidemenu {{{
-" nnoremap <leader>k :Vexplore<cr>
-" let g:netrw_winsize = 25 "window width
-" let g:netrw_altv=1 "open vertical splits on the right
-" let g:netrw_liststyle=3
-" let g:netrw_winsize = 0
+"
+fun! ToggleLeftMenu( arg )
+    let rootDir = FindRootDirectory()
+    execute ":NERDTreeToggle ".rootDir
+endfun
+command! -nargs=* ToggleLeftMenu call ToggleLeftMenu( '<args>' )
 
-nnoremap <leader>k :NERDTreeToggle<CR>
+nnoremap <leader>k :ToggleLeftMenu<CR> 
 nnoremap <leader>nf :NERDTreeFind<CR>
-
 "}}}
 
 "spelling {{{
@@ -1533,5 +1539,6 @@ xnoremap p "_dP
 
 " let g:go_mod_fmt_autosave = 0
 let g:vim_json_syntax_concealcursor = 1
+let g:rooter_change_directory_for_non_project_files = 'home'
 
 runtime! ftplugin/man.vim

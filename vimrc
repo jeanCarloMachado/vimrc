@@ -65,7 +65,7 @@ Plug 'scrooloose/nerdtree'
 Plug 'mhinz/vim-startify'
 "easily go back to project root
 Plug 'airblade/vim-rooter'
-Plug 'vim-syntastic/syntastic', { 'for': ['swift'] }
+" Plug 'vim-syntastic/syntastic', { 'for': ['swift'] }
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 " Plug 'lervag/vimtex', { 'for': ['latex'] }
 Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
@@ -233,7 +233,7 @@ let g:ale_sign_error = '✖'
 autocmd BufRead,BufNewFile */fishfarm/* let g:ale_php_phpcs_standard = "/home/jean/projects/activity-classifier/ruleset.xml"
 
 let g:ale_linters = {
-\   'python': ['flake8', 'pylint'],
+\   'python': ['flake8', 'pylint', 'mypy'],
 \   'php': ['php', 'phpcs'],
 \   'javascript': ['eslint'],
 \   'sh': ['shell', 'shellcheck'],

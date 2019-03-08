@@ -1,7 +1,5 @@
 "Considerations
 "
-" - 1% of the configs here are nvim only
-"
 " Userspace dependencies
 " - par
 " - rg
@@ -24,7 +22,7 @@ call plug#begin()
 "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
 Plug 'altercation/vim-colors-solarized'
 "inline errors, linting
-Plug 'w0rp/ale', { 'for': ['php', 'python', 'ruby', 'markdown', 'sh', 'scala', 'javascript', 'elm'] }
+Plug 'w0rp/ale'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'christoomey/vim-tmux-runner'
 Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
@@ -54,11 +52,10 @@ Plug 'easymotion/vim-easymotion'
 Plug 'janko-m/vim-test', { 'for': ['php', 'python', 'ruby'] }
 Plug 'rhysd/devdocs.vim'
 "adjust indenting
-Plug 'tpope/vim-sleuth'
+" Plug 'tpope/vim-sleuth'
 "seeing git log and git diff
 Plug 'tpope/vim-fugitive'
 Plug 'nathanaelkane/vim-indent-guides'
-" Plug 'majutsushi/tagbar'
 "autocomplete
 Plug 'jeanCarloMachado/vim-toop'
 "autocomplete pairs chars
@@ -70,16 +67,16 @@ Plug 'mhinz/vim-startify'
 Plug 'airblade/vim-rooter'
 Plug 'vim-syntastic/syntastic', { 'for': ['swift'] }
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'lervag/vimtex', { 'for': ['latex'] }
+" Plug 'lervag/vimtex', { 'for': ['latex'] }
 Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
-Plug 'fatih/vim-go', { 'for': ['go'] }
-Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
-Plug 'derekwyatt/vim-scala', { 'for': ['scala'] }
-Plug 'ensime/ensime-vim', { 'do': ':UpdateRemotePlugins', 'for': ['scala'] }
-Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
-Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
-Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
-Plug 'vim-vdebug/vdebug', {'for': ['php'] }
+" Plug 'fatih/vim-go', { 'for': ['go'] }
+" Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
+" Plug 'derekwyatt/vim-scala', { 'for': ['scala'] }
+" Plug 'ensime/ensime-vim', { 'do': ':UpdateRemotePlugins', 'for': ['scala'] }
+" Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
+" Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
+" Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
+" Plug 'vim-vdebug/vdebug', {'for': ['php'] }
 "filetype only * (for swift)
 Plug 'keith/swift.vim'
 Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
@@ -88,10 +85,12 @@ Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'junegunn/goyo.vim'
 Plug 'tpope/vim-abolish'
-Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+"git commit browser in vim
 Plug 'junegunn/gv.vim'
 Plug 'tpope/vim-repeat'
-Plug 'elzr/vim-json'
+Plug 'RRethy/vim-illuminate'
 
 Plug 'autozimu/LanguageClient-neovim', {
     \ 'branch': 'next',
@@ -101,12 +100,11 @@ let g:LanguageClient_serverCommands = {
     \'python' : ['pyls']
     \ }
 
-Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs'}
+" Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs'}
 "requires nvim-completion-manager
 " assuming you're using vim-plug: https://github.com/junegunn/vim-plug
 " Plug 'phpactoflake8r/phpactor' ,  {'do': 'composer install', 'for': 'php'}
-Plug 'ncm2/ncm2'
-Plug 'roxma/nvim-yarp'
+Plug 'ncm2/ncm2' | Plug 'roxma/nvim-yarp'
 "enable ncm2 for all buffers
 autocmd BufEnter * call ncm2#enable_for_buffer()
 " IMPORTANTE: :help Ncm2PopupOpen for more information
@@ -118,8 +116,7 @@ Plug 'ncm2/ncm2-tmux'
 Plug 'ncm2/ncm2-path'
 
 " Include Phpactor
-Plug 'roxma/nvim-yarp'
-Plug 'phpactor/ncm2-phpactor'
+" Plug 'phpactor/ncm2-phpactor'
 
 
 call plug#end()
@@ -236,8 +233,8 @@ let g:ale_sign_error = '✖'
 autocmd BufRead,BufNewFile */fishfarm/* let g:ale_php_phpcs_standard = "/home/jean/projects/activity-classifier/ruleset.xml"
 
 let g:ale_linters = {
-\   'php': ['php', 'phpcs'],
 \   'python': ['flake8', 'pylint'],
+\   'php': ['php', 'phpcs'],
 \   'javascript': ['eslint'],
 \   'sh': ['shell', 'shellcheck'],
 \   'markdown': ['write-good', 'proselint'],
@@ -248,8 +245,8 @@ let g:ale_linters = {
 
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
-\   'php': ['php_cs_fixer', 'phpcbf'],
 \   'python': ['autopep8', 'yapf'],
+\   'php': ['php_cs_fixer', 'phpcbf'],
 \   'scala': ['scalafmt'],
 \   'swift': ['swiftformat'],
 \   'elm': ['elm-format']
@@ -285,7 +282,7 @@ let g:conceal_php_disable_ligature=1
 "}}}
 
 "{{{ grep
-set grepprg=rg\ --vimgrep\ --hidden\ --no-ignore 
+set grepprg=rg\ --vimgrep\ --hidden\ --no-ignore
 set grepformat=%f:%l:%c:%m
 fun! Grepr( arg )
     execute "grep " . a:arg . " %:p:h/*"
@@ -301,7 +298,7 @@ fun! ToggleLeftMenu( arg )
 endfun
 command! -nargs=* ToggleLeftMenu call ToggleLeftMenu( '<args>' )
 
-nnoremap <leader>k :ToggleLeftMenu<CR> 
+nnoremap <leader>k :ToggleLeftMenu<CR>
 nnoremap <leader>nf :NERDTreeFind<CR>
 "}}}
 
@@ -370,6 +367,9 @@ set swapfile
 set directory=~/.vim/swap
 "don't show alert message when the swap already exists
 set shortmess+=A "don't give the "ATTENTION" message when an existing swap file is found
+" suppress the annoying 'match x of y', 'The only match' and 'Pattern not
+" found' messages
+set shortmess+=c
 "}}}
 
 "indenting {{{
@@ -728,16 +728,6 @@ endfunc
 command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
 "}}}
 
-" gvim {{{
-" nnoremap <leader>gv  :! gvim %:p<cr>
-" set guioptions+=m  "remove menu bar
-" set guioptions-=T  "remove toolbar
-" set guioptions-=r  "remove right-hand scroll bar
-" set guioptions-=L  "remove left-hand scroll bar
-" if has('gui_running')
-"   set guifont=DejaVu\ Sans\ Mono\ Book\ 13
-" endif
-"}}}
 
 " {{{ search
 set hlsearch " match while typing the search
@@ -797,13 +787,13 @@ function! s:buflist()
   return split(ls, '\n')
 endfunction
 
-function! s:bufopen(e)
+function! s:bopen(e)
   execute 'buffer' matchstr(a:e, '^[ 0-9]*')
 endfunction
 
 nnoremap <silent> <Leader>bl :call fzf#run(fzf#wrap({
 \   'source':  reverse(<sid>buflist()),
-\   'sink':    function('<sid>bufopen'),
+\   'sink':    function('<sid>bopen'),
 \   'options': '+m',
 \   'down':    len(<sid>buflist()) + 2
 \ }))<CR>
@@ -1024,15 +1014,15 @@ let g:vim_markdown_fenced_languages = [
 
 fun! UnderlineHeading(level)
     if a:level == 1
-        normal! I# 
+        normal! I#
     elseif a:level == 2
-        normal! I## 
+        normal! I##
     elseif a:level == 3
-        normal! I### 
+        normal! I###
     elseif a:level == 4
-        normal! I#### 
+        normal! I####
     elseif a:level == 5
-        normal! I##### 
+        normal! I#####
     endif
 endfunc
 
@@ -1542,3 +1532,8 @@ let g:vim_json_syntax_concealcursor = 1
 let g:rooter_change_directory_for_non_project_files = 'home'
 
 runtime! ftplugin/man.vim
+
+let b:ale_warn_about_trailing_whitespace = 0
+" let g:airline#extensions#tabline#enabled = 1
+
+let g:ale_fix_on_save = 1

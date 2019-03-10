@@ -96,6 +96,7 @@ Plug 'tpope/vim-repeat'
 Plug 'RRethy/vim-illuminate'
 "add highlights to misused spaces
 Plug 'ntpeters/vim-better-whitespace'
+Plug 'bps/vim-textobj-python'
 
 Plug 'autozimu/LanguageClient-neovim', {
     \ 'branch': 'next',
@@ -1090,15 +1091,6 @@ let g:elm_detailed_complete = 0
 
 "custom text objects{{{
 
-call textobj#user#plugin('function', {
-\   'code': {
-\     'select-a-function': 'AFunction',
-\     'select-a': 'af',
-\     'select-i-function': 'IFunction',
-\     'select-i': 'if',
-\   },
-\ })
-
 
 let g:functionKeywordByFiletype = {
 \   "swift": "func",
@@ -1117,36 +1109,46 @@ fun! GetFiletypeFuncKeyword()
     return get(g:functionKeywordByFiletype, 'fallback')
 endfun
 
-fun! AFunction()
-    let funcKeyword = GetFiletypeFuncKeyword()
-    execute "?".funcKeyword
-    normal! 0w
-    let head_pos = getpos('.')
-    call SearchLineOrDocument("{")
-    normal! %
-    let tail_pos = getpos('.')
-    return ['v', head_pos, tail_pos]
-endfun
+" call textobj#user#plugin('function', {
+" \   'code': {
+" \     'select-a-function': 'AFunction',
+" \     'select-a': 'af',
+" \     'select-i-function': 'IFunction',
+" \     'select-i': 'if',
+" \   },
+" \ })
 
-fun! IFunction()
-    let backup_pos = getpos(".")
 
-    let funcKeyword = GetFiletypeFuncKeyword()
-    execute "?".funcKeyword
+" fun! AFunction()
+"     let funcKeyword = GetFiletypeFuncKeyword()
+"     execute "?".funcKeyword
+"     normal! 0w
+"     let head_pos = getpos('.')
+"     call SearchLineOrDocument("{")
+"     normal! %
+"     let tail_pos = getpos('.')
+"     return ['v', head_pos, tail_pos]
+" endfun
 
-    call SearchLineOrDocument("{")
-    let tmp_head = getpos('.')
-    normal! %
-    let tmp_tail = getpos('.')
-    call setpos('.', tmp_head)
-    normal! w
-    let head_pos = getpos('.')
-    call setpos('.', tmp_tail)
-    normal! b
-    let tail_pos = getpos('.')
+" fun! IFunction()
+"     let backup_pos = getpos(".")
 
-    return ['v', head_pos, tail_pos]
-endfun
+"     let funcKeyword = GetFiletypeFuncKeyword()
+"     execute "?".funcKeyword
+
+"     call SearchLineOrDocument("{")
+"     let tmp_head = getpos('.')
+"     normal! %
+"     let tmp_tail = getpos('.')
+"     call setpos('.', tmp_head)
+"     normal! w
+"     let head_pos = getpos('.')
+"     call setpos('.', tmp_tail)
+"     normal! b
+"     let tail_pos = getpos('.')
+
+"     return ['v', head_pos, tail_pos]
+" endfun
 
 
 call textobj#user#plugin('fold', {
@@ -1560,3 +1562,14 @@ let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
 let g:SuperTabDefaultCompletionType = "<c-n>"
+let g:highlightedyank_highlight_duration = 15000
+
+nnoremap <leader>p "0p
+nnoremap <leader>P "0P
+xnoremap <leader>p "0p
+xnoremap <leader>P "0P
+
+" Time in milliseconds (default 250)
+let g:Illuminate_delay = 250
+
+hi illuminatedWord cterm=underline gui=underline

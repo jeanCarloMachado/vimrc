@@ -127,12 +127,13 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'ervandew/supertab'
-"This plugin should help you get to any word on a line in two or three keystrokes with mainly f<char> (which moves your cursor to
-Plug 'bradford-smith94/quick-scope'
 "make the yanked region appartent
 Plug 'machakann/vim-highlightedyank'
+"replaces the yanked text with a text object gr{textobject} to paste  and can
+"be repeatable!
 Plug 'vim-scripts/ReplaceWithRegister'
 "exchange text objects super useful!
+" cx {textobject}  move to a new place, cx{textobject} will swap them
 Plug 'tommcdo/vim-exchange'
 call plug#end()
 "}}}

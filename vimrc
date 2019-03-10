@@ -79,7 +79,7 @@ Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
 " Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
 " Plug 'vim-vdebug/vdebug', {'for': ['php'] }
 "filetype only * (for swift)
-Plug 'keith/swift.vim'
+" Plug 'keith/swift.vim', {'for': ['swift']}
 Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
 Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
 Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'javascript.jsx'] }
@@ -105,6 +105,11 @@ let g:LanguageClient_serverCommands = {
     \'python' : ['pyls']
     \ }
 
+"other servers
+" \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+" \ 'javascript': ['/usr/local/bin/javascript-typescript-stdio'],
+" \ 'javascript.jsx': ['tcp://127.0.0.1:2089'],
+"
 "ncm2 is better than  deoplete :)
 Plug 'ncm2/ncm2' | Plug 'roxma/nvim-yarp'
 "enable ncm2 for all buffers
@@ -121,6 +126,13 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'ervandew/supertab'
+"This plugin should help you get to any word on a line in two or three keystrokes with mainly f<char> (which moves your cursor to
+Plug 'bradford-smith94/quick-scope'
+"make the yanked region appartent
+Plug 'machakann/vim-highlightedyank'
+Plug 'vim-scripts/ReplaceWithRegister'
+"exchange text objects super useful!
+Plug 'tommcdo/vim-exchange'
 call plug#end()
 "}}}
 
@@ -254,7 +266,6 @@ let g:ale_fixers = {
 
 highlight ALEErrorSign ctermbg=NONE ctermfg=red
 highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
-
 "}}}
 
 " autocomplete {{{
@@ -615,7 +626,7 @@ nmap <leader>ccd :!mycopy %:p:h<cr>
 nmap <leader>cdn :!mycopy %:p:h<cr>
 nmap <leader>ccp :!mycopy %:p:h<cr>
 nmap <leader>cdcd :cd %:p:h<cr>
-map <Leader>rn :call RenameFile()<cr>
+map <Leader>mv :call MoveFile()<cr>
 map <Leader>cp :call CopyFile()<cr>
 map <leader>ee :edit!<cr>
 map <leader>ck :!git checkout %<cr>
@@ -651,7 +662,7 @@ fun! RelativePath(filename)
     return s
 endfunc
 
-fun! RenameFile()
+fun! MoveFile()
     let old_name = expand('%:t')
     let old_dir = expand('%:p:h')
 
@@ -1519,15 +1530,19 @@ map <Leader>wm :call WritingMode()<cr>
 "}}}
 
 
-nnoremap <leader>lc :call LanguageClient_contextMenu()<CR>
-" Or map each action separately
-nnoremap <silent> <leader>dco :call LanguageClient#textDocument_hover()<CR>
+"VERY useful skill
+"see all options of the langauge server
+nnoremap <leader>lo :call LanguageClient_contextMenu()<CR>
+" see the signature of a method[
+nnoremap <silent> <leader>ss :call LanguageClient#textDocument_hover()<CR>
+" go to the definition
 nnoremap <silent> <leader>def :call LanguageClient#textDocument_definition()<CR>
-nnoremap <silent> <leader>rnc :call LanguageClient#textDocument_rename()<CR>
+"rename all occurences of the given function
+nnoremap <silent> <leader>rn :call LanguageClient#textDocument_rename()<CR>
 
 
 let g:gist_post_private = 1
-xnoremap p "_dP
+" xnoremap p "_dP
 
 " let g:go_mod_fmt_autosave = 0
 let g:vim_json_syntax_concealcursor = 1

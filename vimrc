@@ -49,19 +49,20 @@ Plug 'benmills/vimux'
 "better tags management
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'easymotion/vim-easymotion'
-Plug 'janko-m/vim-test', { 'for': ['php', 'python', 'ruby'] }
+Plug 'janko-m/vim-test'
 Plug 'rhysd/devdocs.vim'
 "adjust indenting
 " Plug 'tpope/vim-sleuth'
 "seeing git log and git diff
 Plug 'tpope/vim-fugitive'
 Plug 'nathanaelkane/vim-indent-guides'
-"autocomplete
 Plug 'jeanCarloMachado/vim-toop'
 "autocomplete pairs chars
 Plug 'raimondi/delimitmate'
 Plug 'yegappan/mru'
 Plug 'scrooloose/nerdtree'
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'mhinz/vim-startify'
 "easily go back to project root
 Plug 'airblade/vim-rooter'
@@ -81,6 +82,8 @@ Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
 Plug 'keith/swift.vim'
 Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
 Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
+Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'javascript.jsx'] }
+Plug 'mxw/vim-jsx', { 'for': ['javascript', 'javascript.jsx'] }
 "hides links paths, and other small niceties
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'junegunn/goyo.vim'
@@ -91,6 +94,8 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'junegunn/gv.vim'
 Plug 'tpope/vim-repeat'
 Plug 'RRethy/vim-illuminate'
+"add highlights to misused spaces
+Plug 'ntpeters/vim-better-whitespace'
 
 Plug 'autozimu/LanguageClient-neovim', {
     \ 'branch': 'next',
@@ -100,10 +105,7 @@ let g:LanguageClient_serverCommands = {
     \'python' : ['pyls']
     \ }
 
-" Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs'}
-"requires nvim-completion-manager
-" assuming you're using vim-plug: https://github.com/junegunn/vim-plug
-" Plug 'phpactoflake8r/phpactor' ,  {'do': 'composer install', 'for': 'php'}
+"ncm2 is better than  deoplete :)
 Plug 'ncm2/ncm2' | Plug 'roxma/nvim-yarp'
 "enable ncm2 for all buffers
 autocmd BufEnter * call ncm2#enable_for_buffer()
@@ -115,10 +117,10 @@ Plug 'ncm2/ncm2-bufword'
 Plug 'ncm2/ncm2-tmux'
 Plug 'ncm2/ncm2-path'
 
-" Include Phpactor
-" Plug 'phpactor/ncm2-phpactor'
-
-
+Plug 'ryanoasis/vim-devicons'
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+Plug 'ervandew/supertab'
 call plug#end()
 "}}}
 
@@ -134,7 +136,7 @@ set backspace=indent,eol,start "make the backspace work like in most other progr
 set number "show numbers
 set hidden "hides buffers instead of closing them, don't give warnings on unsaved things
 set shell=$SHELL
-set encoding=utf-8
+set encoding=UTF-8
 set showmode "If in Insert, Replace or Visual mode put a message on the last line
 set showcmd "Show (partial) command in the last line of the screen
 set laststatus=2 "when the last window will have a status line: 2: always
@@ -214,12 +216,8 @@ let g:abolish_save_file = "/home/jean/.vim/after/plugin/abolish.vim"
 "}}}
 
 "linting, fixing - ale config {{{
-let g:syntastic_swift_checkers = ['swiftlint', 'swiftpm']
 nnoremap <leader>fmt :ALEFix<cr>
-
-
 let g:ale_set_highlights = 1
-
 let g:ale_lint_on_text_changed = 0
 let g:ale_lint_on_save = 1
 let g:ale_lint_on_enter = 0
@@ -228,12 +226,14 @@ let g:ale_lint_on_text_changed = 0
 let g:ale_writegood_options = ' --so --illusion --adverb --tooWordy --cliches'
 let g:ale_sign_warning = '⚠'
 let g:ale_sign_error = '✖'
+let b:ale_warn_about_trailing_whitespace = 0
+let g:ale_fix_on_save = 1
 
 "change ruleset for fishfamr
 autocmd BufRead,BufNewFile */fishfarm/* let g:ale_php_phpcs_standard = "/home/jean/projects/activity-classifier/ruleset.xml"
 
 let g:ale_linters = {
-\   'python': ['flake8', 'pylint', 'mypy'],
+\   'python': ['mypy', 'flake8', 'pylint'],
 \   'php': ['php', 'phpcs'],
 \   'javascript': ['eslint'],
 \   'sh': ['shell', 'shellcheck'],
@@ -251,12 +251,16 @@ let g:ale_fixers = {
 \   'swift': ['swiftformat'],
 \   'elm': ['elm-format']
 \}
+
+highlight ALEErrorSign ctermbg=NONE ctermfg=red
+highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
+
 "}}}
 
 " autocomplete {{{
-" let g:ale_completion_enabled = 1
+let g:ale_completion_enabled = 1
 " set completeopt=longest,menuone
-" set omnifunc=syntaxcomplete#Complete
+set omnifunc=syntaxcomplete#Complete
 "}}}
 
 "Concealing {{{
@@ -1487,8 +1491,6 @@ autocmd Syntax * call matchadd('WordsToAvoid', '\c\<\(obviously\|basically\|simp
 autocmd Syntax * call matchadd('HardWords', '\c\<\(porquê\|porque\|por\sque\|its\)\>')
 autocmd Syntax * call matchadd('Whitespace', '\s\+$')
 autocmd Syntax * call matchadd('Overlength', '\%81v')
-highlight ALEErrorSign ctermbg=NONE ctermfg=red
-highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
 
 let g:solarized_termtrans = 1
 
@@ -1533,7 +1535,13 @@ let g:rooter_change_directory_for_non_project_files = 'home'
 
 runtime! ftplugin/man.vim
 
-let b:ale_warn_about_trailing_whitespace = 0
 " let g:airline#extensions#tabline#enabled = 1
+let g:NERDTreeMinimalUI = 1
+let g:nerdtree_tabs_open_on_console_startup = 1
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 
-let g:ale_fix_on_save = 1
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
+let g:SuperTabDefaultCompletionType = "<c-n>"

@@ -1573,4 +1573,4 @@ xnoremap <leader>P "0P
 " Time in milliseconds (default 250)
 let g:Illuminate_delay = 250
 
-hi illuminatedWord cterm=underline gui=underline
+" hi illuminatedWord cterm=underline gui=underline

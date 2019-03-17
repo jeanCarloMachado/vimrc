@@ -326,7 +326,7 @@ endfun
 nnoremap <leader>fs :call FixLastSpellingError()<cr>
 map <leader>spt :set spell spelllang=pt_br<cr>
 map <leader>sen :set spell spelllang=en_us<cr>
-autocmd filetype rst,txt,markdown set spell spelllang=en_us
+autocmd filetype rst,txt,markdown set spelllang=en,de_de,pt_br
 "}}}
 
 " quick access {{{

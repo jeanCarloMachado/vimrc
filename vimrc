@@ -1351,19 +1351,29 @@ call toop#mapShell('base64 --decode ', '<leader>d64')
 
 
 "translate
+call toop#mapShell('translate.sh de en', 'tge')
+call toop#mapShell('translate.sh en de', 'teg')
 call toop#mapShell('translate.sh en pt', 'tep')
 call toop#mapShell('translate.sh pt en', 'tpe')
 call toop#mapShell('translate.sh pt de', 'tpd')
 call toop#mapShell('translate.sh en de', 'ted')
 call toop#mapShell('translate.sh de en', 'tde')
-call toop#mapShell('translate.sh de en', 'tge')
 call toop#mapShell('translate.sh de pt', 'tdp')
 call toop#mapShell('translate.sh en fr', 'tef')
 call toop#mapShell('translate.sh en la', 'tel')
 call toop#mapShell('translate.sh la en', 'tle')
-call toop#mapShell('translate.sh de en', '<leader>ge')
-"translate English to German
-call toop#mapShell('translate.sh en de', '<leader>eg')
+
+call toop#mapShell('runFunction translateDuplicating de en', 'dge')
+call toop#mapShell('runFunction translateDuplicating en de', 'deg')
+call toop#mapShell('runFunction translateDuplicating en pt', 'dep')
+call toop#mapShell('runFunction translateDuplicating pt en', 'dpe')
+call toop#mapShell('runFunction translateDuplicating pt de', 'dpd')
+call toop#mapShell('runFunction translateDuplicating en de', 'ded')
+call toop#mapShell('runFunction translateDuplicating de en', 'dde')
+call toop#mapShell('runFunction translateDuplicating de pt', 'ddp')
+call toop#mapShell('runFunction translateDuplicating en fr', 'def')
+call toop#mapShell('runFunction translateDuplicating en la', 'del')
+call toop#mapShell('runFunction translateDuplicating la en', 'dle')
 
 call toop#mapShell('tr " " "\n"', '<leader>sn')
 "make numbered list
@@ -1569,6 +1579,7 @@ nnoremap <leader>p "0p
 nnoremap <leader>P "0P
 xnoremap <leader>p "0p
 xnoremap <leader>P "0P
+nnoremap <leader>v :vnew<CR>
 
 " Time in milliseconds (default 250)
 let g:Illuminate_delay = 250

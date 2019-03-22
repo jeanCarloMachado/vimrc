@@ -139,8 +139,6 @@ call plug#end()
 "}}}
 
 
-" let g:rooter_patterns = ['.projectroot', 'docker-compose.yml', '.git/', '.hg', '.svn', '.bzr','_darcs', 'build.xml', 'DESIGN.md', 'README.md']
-
 " {{{ generic
 set wildignore+=*\\dist\\**
 let mapleader = "\<space>"
@@ -1350,7 +1348,19 @@ call toop#mapShell('base64', '<leader>e64')
 call toop#mapShell('base64 --decode ', '<leader>d64')
 
 
+call toop#mapShell('tablign', '<leader>ta')
 "translate
+" duplicate from
+call toop#mapShell('runFunction translateDuplicating de en', 'df')
+" duplicate to
+call toop#mapShell('runFunction translateDuplicating de en', 'dt')
+" translate to
+call toop#mapShell('translate.sh en de', 'tt')
+" translate from
+call toop#mapShell('translate.sh de en', 'tf')
+
+call toop#mapShell('VOICE=1 translate.sh en de', '<leader>vo')
+
 call toop#mapShell('translate.sh de en', 'tge')
 call toop#mapShell('translate.sh en de', 'teg')
 call toop#mapShell('translate.sh en pt', 'tep')
@@ -1579,7 +1589,7 @@ nnoremap <leader>p "0p
 nnoremap <leader>P "0P
 xnoremap <leader>p "0p
 xnoremap <leader>P "0P
-nnoremap <leader>v :vnew<CR>
+nnoremap <leader>vn :vnew<CR>
 
 " Time in milliseconds (default 250)
 let g:Illuminate_delay = 250

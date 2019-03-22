@@ -57,8 +57,11 @@ Plug 'rhysd/devdocs.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'jeanCarloMachado/vim-toop'
+"marks search matching parts while typing
+Plug 'markonm/traces.vim'
 "autocomplete pairs chars
 Plug 'raimondi/delimitmate'
+Plug 'yuttie/comfortable-motion.vim'
 Plug 'yegappan/mru'
 Plug 'scrooloose/nerdtree'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
@@ -135,6 +138,8 @@ Plug 'vim-scripts/ReplaceWithRegister'
 "exchange text objects super useful!
 " cx {textobject}  move to a new place, cx{textobject} will swap them
 Plug 'tommcdo/vim-exchange'
+"This plugin should help you get to any word on a line in two or three keystrokes with mainly f<char> (which moves your cursor to
+Plug 'bradford-smith94/quick-scope'
 call plug#end()
 "}}}
 
@@ -463,7 +468,22 @@ fun FoldFiletypeSpecific()
     endif
 endfunc
 autocmd! BufReadPost * call FoldFiletypeSpecific()
+function! MyFoldText() " {{{
+    let line = getline(v:foldstart)
 
+    let nucolwidth = &fdc + &number * &numberwidth
+    let windowwidth = winwidth(0) - nucolwidth - 3
+    let foldedlinecount = v:foldend - v:foldstart
+
+    " expand tabs into spaces
+    let onetab = strpart('          ', 0, &tabstop)
+    let line = substitute(line, '\t', onetab, 'g')
+
+    let line = strpart(line, 0, windowwidth - 2 -len(foldedlinecount))
+    let fillcharcount = windowwidth - len(line) - len(foldedlinecount)
+    return line . '…' . repeat(" ",fillcharcount) . foldedlinecount . '…' . ' '
+endfunction " }}}
+set foldtext=MyFoldText()
 "disable indent fold for files with less than 60 lines
 
 fun! FoldSomething(str)

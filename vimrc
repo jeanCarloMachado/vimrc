@@ -28,7 +28,7 @@ Plug 'christoomey/vim-tmux-runner'
 Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
 "same indentation text object
 Plug 'michaeljsmith/vim-indent-object'
-Plug 'vim-scripts/argtextobj.vim'
+" Plug 'vim-scripts/argtextobj.vim'
 "gist support
 Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim'
 "grep like sublime one
@@ -51,8 +51,6 @@ Plug 'ludovicchabant/vim-gutentags'
 Plug 'easymotion/vim-easymotion'
 Plug 'janko-m/vim-test'
 Plug 'rhysd/devdocs.vim'
-"adjust indenting
-" Plug 'tpope/vim-sleuth'
 "seeing git log and git diff
 Plug 'tpope/vim-fugitive'
 Plug 'nathanaelkane/vim-indent-guides'
@@ -73,14 +71,15 @@ Plug 'airblade/vim-rooter'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 " Plug 'lervag/vimtex', { 'for': ['latex'] }
 Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
-" Plug 'fatih/vim-go', { 'for': ['go'] }
-" Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
-" Plug 'derekwyatt/vim-scala', { 'for': ['scala'] }
-" Plug 'ensime/ensime-vim', { 'do': ':UpdateRemotePlugins', 'for': ['scala'] }
-" Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
-" Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
-" Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
-" Plug 'vim-vdebug/vdebug', {'for': ['php'] }
+Plug 'chrisbra/csv.vim', { 'for': ['csv'] }
+Plug 'fatih/vim-go', { 'for': ['go'] }
+Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
+Plug 'derekwyatt/vim-scala', { 'for': ['scala'] }
+Plug 'ensime/ensime-vim', { 'do': ':UpdateRemotePlugins', 'for': ['scala'] }
+Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
+Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
+Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
+Plug 'vim-vdebug/vdebug', {'for': ['php'] }
 "filetype only * (for swift)
 " Plug 'keith/swift.vim', {'for': ['swift']}
 Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
@@ -100,6 +99,7 @@ Plug 'RRethy/vim-illuminate'
 "add highlights to misused spaces
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'bps/vim-textobj-python'
+Plug 'wellle/targets.vim'
 
 Plug 'autozimu/LanguageClient-neovim', {
     \ 'branch': 'next',
@@ -138,8 +138,6 @@ Plug 'vim-scripts/ReplaceWithRegister'
 "exchange text objects super useful!
 " cx {textobject}  move to a new place, cx{textobject} will swap them
 Plug 'tommcdo/vim-exchange'
-"This plugin should help you get to any word on a line in two or three keystrokes with mainly f<char> (which moves your cursor to
-Plug 'bradford-smith94/quick-scope'
 call plug#end()
 "}}}
 
@@ -1368,42 +1366,34 @@ call toop#mapShell('base64', '<leader>e64')
 call toop#mapShell('base64 --decode ', '<leader>d64')
 
 
+"align columns
 call toop#mapShell('tablign', '<leader>ta')
 "translate
-" duplicate from
-call toop#mapShell('runFunction translateDuplicating de en', 'df')
-" duplicate to
-call toop#mapShell('runFunction translateDuplicating de en', 'dt')
-" translate to
-call toop#mapShell('translate.sh en de', 'tt')
-" translate from
-call toop#mapShell('translate.sh de en', 'tf')
 
 call toop#mapShell('VOICE=1 translate.sh en de', '<leader>vo')
 
-call toop#mapShell('translate.sh de en', 'tge')
-call toop#mapShell('translate.sh en de', 'teg')
-call toop#mapShell('translate.sh en pt', 'tep')
-call toop#mapShell('translate.sh pt en', 'tpe')
-call toop#mapShell('translate.sh pt de', 'tpd')
-call toop#mapShell('translate.sh en de', 'ted')
-call toop#mapShell('translate.sh de en', 'tde')
-call toop#mapShell('translate.sh de pt', 'tdp')
-call toop#mapShell('translate.sh en fr', 'tef')
-call toop#mapShell('translate.sh en la', 'tel')
-call toop#mapShell('translate.sh la en', 'tle')
+call toop#mapShell('runFunction translateDuplicating de en', '<leader>ge')
+call toop#mapShell('runFunction translateDuplicating en de', '<leader>eg')
 
-call toop#mapShell('runFunction translateDuplicating de en', 'dge')
-call toop#mapShell('runFunction translateDuplicating en de', 'deg')
-call toop#mapShell('runFunction translateDuplicating en pt', 'dep')
-call toop#mapShell('runFunction translateDuplicating pt en', 'dpe')
-call toop#mapShell('runFunction translateDuplicating pt de', 'dpd')
-call toop#mapShell('runFunction translateDuplicating en de', 'ded')
-" call toop#mapShell('runFunction translateDuplicating de en', 'dde')
-" call toop#mapShell('runFunction translateDuplicating de pt', 'ddp')
-call toop#mapShell('runFunction translateDuplicating en fr', 'def')
-call toop#mapShell('runFunction translateDuplicating en la', 'del')
-call toop#mapShell('runFunction translateDuplicating la en', 'dle')
+call toop#mapShell('runFunction translateDuplicating en pt', '<leader>tep')
+call toop#mapShell('runFunction translateDuplicating pt en', '<leader>tpe')
+call toop#mapShell('runFunction translateDuplicating pt de', '<leader>tpd')
+call toop#mapShell('runFunction translateDuplicating en de', '<leader>ted')
+call toop#mapShell('runFunction translateDuplicating en fr', '<leader>tef')
+call toop#mapShell('runFunction translateDuplicating en la', '<leader>tel')
+call toop#mapShell('runFunction translateDuplicating la en', '<leader>tle')
+
+call toop#mapShell('translate.sh de en', '<leader>sge')
+call toop#mapShell('translate.sh en de', '<leader>seg')
+call toop#mapShell('translate.sh en pt', '<leader>sep')
+call toop#mapShell('translate.sh pt en', '<leader>spe')
+call toop#mapShell('translate.sh pt de', '<leader>spd')
+call toop#mapShell('translate.sh en de', '<leader>sed')
+call toop#mapShell('translate.sh de en', '<leader>sde')
+call toop#mapShell('translate.sh de pt', '<leader>sdp')
+call toop#mapShell('translate.sh en fr', '<leader>sef')
+call toop#mapShell('translate.sh en la', '<leader>sel')
+call toop#mapShell('translate.sh la en', '<leader>sle')
 
 call toop#mapShell('tr " " "\n"', '<leader>sn')
 "make numbered list
@@ -1413,6 +1403,7 @@ call toop#mapShell("awk '// { print \"- \"$0 }'", '<leader>ml')
 call toop#mapShell('graph-easy', '<leader>mg')
 call toop#mapShell('runFunction yml2json', '<leader>yj')
 call toop#mapShell('runFunction toggleQuote', '<leader>tq')
+call toop#mapShell('runFunction addMemrize', '<leader>am')
 
 "strike through
 call toop#mapAround('~~', '~~', '<leader>st')
@@ -1434,7 +1425,7 @@ call toop#mapAround('*', '*', '<leader>it')
 "markdown bold
 call toop#mapAround('**', '**', '<leader>bo')
 call toop#mapAround("***\n", '***', '<leader>hl')
-call toop#mapAround("```sh\n", "\n```", '<leader>c')
+call toop#mapAround("```\n", "\n```", '<leader>c')
 call toop#mapAround("\n---\n", "\n---\n", '<leader>-')
 nnoremap <leader>- i---<esc>
 
@@ -1547,7 +1538,7 @@ autocmd Syntax * call matchadd('Whitespace', '\s\+$')
 autocmd Syntax * call matchadd('Overlength', '\%81v')
 
 let g:solarized_termtrans = 1
-
+let g:airline_theme='solarized'
 set background=dark
 if $VIM_THEME == "light"
     set background=light
@@ -1593,7 +1584,6 @@ let g:rooter_change_directory_for_non_project_files = 'home'
 
 runtime! ftplugin/man.vim
 
-" let g:airline#extensions#tabline#enabled = 1
 let g:NERDTreeMinimalUI = 1
 let g:nerdtree_tabs_open_on_console_startup = 1
 let g:UltiSnipsExpandTrigger="<tab>"
@@ -1615,3 +1605,25 @@ nnoremap <leader>vn :vnew<CR>
 let g:Illuminate_delay = 250
 
 " hi illuminatedWord cterm=underline gui=underline
+let g:airline_solarized_bg='dark'
+let g:airline_focuslost_inactive = 1
+
+
+function! s:goyo_enter()
+  let w:airline_disabled = 1
+endfunction
+
+autocmd! User GoyoEnter call <SID>goyo_enter()
+
+
+
+fun! PDFFile(str)
+    let path = expand('%:p')
+    " let fileName = expand('%:t')
+    " exec '! pandoc "'.path.'" -o /tmp/foo.pdf'
+    exec '! unset QT_QPA_PLATFORM ; markdown-pdf "'.path.'" -o /tmp/foo.pdf'
+    echom "Result file: /tmp/foo.pdf"
+    exec "! zathura /tmp/foo.pdf "
+endfun
+command! -nargs=* PDFFile call PDFFile( '<args>' )
+nnoremap <Leader>pdf :PDFFile<cr>

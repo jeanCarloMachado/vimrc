@@ -102,12 +102,12 @@ Plug 'bps/vim-textobj-python'
 Plug 'wellle/targets.vim'
 
 Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
+			\ 'branch': 'next',
+			\ 'do': 'bash install.sh',
+			\ }
 let g:LanguageClient_serverCommands = {
-    \'python' : ['pyls']
-    \ }
+			\'python' : ['pyls']
+			\ }
 
 "other servers
 " \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
@@ -1400,7 +1400,8 @@ call toop#mapShell('tr " " "\n"', '<leader>sn')
 call toop#mapShell("runFunction makeNumberedList", '<leader>nl')
 "make list
 call toop#mapShell("awk '// { print \"- \"$0 }'", '<leader>ml')
-call toop#mapShell('graph-easy', '<leader>mg')
+call toop#mapShell('runFunction graphEasyDuplicating', '<leader>mg')
+call toop#mapShell('runFunction graphEasyImage', '<leader>mi')
 call toop#mapShell('runFunction yml2json', '<leader>yj')
 call toop#mapShell('runFunction toggleQuote', '<leader>tq')
 call toop#mapShell('runFunction addMemrize', '<leader>am')
@@ -1619,11 +1620,7 @@ autocmd! User GoyoEnter call <SID>goyo_enter()
 
 fun! PDFFile(str)
     let path = expand('%:p')
-    " let fileName = expand('%:t')
-    " exec '! pandoc "'.path.'" -o /tmp/foo.pdf'
-    exec '! unset QT_QPA_PLATFORM ; markdown-pdf "'.path.'" -o /tmp/foo.pdf'
-    echom "Result file: /tmp/foo.pdf"
-    exec "! zathura /tmp/foo.pdf "
+    let out = system('run_function fileToPDF "'.path.'" & ')
 endfun
 command! -nargs=* PDFFile call PDFFile( '<args>' )
 nnoremap <Leader>pdf :PDFFile<cr>

@@ -1617,10 +1617,9 @@ endfunction
 autocmd! User GoyoEnter call <SID>goyo_enter()
 
 
-
 fun! PDFFile(str)
     let path = expand('%:p')
-    let out = system('run_function fileToPDF "'.path.'" & ')
+    execute 'AsyncRun run_function fileToPDF "'.path.'"'
 endfun
 command! -nargs=* PDFFile call PDFFile( '<args>' )
 nnoremap <Leader>pdf :PDFFile<cr>

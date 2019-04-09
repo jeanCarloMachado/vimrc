@@ -100,7 +100,7 @@ Plug 'RRethy/vim-illuminate'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'bps/vim-textobj-python'
 Plug 'wellle/targets.vim'
-
+Plug 'blueyed/vim-diminactive'
 Plug 'autozimu/LanguageClient-neovim', {
 			\ 'branch': 'next',
 			\ 'do': 'bash install.sh',
@@ -189,7 +189,7 @@ nnoremap <Leader>dt :r ! date<cr>
 nnoremap <leader>pu :PlugUpdate<cr>
 nnoremap <leader>pc :PlugClean<cr>
 nnoremap cwi ciw
-map <leader>i mmgg=G`m
+" map <leader>i mmgg=G`m
 map <leader>x :w<','> !bash<cr>
 map <leader>me :!chmod +x %<cr>
 nnoremap <leader>nt :tabnew<cr>
@@ -277,14 +277,6 @@ let g:ale_completion_enabled = 1
 set omnifunc=syntaxcomplete#Complete
 "}}}
 
-"Concealing {{{
-autocmd FileType markdown call matchadd('Conceal', '# ', 999, -1, {'conceal': ''}) |
-    \ call matchadd('Conceal', '## ', 999, -1, {'conceal': ''}) |
-    \ call matchadd('Conceal', '### ', 999, -1, {'conceal': ''}) |
-    \ call matchadd('Conceal', '#### ', 999, -1, {'conceal': ''})
-
-" autocmd FileType swift call matchadd('Conceal', "{\\n", 999, -1, {'conceal': ''}) |
-"     \ call matchadd('Conceal', "}\\n", 999, -1, {'conceal': ''})
 
 
 autocmd FileType php call matchadd('Conceal', '"', 999, -1, {'conceal': ''}) |
@@ -441,7 +433,7 @@ fun FoldFiletypeSpecific()
     set foldopen=block,hor,insert,jump,mark,percent,quickfix,search,tag,undo
 
 
-    let MIN_LINES_TO_FOLD = 80
+    let MIN_LINES_TO_FOLD = 45
     if (line('$') < MIN_LINES_TO_FOLD)
         setlocal foldenable!
         return
@@ -875,7 +867,7 @@ let g:repls = {
 \   'default': 'irb',
 \}
 
-fun! RunRepl()
+fun! Repl()
     if (has_key(g:repls, &filetype))
       let cmd = get(g:repls, &filetype)
       :VimuxRunCommand(cmd."\n")
@@ -885,7 +877,7 @@ fun! RunRepl()
     let cmd = get(g:repls, 'default')
     :VimuxRunCommand(cmd."\n")
 endfunc
-nmap <leader>rr  :call RunRepl()<cr>
+nmap <leader>rr  :call Repl()<cr>
 
 "}}}
 
@@ -1366,11 +1358,14 @@ call toop#mapShell('base64', '<leader>e64')
 call toop#mapShell('base64 --decode ', '<leader>d64')
 
 
+call toop#mapShell('RESULT_PREFIX="#" run_function printInputAndOutput interpret', '<leader>ii')
 "align columns
 call toop#mapShell('tablign', '<leader>ta')
 "translate
 
 call toop#mapShell('VOICE=1 translate.sh en de', '<leader>vo')
+" for voice memorization
+call toop#mapShell('audioMemorizationGeneration.sh', '<leader>vm')
 
 call toop#mapShell('runFunction translateDuplicating de en', '<leader>ge')
 call toop#mapShell('runFunction translateDuplicating en de', '<leader>eg')

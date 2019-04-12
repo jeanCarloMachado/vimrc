@@ -1365,7 +1365,7 @@ call toop#mapShell('tablign', '<leader>ta')
 
 call toop#mapShell('VOICE=1 translate.sh en de', '<leader>vo')
 " for voice memorization
-call toop#mapShell('audioMemorizationGeneration.sh', '<leader>vm')
+call toop#mapShell('run_function printInputAndOutput bash -c "audioMemorizationGeneration.sh 1>/dev/null"', '<leader>vm')
 
 call toop#mapShell('runFunction translateDuplicating de en', '<leader>ge')
 call toop#mapShell('runFunction translateDuplicating en de', '<leader>eg')

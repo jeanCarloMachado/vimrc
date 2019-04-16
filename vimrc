@@ -1604,6 +1604,11 @@ let g:Illuminate_delay = 250
 let g:airline_solarized_bg='dark'
 let g:airline_focuslost_inactive = 1
 
+fun! WordUnderCursorCount(args)
+	execute ":%s@\\<" . expand("<cword>") . "\\>\@&@gn"
+endfun
+command! -nargs=* WordUnderCursorCount call WordUnderCursorCount( '<args>' )
+
 
 function! s:goyo_enter()
   let w:airline_disabled = 1

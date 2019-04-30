@@ -449,6 +449,7 @@ fun FoldFiletypeSpecific()
 
     if (&filetype == "markdown")
       setlocal foldmethod=expr
+        setlocal foldlevel=0
         return
     endif
 
@@ -586,7 +587,7 @@ autocmd CmdwinEnter * nnoremap <CR> <CR>
 autocmd BufReadPost quickfix nnoremap <CR> <CR>
 
 fun! OpenUrl(url)
-    silent execute '! open "' . a:url . '" 1>/dev/null  &'
+    silent execute "! open '" . a:url . "' 1>/dev/null  &"
 endfunc
 nnoremap gx :call OpenUrl()<cr>
 
@@ -1356,6 +1357,8 @@ call toop#mapShell('run_function xml_beautifier', '<leader>x')
 call toop#mapShell('run_function xml_beautifier', '<leader>xb')
 call toop#mapShell('base64', '<leader>e64')
 call toop#mapShell('base64 --decode ', '<leader>d64')
+call toop#mapShell('python3 -c "import sys,urllib.parse;print(urllib.parse.quote(sys.stdin.read().strip()))"', '<leader>ue')
+call toop#mapShell('python3 -c "import sys,urllib.parse;print(urllib.parse.unquote(sys.stdin.read().strip()))"', '<leader>ud')
 
 
 call toop#mapShell('RESULT_PREFIX="#" run_function printInputAndOutput interpret', '<leader>ii')

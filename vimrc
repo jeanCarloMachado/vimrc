@@ -1,18 +1,13 @@
-"Considerations
+" Welcome to my vim
+"
+" ## Conventions
+" Comments about code should go above the code now below
 "
 " Userspace dependencies
 " - par
 " - rg
-"- ctags https://github.com/universal-ctags/ctags
+" - ctags https://github.com/universal-ctags/ctags
 " - yaourt -S python-proselint write-good flake8
-
-" Each new supported language should have configured the following features
-" - linters and fixer
-" - default template for empty files
-" - check if ctags support works, otherwise add
-" - documentation querying on devdocs otherwiser add exception
-" - simple repl setup
-" - unit testing execution in single command
 
 " plugins load {{{
 set nocompatible
@@ -24,11 +19,9 @@ Plug 'altercation/vim-colors-solarized'
 "inline errors, linting
 Plug 'w0rp/ale'
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'christoomey/vim-tmux-runner'
 Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
 "same indentation text object
 Plug 'michaeljsmith/vim-indent-object'
-" Plug 'vim-scripts/argtextobj.vim'
 "gist support
 Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim'
 "grep like sublime one
@@ -54,7 +47,6 @@ Plug 'rhysd/devdocs.vim'
 "seeing git log and git diff
 Plug 'tpope/vim-fugitive'
 Plug 'nathanaelkane/vim-indent-guides'
-Plug 'jeanCarloMachado/vim-toop'
 "marks search matching parts while typing
 Plug 'markonm/traces.vim'
 "autocomplete pairs chars
@@ -69,6 +61,7 @@ Plug 'mhinz/vim-startify'
 Plug 'airblade/vim-rooter'
 " Plug 'vim-syntastic/syntastic', { 'for': ['swift'] }
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+" programming languages {{{
 " Plug 'lervag/vimtex', { 'for': ['latex'] }
 Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
 Plug 'chrisbra/csv.vim', { 'for': ['csv'] }
@@ -88,6 +81,9 @@ Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'javascript.jsx'] }
 Plug 'mxw/vim-jsx', { 'for': ['javascript', 'javascript.jsx'] }
 "hides links paths, and other small niceties
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
+"}}}
+
+Plug 'christoomey/vim-tmux-runner'
 Plug 'junegunn/goyo.vim'
 Plug 'tpope/vim-abolish'
 Plug 'vim-airline/vim-airline'
@@ -98,27 +94,17 @@ Plug 'tpope/vim-repeat'
 Plug 'RRethy/vim-illuminate'
 "add highlights to misused spaces
 Plug 'ntpeters/vim-better-whitespace'
-Plug 'bps/vim-textobj-python'
-Plug 'wellle/targets.vim'
 Plug 'blueyed/vim-diminactive'
 Plug 'autozimu/LanguageClient-neovim', {
 			\ 'branch': 'next',
 			\ 'do': 'bash install.sh',
 			\ }
-let g:LanguageClient_serverCommands = {
-			\'python' : ['pyls']
-			\ }
-
-"other servers
-" \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
-" \ 'javascript': ['/usr/local/bin/javascript-typescript-stdio'],
-" \ 'javascript.jsx': ['tcp://127.0.0.1:2089'],
-"
+" autocompletion {{{
 "ncm2 is better than  deoplete :)
 Plug 'ncm2/ncm2' | Plug 'roxma/nvim-yarp'
 "enable ncm2 for all buffers
 autocmd BufEnter * call ncm2#enable_for_buffer()
-" IMPORTANTE: :help Ncm2PopupOpen for more information
+" Important: :help Ncm2PopupOpen for more information
 set completeopt=noinsert,menuone,noselect
 " NOTE: you need to install completion sources to get completions. Check
 " our wiki page for a list of sources: https://github.com/ncm2/ncm2/wiki
@@ -126,10 +112,15 @@ Plug 'ncm2/ncm2-bufword'
 Plug 'ncm2/ncm2-tmux'
 Plug 'ncm2/ncm2-path'
 
+"}}}
+"get beautiful icons for nerdtree
 Plug 'ryanoasis/vim-devicons'
+" snippets {{{
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'ervandew/supertab'
+
+"}}}
 "make the yanked region appartent
 Plug 'machakann/vim-highlightedyank'
 "replaces the yanked text with a text object gr{textobject} to paste  and can
@@ -137,10 +128,18 @@ Plug 'machakann/vim-highlightedyank'
 Plug 'vim-scripts/ReplaceWithRegister'
 "exchange text objects super useful!
 " cx {textobject}  move to a new place, cx{textobject} will swap them
+" text object stuff {{{
+Plug 'jeanCarloMachado/vim-toop'
 Plug 'tommcdo/vim-exchange'
-call plug#end()
+Plug 'bps/vim-textobj-python'
+Plug 'wellle/targets.vim'
+" Plug 'vim-scripts/argtextobj.vim'
 "}}}
 
+
+
+call plug#end()
+"}}}
 
 " {{{ generic
 set wildignore+=*\\dist\\**
@@ -277,8 +276,7 @@ let g:ale_completion_enabled = 1
 set omnifunc=syntaxcomplete#Complete
 "}}}
 
-
-
+" concealing {{{
 autocmd FileType php call matchadd('Conceal', '"', 999, -1, {'conceal': ''}) |
     \ call matchadd('Conceal', "'", 999, -1, {'conceal': ''}) |
     \ call matchadd('Conceal', 'class ', 999, -1, {'conceal': ''}) |
@@ -753,7 +751,6 @@ fun! OpenRepoOnGithub(arg)
 endfunc
 command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
 "}}}
-
 
 " {{{ search
 set hlsearch " match while typing the search
@@ -1564,6 +1561,10 @@ map <Leader>wm :call WritingMode()<cr>
 
 
 "VERY useful skill
+let g:LanguageClient_serverCommands = {
+			\'python' : ['pyls']
+			\ }
+
 "see all options of the langauge server
 nnoremap <leader>lo :call LanguageClient_contextMenu()<CR>
 " see the signature of a method[
@@ -1577,7 +1578,6 @@ nnoremap <silent> <leader>rn :call LanguageClient#textDocument_rename()<CR>
 let g:gist_post_private = 1
 " xnoremap p "_dP
 
-" let g:go_mod_fmt_autosave = 0
 let g:vim_json_syntax_concealcursor = 1
 let g:rooter_change_directory_for_non_project_files = 'home'
 

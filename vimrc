@@ -136,8 +136,6 @@ Plug 'wellle/targets.vim'
 " Plug 'vim-scripts/argtextobj.vim'
 "}}}
 
-
-
 call plug#end()
 "}}}
 
@@ -235,7 +233,6 @@ let g:ale_set_highlights = 1
 let g:ale_lint_on_text_changed = 0
 let g:ale_lint_on_save = 1
 let g:ale_lint_on_enter = 0
-let g:ale_lint_on_save = 1
 let g:ale_lint_on_text_changed = 0
 let g:ale_writegood_options = ' --so --illusion --adverb --tooWordy --cliches'
 let g:ale_sign_warning = '⚠'
@@ -600,6 +597,7 @@ command! -nargs=* WikiGrep call GrepWiki( '<args>' )
 "}}}
 
 " templates for filetypes {{{
+"
 autocmd BufNewFile *.php 0r $TEMPLATES_DIR/php.php
 autocmd BufNewFile *.sh 0r $TEMPLATES_DIR/shell.sh
 autocmd BufNewFile *.hs 0r $TEMPLATES_DIR/haskell.hs
@@ -794,6 +792,8 @@ au BufRead,BufNewFile *.vue set syntax=javascript
 autocmd BufNewFile,BufRead *.es6,*.ts set filetype=javascript
 autocmd BufNewFile,BufRead *.thrift set syntax=c
 autocmd filetype crontab setlocal nobackup nowritebackup
+
+autocmd filetype php let g:ale_fix_on_save = 0
 "}}}
 
 "fzf {{{

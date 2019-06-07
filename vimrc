@@ -8,7 +8,12 @@
 " - rg
 " - ctags https://github.com/universal-ctags/ctags
 " - yaourt -S python-proselint write-good flake8
+"
+" Changelog
+"
+" - Tue 21 May 2019 09:28:46 AM CEST - drop gist support because they are dangerous security-wise
 
+let g:theme = 'light'
 " plugins load {{{
 set nocompatible
 filetype on
@@ -22,8 +27,6 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
 "same indentation text object
 Plug 'michaeljsmith/vim-indent-object'
-"gist support
-Plug 'mattn/webapi-vim' | Plug 'mattn/gist-vim'
 "grep like sublime one
 Plug 'dyng/ctrlsf.vim'
 "quoting/parenthesizing
@@ -43,14 +46,13 @@ Plug 'benmills/vimux'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'easymotion/vim-easymotion'
 Plug 'janko-m/vim-test'
-Plug 'rhysd/devdocs.vim'
 "seeing git log and git diff
 Plug 'tpope/vim-fugitive'
-Plug 'nathanaelkane/vim-indent-guides'
 "marks search matching parts while typing
 Plug 'markonm/traces.vim'
 "autocomplete pairs chars
 Plug 'raimondi/delimitmate'
+" @TODO investigate what this shit does
 Plug 'yuttie/comfortable-motion.vim'
 Plug 'yegappan/mru'
 Plug 'scrooloose/nerdtree'
@@ -81,20 +83,19 @@ Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'javascript.jsx'] }
 Plug 'mxw/vim-jsx', { 'for': ['javascript', 'javascript.jsx'] }
 "hides links paths, and other small niceties
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
+Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs'}
 "}}}
 
 Plug 'christoomey/vim-tmux-runner'
 Plug 'junegunn/goyo.vim'
 Plug 'tpope/vim-abolish'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
 "git commit browser in vim
 Plug 'junegunn/gv.vim'
 Plug 'tpope/vim-repeat'
 Plug 'RRethy/vim-illuminate'
 "add highlights to misused spaces
 Plug 'ntpeters/vim-better-whitespace'
-Plug 'blueyed/vim-diminactive'
+" Plug 'blueyed/vim-diminactive'
 Plug 'autozimu/LanguageClient-neovim', {
 			\ 'branch': 'next',
 			\ 'do': 'bash install.sh',
@@ -122,10 +123,8 @@ Plug 'ervandew/supertab'
 
 "}}}
 "make the yanked region appartent
-Plug 'machakann/vim-highlightedyank'
 "replaces the yanked text with a text object gr{textobject} to paste  and can
 "be repeatable!
-Plug 'vim-scripts/ReplaceWithRegister'
 "exchange text objects super useful!
 " cx {textobject}  move to a new place, cx{textobject} will swap them
 " text object stuff {{{
@@ -178,7 +177,6 @@ runtime macros/matchit.vim "Enable extended % matching
 "Generic mappings{{{
 "Allow using the repeat operator with a visual selection
 vnoremap . :normal .<CR>
-nnoremap <BS> :Rex<cr>
 nnoremap + ddp
 nnoremap _ dd2kp
 nnoremap <Leader>le :noh<cr>
@@ -241,11 +239,11 @@ let b:ale_warn_about_trailing_whitespace = 0
 let g:ale_fix_on_save = 1
 
 "change ruleset for fishfamr
-autocmd BufRead,BufNewFile */fishfarm/* let g:ale_php_phpcs_standard = "/home/jean/projects/activity-classifier/ruleset.xml"
+" autocmd BufRead,BufNewFile */fishfarm/* let g:ale_php_phpcs_standard = "/home/jean/projects/activity-classifier/ruleset.xml"
 
+" \   'php': ['php', 'phpcs'],
 let g:ale_linters = {
 \   'python': ['mypy', 'flake8', 'pylint'],
-\   'php': ['php', 'phpcs'],
 \   'javascript': ['eslint'],
 \   'sh': ['shell', 'shellcheck'],
 \   'markdown': ['write-good', 'proselint'],
@@ -263,8 +261,6 @@ let g:ale_fixers = {
 \   'elm': ['elm-format']
 \}
 
-highlight ALEErrorSign ctermbg=NONE ctermfg=red
-highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
 "}}}
 
 " autocomplete {{{
@@ -598,7 +594,7 @@ command! -nargs=* WikiGrep call GrepWiki( '<args>' )
 
 " templates for filetypes {{{
 "
-autocmd BufNewFile *.php 0r $TEMPLATES_DIR/php.php
+autocmd BufNewFile *[^Test].php 0r $TEMPLATES_DIR/php.php
 autocmd BufNewFile *.sh 0r $TEMPLATES_DIR/shell.sh
 autocmd BufNewFile *.hs 0r $TEMPLATES_DIR/haskell.hs
 autocmd BufNewFile *.html 0r $TEMPLATES_DIR/html.html
@@ -609,6 +605,9 @@ autocmd BufNewFile **/*_paper.md 0r $TEMPLATES_DIR/science-review.md
 autocmd BufNewFile **/*review*.md 0r $TEMPLATES_DIR/science-review.md
 autocmd BufNewFile */diary/*.md 0r $TEMPLATES_DIR/diary.md
 autocmd BufNewFile */posts/*.md 0r $TEMPLATES_DIR/post.md
+autocmd BufNewFile */composer.json 0r $TEMPLATES_DIR/composer.json
+autocmd BufNewFile */phpunit.xml 0r $TEMPLATES_DIR/phpunit.xml
+autocmd BufNewFile */*Test.php 0r $TEMPLATES_DIR/phpTest.php
 "}}}
 
 " relative to current file {{{
@@ -793,7 +792,7 @@ autocmd BufNewFile,BufRead *.es6,*.ts set filetype=javascript
 autocmd BufNewFile,BufRead *.thrift set syntax=c
 autocmd filetype crontab setlocal nobackup nowritebackup
 
-autocmd filetype php let g:ale_fix_on_save = 0
+" autocmd filetype php let g:ale_fix_on_save = 0
 "}}}
 
 "fzf {{{
@@ -1484,11 +1483,11 @@ augroup resCur
 augroup END
 
 set cursorline
-set cursorcolumn
+" set cursorcolumn
 
 fun! CursorToggle()
     set cursorline!
-    set cursorcolumn!
+    " set cursorcolumn!
 endfun
 command! -nargs=* CursorToggle call CursorToggle()
 nnoremap <leader>ct  :call CursorToggle()<cr>
@@ -1517,52 +1516,50 @@ syntax sync fromstart
 "the later syntax is applied the better
 "since something might override it
 syntax enable
-augroup VimrcColors
-    au!
-    autocmd ColorScheme * highlight WordsToAvoid ctermfg=DarkBlue cterm=underline
-    autocmd ColorScheme * highlight HardWords ctermfg=DarkBlue cterm=underline
-    autocmd ColorScheme * highlight Whitespace ctermbg=Grey
-    autocmd ColorScheme * highlight Overlength ctermbg=DarkGrey
-    autocmd ColorScheme * highlight SpellBad ctermfg=Brown
-    "makes a underline on the current cursor line
-augroup END
 
-autocmd Syntax * call matchadd('WordsToAvoid', '\c\<\(obviously\|basically\|simply\|of\scourse\|clearly\|just\|little\|quite\|everyone\knows\|however\|easy\|obviamente\|basicamente\|simplesmente\|com\certeza\|claramente\|apenas\|mais\|todos\sabem\|entretanto\|então\|fácil\|bem\)\>')
-"words that need to be revised
-autocmd Syntax * call matchadd('HardWords', '\c\<\(porquê\|porque\|por\sque\|its\)\>')
-autocmd Syntax * call matchadd('Whitespace', '\s\+$')
-autocmd Syntax * call matchadd('Overlength', '\%81v')
 
-let g:solarized_termtrans = 1
-let g:airline_theme='solarized'
-set background=dark
-if $VIM_THEME == "light"
-    set background=light
-endif
+
+
+let g:solarized_termcolors= 16
+let g:solarized_termtrans = 0
+let g:solarized_degrade = 0
+let g:solarized_bold = 1
+let g:solarized_underline = 1
+let g:solarized_italic = 1
+let g:solarized_contrast = "high"
+let  g:solarized_visibility= "high"
+set t_Co=256
+
+"base03    #002b36  8/4 brblack  234 #1c1c1c 15 -12 -12   0  43  54 193 100  21
+"base02    #073642  0/4 black    235 #262626 20 -12 -12   7  54  66 192  90  26
+"base01    #586e75 10/7 brgreen  240 #4e4e4e 45 -07 -07  88 110 117 194  25  46
+"base00    #657b83 11/7 bryellow 241 #585858 50 -07 -07 101 123 131 195  23  51
+"base0     #839496 12/6 brblue   244 #808080 60 -06 -03 131 148 150 186  13  59
+"base1     #93a1a1 14/4 brcyan   245 #8a8a8a 65 -05 -02 147 161 161 180   9  63
+"base2     #eee8d5  7/7 white    254 #d7d7af 92 -00  10 238 232 213  44  11  93
+"base3     #fdf6e3 15/7 brwhite  230 #ffffd7 97  00  10 253 246 227  44  10  99
+"yellow    #b58900  3/3 yellow   136 #af8700 60  10  65 181 137   0  45 100  71
+"orange    #cb4b16  9/3 brred    166 #d75f00 50  50  55 203  75  22  18  89  80
+"red       #dc322f  1/1 red      160 #d70000 50  65  45 220  50  47   1  79  86
+"magenta   #d33682  5/5 magenta  125 #af005f 50  65 -05 211  54 130 331  74  83
+"violet    #6c71c4 13/5 brmagenta 61 #5f5faf 50  15 -45 108 113 196 237  45  77
+"blue      #268bd2  4/4 blue      33 #0087ff 55 -10 -45  38 139 210 205  82  82
+"cyan      #2aa198  6/6 cyan      37 #00afaf 60 -35 -05  42 161 152 175  74  63
+"green     #859900  2/2 green     64 #5f8700 60 -20  65 133 153   0  68 100  60
+
 
 colorscheme solarized
-let g:solarized_bold=1
-set t_Co=256
-" color 0 is the dark background and 15 is the light one hi StatusLine ctermfg=12 ctermbg=0 cterm=NONE
 
 "reapplies the sytanx when it's broken
 noremap <F12> <Esc>:syntax sync fromstart<CR>
 inoremap <F12> <C-o>:syntax sync fromstart<CR>
 "}}}
 
-"writer mode {{{
 
-fun! WritingMode()
-    :Goyo
-endfun
-command! -nargs=* WritingMode call WritingMode()
-map <Leader>wm :call WritingMode()<cr>
-"}}}
-
-
+"\'php' : ['php /home/jean/projects/little-architecture/vendor/felixfbecker/language-server/bin/php-language-server.php']
 "VERY useful skill
 let g:LanguageClient_serverCommands = {
-			\'python' : ['pyls']
+			\'python' : ['pyls'],
 			\ }
 
 "see all options of the langauge server
@@ -1575,7 +1572,6 @@ nnoremap <silent> <leader>def :call LanguageClient#textDocument_definition()<CR>
 nnoremap <silent> <leader>rn :call LanguageClient#textDocument_rename()<CR>
 
 
-let g:gist_post_private = 1
 " xnoremap p "_dP
 
 let g:vim_json_syntax_concealcursor = 1
@@ -1602,22 +1598,12 @@ nnoremap <leader>vn :vnew<CR>
 
 " Time in milliseconds (default 250)
 let g:Illuminate_delay = 250
-
 " hi illuminatedWord cterm=underline gui=underline
-let g:airline_solarized_bg='dark'
-let g:airline_focuslost_inactive = 1
 
 fun! WordUnderCursorCount(args)
 	execute ":%s@\\<" . expand("<cword>") . "\\>\@&@gn"
 endfun
 command! -nargs=* WordUnderCursorCount call WordUnderCursorCount( '<args>' )
-
-
-function! s:goyo_enter()
-  let w:airline_disabled = 1
-endfunction
-
-autocmd! User GoyoEnter call <SID>goyo_enter()
 
 
 fun! PDFFile(str)
@@ -1626,3 +1612,82 @@ fun! PDFFile(str)
 endfun
 command! -nargs=* PDFFile call PDFFile( '<args>' )
 nnoremap <Leader>pdf :PDFFile<cr>
+let g:gitgutter_override_sign_column_highlight = 0
+
+" settings for light color solarized
+fun! PersonalHighlights()
+	""" this changes where mainly made to make the solarized light them
+	""" better for use for getting a better sense of the options do a
+	""" :h ColorColumn
+
+    if g:theme == "light"
+        highlight Cursor ctermbg=NONE cterm=bold
+        highlight CursorColumn ctermbg=Yellow cterm=bold
+        highlight CursorLine ctermbg=white
+        highlight ALEErrorSign ctermbg=NONE ctermfg=red
+        highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
+        set hlsearch
+        hi Folded ctermbg=white
+        highlight LineNr ctermbg=white
+        hi VertSplit ctermbg=white
+        hi illuminatedWord cterm=underline gui=underline
+        hi StatusLine ctermbg=darkgrey ctermfg=white
+        hi StatusLineNC ctermbg=darkgrey ctermfg=white
+        highlight clear SignColumn
+        highlight SignColumn ctermbg=white
+        highlight FoldColumn ctermbg=white
+        highlight ColorColumn ctermbg=white
+
+        highlight Pmenu ctermfg=white
+        highlight PmenuSel ctermfg=white
+        highlight PmenuSbar ctermfg=white
+        highlight QuickFixLine ctermfg=white
+        highlight TabLine ctermbg=white
+        highlight TabLineFill ctermbg=white
+        highlight TabLineSel ctermbg=white
+    else
+        highlight SignColumn ctermbg=black
+        highlight FoldColumn ctermbg=black
+        highlight ColorColumn ctermbg=black
+
+    endif
+
+endfun
+
+
+if g:theme == 'dark'
+	set background=dark
+else
+	set background=light
+endif
+
+call PersonalHighlights()
+
+
+
+"writer mode {{{
+
+fun! WritingMode()
+    :Goyo
+endfun
+command! -nargs=* WritingMode call WritingMode()
+map <Leader>wm :call WritingMode()<cr>
+"}}}
+"
+"
+function! s:goyo_leave()
+	" call PersonalHighlights()
+endfunction
+
+autocmd! User GoyoLeave call <SID>goyo_leave()
+
+
+
+" tabstop:          Width of tab character
+" softtabstop:      Fine tunes the amount of white space to be added
+" shiftwidth        Determines the amount of whitespace to add in normal mode
+" expandtab:        When on uses space instead of tabs
+set tabstop     =4
+set softtabstop =4
+set shiftwidth  =4
+set expandtab

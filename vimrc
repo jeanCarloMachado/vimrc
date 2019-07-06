@@ -599,6 +599,7 @@ command! -nargs=* WikiGrep call GrepWiki( '<args>' )
 " templates for filetypes {{{
 "
 autocmd BufNewFile *[^Test].php 0r $TEMPLATES_DIR/php.php
+autocmd BufNewFile test_*.py 0r $TEMPLATES_DIR/test.py
 autocmd BufNewFile *.sh 0r $TEMPLATES_DIR/shell.sh
 autocmd BufNewFile *.hs 0r $TEMPLATES_DIR/haskell.hs
 autocmd BufNewFile *.html 0r $TEMPLATES_DIR/html.html

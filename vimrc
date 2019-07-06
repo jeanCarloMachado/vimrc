@@ -8,12 +8,12 @@
 " - rg
 " - ctags https://github.com/universal-ctags/ctags
 " - yaourt -S python-proselint write-good flake8
-"
 " Changelog
+"
 "
 " - Tue 21 May 2019 09:28:46 AM CEST - drop gist support because they are dangerous security-wise
 
-let g:theme = 'light'
+let g:theme = 'dark'
 " plugins load {{{
 set nocompatible
 filetype on
@@ -34,57 +34,26 @@ Plug 'tpope/vim-surround'
 "shows a git diff in the gutter (sign column) and stages/undoes hunks.
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-commentary'
-" visualizing marks
-Plug 'kshenoy/vim-signature'
 " this plugin is slow when the project is too big
 "most recently used files list
 Plug 'git@github.com:skywind3000/asyncrun.vim.git'
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 Plug 'wakatime/vim-wakatime'
 Plug 'benmills/vimux'
-"better tags management
-Plug 'ludovicchabant/vim-gutentags'
 Plug 'easymotion/vim-easymotion'
 Plug 'janko-m/vim-test'
-"seeing git log and git diff
-Plug 'tpope/vim-fugitive'
-"marks search matching parts while typing
-Plug 'markonm/traces.vim'
 "autocomplete pairs chars
 Plug 'raimondi/delimitmate'
-" @TODO investigate what this shit does
-Plug 'yuttie/comfortable-motion.vim'
 Plug 'yegappan/mru'
 Plug 'scrooloose/nerdtree'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'Xuyuanp/nerdtree-git-plugin'
+"useful to get the recent opened files
 Plug 'mhinz/vim-startify'
 "easily go back to project root
 Plug 'airblade/vim-rooter'
 " Plug 'vim-syntastic/syntastic', { 'for': ['swift'] }
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-" programming languages {{{
-" Plug 'lervag/vimtex', { 'for': ['latex'] }
-Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
-Plug 'chrisbra/csv.vim', { 'for': ['csv'] }
-Plug 'fatih/vim-go', { 'for': ['go'] }
-Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
-Plug 'derekwyatt/vim-scala', { 'for': ['scala'] }
-Plug 'ensime/ensime-vim', { 'do': ':UpdateRemotePlugins', 'for': ['scala'] }
-Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
-Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
-Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
-Plug 'vim-vdebug/vdebug', {'for': ['php'] }
-"filetype only * (for swift)
-" Plug 'keith/swift.vim', {'for': ['swift']}
-Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
-Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
-Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'javascript.jsx'] }
-Plug 'mxw/vim-jsx', { 'for': ['javascript', 'javascript.jsx'] }
-"hides links paths, and other small niceties
-Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
-Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs'}
-"}}}
 
 Plug 'christoomey/vim-tmux-runner'
 Plug 'junegunn/goyo.vim'
@@ -96,6 +65,7 @@ Plug 'RRethy/vim-illuminate'
 "add highlights to misused spaces
 Plug 'ntpeters/vim-better-whitespace'
 " Plug 'blueyed/vim-diminactive'
+Plug 'nathanaelkane/vim-indent-guides'
 Plug 'autozimu/LanguageClient-neovim', {
 			\ 'branch': 'next',
 			\ 'do': 'bash install.sh',
@@ -117,10 +87,9 @@ Plug 'ncm2/ncm2-path'
 "get beautiful icons for nerdtree
 Plug 'ryanoasis/vim-devicons'
 " snippets {{{
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
-Plug 'ervandew/supertab'
-
+" Plug 'SirVer/ultisnips'
+" Plug 'honza/vim-snippets'
+" Plug 'ervandew/supertab'
 "}}}
 "make the yanked region appartent
 "replaces the yanked text with a text object gr{textobject} to paste  and can
@@ -132,7 +101,42 @@ Plug 'jeanCarloMachado/vim-toop'
 Plug 'tommcdo/vim-exchange'
 Plug 'bps/vim-textobj-python'
 Plug 'wellle/targets.vim'
+
+
+" programming languages {{{
+" Plug 'lervag/vimtex', { 'for': ['latex'] }
+"
+Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
+Plug 'chrisbra/csv.vim', { 'for': ['csv'] }
+Plug 'fatih/vim-go', { 'for': ['go'] }
+Plug 'derekwyatt/vim-scala', { 'for': ['scala'] }
+Plug 'ensime/ensime-vim', { 'do': ':UpdateRemotePlugins', 'for': ['scala'] }
+Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
+Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
+Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
+Plug 'vim-vdebug/vdebug', {'for': ['php'] }
+"filetype only * (for swift)
+" Plug 'keith/swift.vim', {'for': ['swift']}
+Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
+Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
+Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'javascript.jsx'] }
+Plug 'mxw/vim-jsx', { 'for': ['javascript', 'javascript.jsx'] }
+"hides links paths, and other small niceties
+Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
+Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs'}
+"}}}
+
+" ==== discarded plugins and why ====
 " Plug 'vim-scripts/argtextobj.vim'
+" visualizing marks - not essential, better to have a high performant vim
+" Plug 'kshenoy/vim-signature'
+"better tags management -  I do not use tags anymore, rely on language server
+"instead
+" Plug 'ludovicchabant/vim-gutentags'
+""seeing git log and git diff - I kind of prefer to handle git stuff in the shell
+"Plug 'tpope/vim-fugitive'
+"marks search matching parts while typing - not really important
+" Plug 'markonm/traces.vim'
 "}}}
 
 call plug#end()
@@ -193,7 +197,7 @@ nmap <leader>sh :!cd %:h && zsh <cr>
 nmap <leader>pn :!echo %<cr>
 nmap <leader>pfn :!echo %:p<cr>
 nmap <silent> <leader>ve :e $MY_VIMRC<cr>:lcd %:h<cr>
-nnoremap <leader>c :noh<cr>
+
 " set shellcmdflag=-ic "make vim :! behave like a normal prompt
 nnoremap <leader><space> :w<cr>
 "use C-p and C-n to browser normal mode commands history
@@ -1399,6 +1403,7 @@ call toop#mapShell('runFunction graphEasyImage', '<leader>mi')
 call toop#mapShell('runFunction yml2json', '<leader>yj')
 call toop#mapShell('runFunction toggleQuote', '<leader>tq')
 call toop#mapShell('runFunction addMemrize', '<leader>am')
+call toop#mapShell('runFunction addTrelloCard', '<leader>ct')
 
 "strike through
 call toop#mapAround('~~', '~~', '<leader>st')
@@ -1420,7 +1425,7 @@ call toop#mapAround('*', '*', '<leader>it')
 "markdown bold
 call toop#mapAround('**', '**', '<leader>bo')
 call toop#mapAround("***\n", '***', '<leader>hl')
-call toop#mapAround("```\n", "\n```", '<leader>c')
+call toop#mapAround("```\n", "\n```", '<leader>cb')
 call toop#mapAround("\n---\n", "\n---\n", '<leader>-')
 nnoremap <leader>- i---<esc>
 
@@ -1490,7 +1495,6 @@ fun! CursorToggle()
     " set cursorcolumn!
 endfun
 command! -nargs=* CursorToggle call CursorToggle()
-nnoremap <leader>ct  :call CursorToggle()<cr>
 "}}}
 
 "performance {{{
@@ -1676,7 +1680,7 @@ map <Leader>wm :call WritingMode()<cr>
 "
 "
 function! s:goyo_leave()
-	" call PersonalHighlights()
+	call PersonalHighlights()
 endfunction
 
 autocmd! User GoyoLeave call <SID>goyo_leave()

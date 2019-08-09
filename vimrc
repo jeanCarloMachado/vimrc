@@ -13,6 +13,7 @@
 "
 " - Tue 21 May 2019 09:28:46 AM CEST - drop gist support because they are dangerous security-wise
 
+" let g:theme = 'light'
 let g:theme = 'dark'
 " plugins load {{{
 set nocompatible

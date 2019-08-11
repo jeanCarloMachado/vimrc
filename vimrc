@@ -23,7 +23,7 @@ call plug#begin()
 "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
 Plug 'altercation/vim-colors-solarized'
 "inline errors, linting
-Plug 'w0rp/ale'
+Plug 'w0rp/ale', {'commit': 'b1230873b6c2044864b3ea2302b8521670fa4137'}
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
 "same indentation text object
@@ -33,7 +33,7 @@ Plug 'dyng/ctrlsf.vim'
 "quoting/parenthesizing
 Plug 'tpope/vim-surround'
 "shows a git diff in the gutter (sign column) and stages/undoes hunks.
-Plug 'airblade/vim-gitgutter'
+Plug 'airblade/vim-gitgutter', {'commit': 'c75c83df531881008f8cf903eab7cd68bc19ff7a'}
 Plug 'tpope/vim-commentary'
 " this plugin is slow when the project is too big
 "most recently used files list
@@ -99,6 +99,7 @@ Plug 'ryanoasis/vim-devicons'
 " cx {textobject}  move to a new place, cx{textobject} will swap them
 " text object stuff {{{
 Plug 'jeanCarloMachado/vim-toop'
+" swap text objects from location
 Plug 'tommcdo/vim-exchange'
 Plug 'bps/vim-textobj-python'
 Plug 'wellle/targets.vim'
@@ -119,7 +120,6 @@ Plug 'vim-vdebug/vdebug', {'for': ['php'] }
 "filetype only * (for swift)
 " Plug 'keith/swift.vim', {'for': ['swift']}
 Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
-Plug 'pangloss/vim-javascript', { 'for': ['javascript']}
 Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'javascript.jsx'] }
 Plug 'mxw/vim-jsx', { 'for': ['javascript', 'javascript.jsx'] }
 "hides links paths, and other small niceties
@@ -140,6 +140,7 @@ Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer ru
 " Plug 'markonm/traces.vim'
 "}}}
 
+Plug 'sheerun/vim-polyglot'
 call plug#end()
 "}}}
 
@@ -170,12 +171,14 @@ set formatprg=par "The name of an external program that will be used to format t
 set exrc "enable vimrc per project
 " set secure "disable unsecure options
 " Move to word
-if has("clipboard")
-    set clipboard=unnamed " copy to the system clipboard
-    if has("unnamedplus") " X11 support
-        set clipboard+=unnamedplus
-    endif
-endif
+set clipboard=unnamed " copy to the system clipboard
+set clipboard+=unnamedplus
+" if has("clipboard")
+"     set clipboard=unnamed " copy to the system clipboard
+"     if has("unnamedplus") " X11 support
+"         set clipboard+=unnamedplus
+"     endif
+" endif
 runtime macros/matchit.vim "Enable extended % matching
 "}}}
 
@@ -238,8 +241,8 @@ let g:ale_lint_on_save = 1
 let g:ale_lint_on_enter = 0
 let g:ale_lint_on_text_changed = 0
 let g:ale_writegood_options = ' --so --illusion --adverb --tooWordy --cliches'
-let g:ale_sign_warning = '⚠'
-let g:ale_sign_error = '✖'
+" let g:ale_sign_warning = '⚠'
+" let g:ale_sign_error = '✖'
 let b:ale_warn_about_trailing_whitespace = 0
 let g:ale_fix_on_save = 1
 
@@ -1618,7 +1621,6 @@ fun! PDFFile(str)
 endfun
 command! -nargs=* PDFFile call PDFFile( '<args>' )
 nnoremap <Leader>pdf :PDFFile<cr>
-let g:gitgutter_override_sign_column_highlight = 0
 
 " settings for light color solarized
 fun! PersonalHighlights()
@@ -1634,7 +1636,7 @@ fun! PersonalHighlights()
         highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
         set hlsearch
         hi Folded ctermbg=white
-        highlight LineNr ctermbg=white
+        " highlight LineNr ctermbg=white
         hi VertSplit ctermbg=white
         hi illuminatedWord cterm=underline gui=underline
         hi StatusLine ctermbg=darkgrey ctermfg=white
@@ -1697,3 +1699,6 @@ set tabstop     =4
 set softtabstop =4
 set shiftwidth  =4
 set expandtab
+
+
+"  how to paste on multiple selections without messing up https://trello.com/c/WR8J9HAQ

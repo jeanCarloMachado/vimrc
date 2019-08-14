@@ -1702,3 +1702,18 @@ set expandtab
 
 
 "  how to paste on multiple selections without messing up https://trello.com/c/WR8J9HAQ
+"
+
+
+" project specific settings {{{
+fun! TravelerFrontend()
+    set tabstop=2 shiftwidth=2
+endfun
+autocmd BufNewFile,BufRead */traveler-frontend/* call TravelerFrontend()
+
+fun! Fishfarm()
+    set tabstop=4 shiftwidth=4
+endfun
+autocmd BufNewFile,BufRead */fishfarm/* call Fishfarm()
+
+"}}}

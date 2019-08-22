@@ -260,6 +260,8 @@ let g:ale_linters = {
 \   'elm': ['elm-fomart', 'elm-make']
 \}
 
+" the python fixer that sets the correct indentation for files is  yapf
+" and we have a copy of it in personal scripts: /home/jean/Dropbox/projects/dotfiles/scripts/yapf
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
 \   'python': ['autopep8', 'yapf'],

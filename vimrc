@@ -808,8 +808,8 @@ autocmd filetype crontab setlocal nobackup nowritebackup
 
 "fzf {{{
 let g:fzf_buffers_jump = 1
-map <c-p> :FZF<cr>
-nnoremap <silent> <c-a> :call fzf#run(fzf#wrap({
+" map <c-p> :FZF<cr>
+nnoremap <silent> <c-p> :call fzf#run(fzf#wrap({
 \    'source': 'find .'
 \ }))<CR>
 
@@ -1370,6 +1370,7 @@ call toop#mapShell('python3 -c "import sys,urllib.parse;print(urllib.parse.unquo
 
 call toop#mapShell('RESULT_PREFIX="#" run_function printInputAndOutput interpret', '<leader>ii')
 "align columns
+"make tables beautiful
 call toop#mapShell('tablign', '<leader>ta')
 "translate
 
@@ -1570,7 +1571,7 @@ inoremap <F12> <C-o>:syntax sync fromstart<CR>
 "\'php' : ['php /home/jean/projects/little-architecture/vendor/felixfbecker/language-server/bin/php-language-server.php']
 "VERY useful skill
 let g:LanguageClient_serverCommands = {
-			\'python' : ['pyls'],
+			\'python' : ['pyls', '-v', '--log-file', '/tmp/pyls'],
 			\ }
 
 "see all options of the langauge server
@@ -1719,3 +1720,6 @@ endfun
 autocmd BufNewFile,BufRead */fishfarm/* call Fishfarm()
 
 "}}}
+let g:LanguageClient_autoStart = 1
+let g:LanguageClient_hoverPreview="Always"
+" let g:LanguageClient_useFloatingHover=1

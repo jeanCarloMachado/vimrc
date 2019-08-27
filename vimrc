@@ -1723,3 +1723,34 @@ autocmd BufNewFile,BufRead */fishfarm/* call Fishfarm()
 let g:LanguageClient_autoStart = 1
 let g:LanguageClient_hoverPreview="Always"
 " let g:LanguageClient_useFloatingHover=1
+"
+
+
+
+autocmd BufEnter *.py,*.php let g:timer = timer_start(4000, 'AnnotatheCurrentWord',{'repeat':-1})
+autocmd BufLeave *.py,*.php call timer_stop(g:timer)
+
+let g:old_pos = getpos(".")
+func! AnnotatheCurrentWord(timer)
+  let new_pos =  getpos(".")
+
+
+  if (new_pos == g:old_pos)
+
+      let char_tmp1 = getline('.')[col('.') - 1:]
+      if ! char_tmp1
+          return
+      endif
+      let char_tmp = strgetchar(char_tmp1, 0)
+      if ! char_tmp
+          return
+      endif
+      let char_under_cusor = nr2char(char_tmp)
+      let match = matchstr(char_under_cusor, '[A-Za-z0-9].')
+      if !empty(match)
+          :call LanguageClient#textDocument_hover()
+      endif
+
+  endif
+  let g:old_pos = new_pos
+endfunc

@@ -1497,13 +1497,11 @@ augroup resCur
 augroup END
 
 set cursorline
-" set cursorcolumn
 
-fun! CursorToggle()
-    set cursorline!
-    " set cursorcolumn!
+fun! CursorVerticalToggle()
+    set cursorcolumn!
 endfun
-command! -nargs=* CursorToggle call CursorToggle()
+command! -nargs=* CursorVerticalToggle call CursorVerticalToggle()
 "}}}
 
 "performance {{{

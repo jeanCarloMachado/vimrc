@@ -41,32 +41,35 @@ Plug 'git@github.com:skywind3000/asyncrun.vim.git'
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 Plug 'wakatime/vim-wakatime'
 Plug 'benmills/vimux'
-Plug 'easymotion/vim-easymotion'
+" removed because i do not use it enough
+" Plug 'easymotion/vim-easymotion'
 Plug 'janko-m/vim-test'
 "autocomplete pairs chars
 Plug 'raimondi/delimitmate'
 Plug 'yegappan/mru'
 Plug 'scrooloose/nerdtree'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+" removed because I do no use it enough
 Plug 'Xuyuanp/nerdtree-git-plugin'
 "useful to get the recent opened files
 Plug 'mhinz/vim-startify'
-"easily go back to project root
-Plug 'airblade/vim-rooter'
+" removed because sometimes I do not want to go to the root
+" Plug 'airblade/vim-rooter'
 " Plug 'vim-syntastic/syntastic', { 'for': ['swift'] }
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 
 Plug 'christoomey/vim-tmux-runner'
 Plug 'junegunn/goyo.vim'
 Plug 'tpope/vim-abolish'
+" removed because i do not use it enough
 "git commit browser in vim
-Plug 'junegunn/gv.vim'
+" Plug 'junegunn/gv.vim'
 Plug 'tpope/vim-repeat'
 Plug 'RRethy/vim-illuminate'
 "add highlights to misused spaces
 Plug 'ntpeters/vim-better-whitespace'
 " Plug 'blueyed/vim-diminactive'
-Plug 'nathanaelkane/vim-indent-guides'
+Plug 'nathanaelkane/vim-indent-guides', { 'for': ['html', 'vue', 'yaml', 'yml'] }
 Plug 'autozimu/LanguageClient-neovim', {
 			\ 'branch': 'next',
 			\ 'do': 'bash install.sh',

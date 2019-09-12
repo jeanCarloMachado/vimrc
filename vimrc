@@ -128,15 +128,17 @@ Plug 'mxw/vim-jsx', { 'for': ['javascript', 'javascript.jsx'] }
 "hides links paths, and other small niceties
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs'}
+Plug 'bagrat/vim-buffet'
 "}}}
 
 " ==== discarded plugins and why ====
 " Plug 'vim-scripts/argtextobj.vim'
 " visualizing marks - not essential, better to have a high performant vim
 " Plug 'kshenoy/vim-signature'
-"better tags management -  I do not use tags anymore, rely on language server
-"instead
-" Plug 'ludovicchabant/vim-gutentags'
+" better tags management -  I do not use tags anymore, rely on language server instead
+" Thu 12 Sep 2019 10:31:46 AM CEST re-enabled that because is necessary for
+" fishfarm sometimes
+Plug 'ludovicchabant/vim-gutentags'
 ""seeing git log and git diff - I kind of prefer to handle git stuff in the shell
 "Plug 'tpope/vim-fugitive'
 "marks search matching parts while typing - not really important
@@ -307,8 +309,8 @@ command! -nargs=* Grepr call Grepr( '<args>' )
 " sidemenu {{{
 "
 fun! ToggleLeftMenu( arg )
-    let rootDir = FindRootDirectory()
-    execute ":NERDTreeToggle ".rootDir
+    " let rootDir = FindRootDirectory()
+    execute ":NERDTreeToggle "
 endfun
 command! -nargs=* ToggleLeftMenu call ToggleLeftMenu( '<args>' )
 
@@ -1756,3 +1758,7 @@ func! AnnotatheCurrentWord(timer)
   endif
   let g:old_pos = new_pos
 endfunc
+
+function! g:BuffetSetCustomColors()
+    hi! BuffetCurrentBuffer cterm=NONE ctermbg=5 ctermfg=8 guibg=#00FF00 guifg=#000000
+endfunction

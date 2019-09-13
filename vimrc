@@ -2,6 +2,7 @@
 "
 " ## Conventions
 " Comments about code should go above the code now below
+" Every non obvious change should be commited. I really forget after a while
 "
 " Userspace dependencies
 " - par
@@ -193,6 +194,7 @@ vnoremap . :normal .<CR>
 nnoremap + ddp
 nnoremap _ dd2kp
 nnoremap <Leader>le :noh<cr>
+"returns the current date
 nnoremap <Leader>dt :r ! date<cr>
 nnoremap <leader>pu :PlugUpdate<cr>
 nnoremap <leader>pc :PlugClean<cr>
@@ -201,7 +203,7 @@ nnoremap cwi ciw
 map <leader>x :w<','> !bash<cr>
 map <leader>me :!chmod +x %<cr>
 nnoremap <leader>nt :tabnew<cr>
-"open director (file manager)
+"open directory
 nmap <leader>sh :!cd %:h && zsh <cr>
 nmap <leader>pn :!echo %<cr>
 nmap <leader>pfn :!echo %:p<cr>
@@ -495,6 +497,8 @@ call toop#mapFunction('FoldSomething', '<leader>fo')
 "}}}
 
 "eval {{{
+" send the content to a tmux pane, running whatever,
+" bash, python, etc
 fun! Eval(str)
     :VimuxRunCommand(a:str."\n")
 endfunc
@@ -1090,6 +1094,18 @@ endfunc
 
 "}}}
 
+
+""" tried already to to pdf of buffer but is very hard to do so. I do not
+""" is useful to expend extra time on this shit
+fun! PDFFile(str)
+    let path = expand('%:p')
+    execute 'AsyncRun run_function pdfFromFile "'.path.'"'
+endfun
+command! -nargs=* PDFFile call PDFFile( '<args>' )
+nnoremap <Leader>pdf :PDFFile<cr>
+
+
+
 "PHP {{{
 call toop#mapShell('json_encode_from_php', '<leader>pj')
 call toop#mapShell('json-to-php', '<leader>jp')
@@ -1106,9 +1122,12 @@ autocmd filetype c call CFiletypeConfigs()
 "}}}
 
 " elm {{{
-let g:elm_format_autosave = 0
-let g:elm_make_show_warnings = 0
-let g:elm_detailed_complete = 0
+fun! ElmConfigs()
+    let g:elm_format_autosave = 0
+    let g:elm_make_show_warnings = 0
+    let g:elm_detailed_complete = 0
+endfun
+autocmd filetype elm call ElmConfigs()
 "}}}
 "}}}
 
@@ -1374,6 +1393,11 @@ call toop#mapShell('python3 -c "import sys,urllib.parse;print(urllib.parse.quote
 call toop#mapShell('python3 -c "import sys,urllib.parse;print(urllib.parse.unquote(sys.stdin.read().strip()))"', '<leader>ud')
 
 
+" interpret function serves to evaluate simple expressions inline in pure
+" python, is sort of eval but sends the stdout back in the page
+" good for using vim sort as a notebook where you keep your equations
+" close to the text your are using to explain
+"
 call toop#mapShell('RESULT_PREFIX="#" run_function printInputAndOutput interpret', '<leader>ii')
 "align columns
 "make tables beautiful
@@ -1441,12 +1465,16 @@ call toop#mapAround('**', '**', '<leader>bo')
 call toop#mapAround("***\n", '***', '<leader>hl')
 call toop#mapAround("```\n", "\n```", '<leader>cb')
 call toop#mapAround("\n---\n", "\n---\n", '<leader>-')
+
+
+
 nnoremap <leader>- i---<esc>
 
 fun! GoogleIt(str)
     execute 'AsyncRun run_function googleIt "'.a:str.'"'
 endfunc
 call toop#mapFunction('GoogleIt', '<leader>gi')
+
 function! Duplicate(string)
     return a:string.a:string
 endfun
@@ -1622,12 +1650,6 @@ endfun
 command! -nargs=* WordUnderCursorCount call WordUnderCursorCount( '<args>' )
 
 
-fun! PDFFile(str)
-    let path = expand('%:p')
-    execute 'AsyncRun run_function fileToPDF "'.path.'"'
-endfun
-command! -nargs=* PDFFile call PDFFile( '<args>' )
-nnoremap <Leader>pdf :PDFFile<cr>
 
 " settings for light color solarized
 fun! PersonalHighlights()
@@ -1762,3 +1784,4 @@ endfunc
 function! g:BuffetSetCustomColors()
     hi! BuffetCurrentBuffer cterm=NONE ctermbg=5 ctermfg=8 guibg=#00FF00 guifg=#000000
 endfunction
+:set path+=/home/jean/projects/personalscripts

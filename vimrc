@@ -936,6 +936,7 @@ endfun
 set tags=./tags
 let g:gutentags_ctags_extra_args=["--fields=+aimlS"]
 let g:gutentags_ctags_executable="myctags"
+let g:gutentags_ctags_exclude_wildignore=0
 " autocmd filetype php let g:gutentags_ctags_executable="phpctags"
 " let g:gutentags_exclude = ['*.css', '*.html', '*.js']
 " let g:gutentags_cache_dir = '~/.vim/gutentags'

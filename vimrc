@@ -13,7 +13,6 @@
 "
 "
 " - Tue 21 May 2019 09:28:46 AM CEST - drop gist support because they are dangerous security-wise
-
 " let g:theme = 'light'
 let g:theme = 'dark'
 " plugins load {{{
@@ -87,6 +86,7 @@ set completeopt=noinsert,menuone,noselect
 Plug 'ncm2/ncm2-bufword'
 Plug 'ncm2/ncm2-tmux'
 Plug 'ncm2/ncm2-path'
+Plug 'wellle/tmux-complete.vim'
 
 "}}}
 "get beautiful icons for nerdtree
@@ -129,7 +129,9 @@ Plug 'mxw/vim-jsx', { 'for': ['javascript', 'javascript.jsx'] }
 "hides links paths, and other small niceties
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
 Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs'}
-Plug 'bagrat/vim-buffet'
+" Mon 16 Sep 2019 06:01:40 PM CEST
+" disabled because I do not like the colorscheme and it is a bit confusing
+" Plug 'bagrat/vim-buffet'
 "}}}
 
 " ==== discarded plugins and why ====

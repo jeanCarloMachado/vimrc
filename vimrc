@@ -155,7 +155,8 @@ call plug#end()
 " {{{ generic
 set wildignore+=*\\dist\\**
 let mapleader = "\<space>"
-" set mouse=a "enable mouse on normal,visual,inter,command-line modes
+
+set mouse=a "enable mouse on normal,visual,inter,command-line modes
 set backspace=indent,eol,start "make the backspace work like in most other programs
 " set cot+=menuone "Use the popup menu also when there is only one match
 set number "show numbers

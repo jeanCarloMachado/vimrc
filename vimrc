@@ -254,7 +254,7 @@ let g:ale_writegood_options = ' --so --illusion --adverb --tooWordy --cliches'
 " let g:ale_sign_warning = '⚠'
 " let g:ale_sign_error = '✖'
 let b:ale_warn_about_trailing_whitespace = 0
-let g:ale_fix_on_save = 1
+let g:ale_fix_on_save = 0
 
 "change ruleset for fishfamr
 " autocmd BufRead,BufNewFile */fishfarm/* let g:ale_php_phpcs_standard = "/home/jean/projects/activity-classifier/ruleset.xml"
@@ -1789,3 +1789,9 @@ function! g:BuffetSetCustomColors()
     hi! BuffetCurrentBuffer cterm=NONE ctermbg=5 ctermfg=8 guibg=#00FF00 guifg=#000000
 endfunction
 :set path+=/home/jean/projects/personalscripts
+
+
+"yaml specific {{{
+au! BufNewFile,BufReadPost *.{yaml,yml} set filetype=yaml foldmethod=indent
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
+"}}}

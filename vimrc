@@ -254,12 +254,14 @@ let g:ale_writegood_options = ' --so --illusion --adverb --tooWordy --cliches'
 " let g:ale_sign_warning = '⚠'
 " let g:ale_sign_error = '✖'
 let b:ale_warn_about_trailing_whitespace = 0
-let g:ale_fix_on_save = 0
+let g:ale_fix_on_save = 1
 
 "change ruleset for fishfamr
 " autocmd BufRead,BufNewFile */fishfarm/* let g:ale_php_phpcs_standard = "/home/jean/projects/activity-classifier/ruleset.xml"
 
-" \   'php': ['php', 'phpcs'],
+" let g:ale_php_cs_fixer_options = " --config /home/jean/projects/personalscripts/fishfarmstyle.php "
+let g:ale_php_cs_fixer_executable = '/home/jean/Dropbox/projects/dotfiles/scripts/php-cs-fixer-fishfarm.sh'
+
 let g:ale_linters = {
 \   'python': ['mypy', 'flake8', 'pylint'],
 \   'javascript': ['eslint'],
@@ -267,6 +269,7 @@ let g:ale_linters = {
 \   'markdown': ['write-good', 'proselint'],
 \   'scala': ['fsc', 'scalac'],
 \   'swift': ['swiftlint'],
+\   'php': ['php', 'phpcs'],
 \   'elm': ['elm-fomart', 'elm-make']
 \}
 
@@ -275,7 +278,7 @@ let g:ale_linters = {
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
 \   'python': ['autopep8', 'yapf'],
-\   'php': ['php_cs_fixer', 'phpcbf'],
+\   'php': ['php_cs_fixer'],
 \   'scala': ['scalafmt'],
 \   'swift': ['swiftformat'],
 \   'elm': ['elm-format']
@@ -1795,3 +1798,4 @@ endfunction
 au! BufNewFile,BufReadPost *.{yaml,yml} set filetype=yaml foldmethod=indent
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 "}}}
+"php_cs_fixer_options

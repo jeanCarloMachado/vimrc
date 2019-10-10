@@ -69,7 +69,8 @@ Plug 'RRethy/vim-illuminate'
 "add highlights to misused spaces
 Plug 'ntpeters/vim-better-whitespace'
 " Plug 'blueyed/vim-diminactive'
-Plug 'nathanaelkane/vim-indent-guides', { 'for': ['html', 'vue', 'yaml', 'yml'] }
+" Plug 'nathanaelkane/vim-indent-guides', { 'for': ['html', 'vue', 'yaml', 'yml', 'tpl'] }
+Plug 'nathanaelkane/vim-indent-guides'
 Plug 'autozimu/LanguageClient-neovim', {
 			\ 'branch': 'next',
 			\ 'do': 'bash install.sh',
@@ -872,7 +873,7 @@ let g:fzf_colors =
 
 "}}}
 
-" repl, eval, tmux integration {{{
+" repl, eval, tmux integration {{{;
 let g:VimuxHeight = "20"
 fun! TmuxContent()
     let idx = g:VimuxRunnerIndex
@@ -1750,6 +1751,7 @@ autocmd BufNewFile,BufRead */traveler-frontend/* call TravelerFrontend()
 fun! Fishfarm()
     set tabstop=4 shiftwidth=4
 endfun
+autocmd BufNewFile,BufRead */gyg/* call Fishfarm()
 autocmd BufNewFile,BufRead */fishfarm/* call Fishfarm()
 
 "}}}
@@ -1799,3 +1801,9 @@ au! BufNewFile,BufReadPost *.{yaml,yml} set filetype=yaml foldmethod=indent
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 "}}}
 "php_cs_fixer_options
+"
+""force all tpl to be treated like html
+" autocmd BufNewFile,BufRead *.tpl set syntax=html
+let g:dispatch_compilers = {}
+" let g:dispatch_compilers['./vendor/bin/']
+let g:dispatch_compilers['phpunit'] = './vendor/bin/phpunit'

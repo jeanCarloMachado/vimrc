@@ -133,3 +133,4 @@ Abolish im I'm
 Abolish ince nice
 Abolish trello Trello
 Abolish adp ADP
+Abolish autor author

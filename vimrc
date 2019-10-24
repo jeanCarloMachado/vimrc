@@ -88,7 +88,7 @@ Plug 'ncm2/ncm2-bufword'
 Plug 'ncm2/ncm2-tmux'
 Plug 'ncm2/ncm2-path'
 Plug 'wellle/tmux-complete.vim'
-
+Plug 'pandysong/ghost-text.vim'
 "}}}
 "get beautiful icons for nerdtree
 Plug 'ryanoasis/vim-devicons'
@@ -121,7 +121,8 @@ Plug 'ensime/ensime-vim', { 'do': ':UpdateRemotePlugins', 'for': ['scala'] }
 Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
-Plug 'vim-vdebug/vdebug', {'for': ['php'] }
+"removed vdebug because of my reliance on python debugger and phpstorm
+" Plug 'vim-vdebug/vdebug', {'for': ['php'] }
 "filetype only * (for swift)
 " Plug 'keith/swift.vim', {'for': ['swift']}
 Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
@@ -1608,11 +1609,14 @@ inoremap <F12> <C-o>:syntax sync fromstart<CR>
 "}}}
 
 
-"\'php' : ['php /home/jean/projects/little-architecture/vendor/felixfbecker/language-server/bin/php-language-server.php']
 "VERY useful skill
 let g:LanguageClient_serverCommands = {
 			\'python' : ['pyls', '-v', '--log-file', '/tmp/pyls'],
+            \'php' : ['restartWhenFails', 'php', '/home/jean/.composer/vendor/bin/php-language-server.php', '--memory-limit=2G']
 			\ }
+let g:LanguageClient_autoStart = 1
+let g:LanguageClient_autoStop = 1
+let g:LanguageClient_trace = 1
 
 "see all options of the langauge server
 nnoremap <leader>lo :call LanguageClient_contextMenu()<CR>

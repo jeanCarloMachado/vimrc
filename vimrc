@@ -77,7 +77,13 @@ Plug 'autozimu/LanguageClient-neovim', {
 			\ }
 " autocompletion {{{
 "ncm2 is better than  deoplete :)
-Plug 'ncm2/ncm2' | Plug 'roxma/nvim-yarp'
+if ! has('nvim')
+    Plug 'roxma/vim-hug-neovim-rpc'
+endif
+
+    Plug 'roxma/nvim-yarp'
+Plug 'ncm2/ncm2'
+
 "enable ncm2 for all buffers
 autocmd BufEnter * call ncm2#enable_for_buffer()
 " Important: :help Ncm2PopupOpen for more information

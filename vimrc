@@ -533,6 +533,7 @@ call toop#mapFunction('Subs', '<leader>o')
 fun! Diary( arg )
     let out = system('run_function diary_file "' . a:arg . '"')
     execute "edit " . out
+    call WritingMode()
 endfunc
 
 command! -nargs=* Today call Diary( 'today' )
@@ -540,6 +541,7 @@ command! -nargs=* Someday call Diary( 'someday' )
 command! -nargs=* Diary call Diary( '<args>' )
 command! -nargs=* Diary call Diary( '<args>' )
 nnoremap <Leader>now :Today<cr>
+nnoremap <Leader>n :Today<cr>
 command! -nargs=* Tomorrow call Diary( 'tomorrow' )
 nnoremap <Leader>to :Tomorrow<cr>
 command! -nargs=* Monday call Diary( 'monday' )
@@ -1620,9 +1622,9 @@ let g:LanguageClient_serverCommands = {
 			\'python' : ['pyls', '-v', '--log-file', '/tmp/pyls'],
             \'php' : ['restartWhenFails', 'php', '/home/jean/.composer/vendor/bin/php-language-server.php', '--memory-limit=2G']
 			\ }
-let g:LanguageClient_autoStart = 1
-let g:LanguageClient_autoStop = 1
-let g:LanguageClient_trace = 1
+" let g:LanguageClient_autoStart = 1
+" let g:LanguageClient_autoStop = 1
+" let g:LanguageClient_trace = 1
 
 "see all options of the langauge server
 nnoremap <leader>lo :call LanguageClient_contextMenu()<CR>

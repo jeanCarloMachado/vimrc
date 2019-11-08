@@ -736,7 +736,6 @@ fun! CopyFile()
 endfunc
 
 fun! RunLine()
-    :echom "gandalf"
     let line = GetCurrentLineContent()
     :VimuxCloseRunner
     :VimuxRunCommand(line."\n")
@@ -1721,7 +1720,6 @@ endif
 call PersonalHighlights()
 
 
-
 "writer mode {{{
 
 fun! WritingMode()
@@ -1819,3 +1817,12 @@ autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 let g:dispatch_compilers = {}
 " let g:dispatch_compilers['./vendor/bin/']
 let g:dispatch_compilers['phpunit'] = './vendor/bin/phpunit'
+
+
+" fun! RunQbq(str)
+"     :VimuxRunCommand('dbq ')
+"     :VimuxRunCommand('echo "' . a:str . '" | dbq ')
+" endfunction
+
+" call toop#mapFunction('RunQbq', '<leader>dq')
+

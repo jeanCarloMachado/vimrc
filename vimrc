@@ -1826,4 +1826,4 @@ let g:dispatch_compilers['phpunit'] = './vendor/bin/phpunit'
 " endfunction
 
 " call toop#mapFunction('RunQbq', '<leader>dq')
-
+let g:LanguageClient_useVirtualText = 0

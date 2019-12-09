@@ -51,7 +51,7 @@ Plug 'scrooloose/nerdtree'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 " removed because I do no use it enough
 Plug 'Xuyuanp/nerdtree-git-plugin'
-"useful to get the recent opened files
+"to get the recent opened files
 Plug 'mhinz/vim-startify'
 " removed because sometimes I do not want to go to the root
 " Plug 'airblade/vim-rooter'
@@ -1113,7 +1113,6 @@ endfunc
 
 
 """ tried already to to pdf of buffer but is very hard to do so. I do not
-""" is useful to expend extra time on this shit
 fun! PDFFile(str)
     let path = expand('%:p')
     execute 'AsyncRun run_function pdfFromFile "'.path.'"'
@@ -1435,6 +1434,8 @@ call toop#mapShell('runFunction translateDuplicating en de', '<leader>ted')
 call toop#mapShell('runFunction translateDuplicating en fr', '<leader>tef')
 call toop#mapShell('runFunction translateDuplicating en la', '<leader>tel')
 call toop#mapShell('runFunction translateDuplicating la en', '<leader>tle')
+"sum numbers of a text
+call toop#mapShell('run_function printInputAndOutput numbers_of_text.py "+"', '<leader>sn')
 
 call toop#mapShell('translate.sh de en', '<leader>sge')
 call toop#mapShell('translate.sh en de', '<leader>seg')
@@ -1448,7 +1449,7 @@ call toop#mapShell('translate.sh en fr', '<leader>sef')
 call toop#mapShell('translate.sh en la', '<leader>sel')
 call toop#mapShell('translate.sh la en', '<leader>sle')
 
-call toop#mapShell('tr " " "\n"', '<leader>sn')
+" call toop#mapShell('tr " " "\n"', '<leader>sn')
 "make numbered list
 call toop#mapShell("runFunction makeNumberedList", '<leader>nl')
 "make list
@@ -1561,7 +1562,7 @@ set lazyredraw "don't redraw screend when running macros
 " if the 256 is a command things will break
 " so I'll disable this thing for now
 " syntax sync minlines=256
-"increase redraw time, useful for big files
+"increase redraw time, performance tweak for for big files
 set redrawtime=10000
 syntax sync fromstart
 
@@ -1622,9 +1623,6 @@ let g:LanguageClient_serverCommands = {
 			\'python' : ['pyls', '-v', '--log-file', '/tmp/pyls'],
             \'php' : ['restartWhenFails', 'php', '/home/jean/.composer/vendor/bin/php-language-server.php', '--memory-limit=2G']
 			\ }
-" let g:LanguageClient_autoStart = 1
-" let g:LanguageClient_autoStop = 1
-" let g:LanguageClient_trace = 1
 
 "see all options of the langauge server
 nnoremap <leader>lo :call LanguageClient_contextMenu()<CR>
@@ -1768,7 +1766,6 @@ autocmd BufNewFile,BufRead */fishfarm/* call Fishfarm()
 "}}}
 let g:LanguageClient_autoStart = 1
 let g:LanguageClient_hoverPreview="Always"
-" let g:LanguageClient_useFloatingHover=1
 "
 
 

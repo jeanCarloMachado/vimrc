@@ -24,6 +24,7 @@ call plug#begin()
 Plug 'altercation/vim-colors-solarized'
 "inline errors, linting
 Plug 'w0rp/ale', {'commit': 'b1230873b6c2044864b3ea2302b8521670fa4137'}
+Plug 'pgr0ss/vim-github-url'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
 "same indentation text object

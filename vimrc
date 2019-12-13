@@ -52,8 +52,8 @@ Plug 'scrooloose/nerdtree'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 " removed because I do no use it enough
 Plug 'Xuyuanp/nerdtree-git-plugin'
-"to get the recent opened files
-Plug 'mhinz/vim-startify'
+""to get the recent opened files
+"Plug 'mhinz/vim-startify'
 " removed because sometimes I do not want to go to the root
 " Plug 'airblade/vim-rooter'
 " Plug 'vim-syntastic/syntastic', { 'for': ['swift'] }
@@ -1825,3 +1825,11 @@ let g:dispatch_compilers['phpunit'] = './vendor/bin/phpunit'
 
 " call toop#mapFunction('RunQbq', '<leader>dq')
 let g:LanguageClient_useVirtualText = 0
+
+
+fun! SwapEditors(path)
+    :echo "Opening file on editor: ".a:path
+    execute 'AsyncRun openOnVim "'.a:path.'" vim'
+endfun
+command! -nargs=* SwapEditors call SwapEditors(expand('%:p'))
+nnoremap <Leader>n :SwapEditors<cr>

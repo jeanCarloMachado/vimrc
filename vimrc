@@ -121,7 +121,7 @@ Plug 'wellle/targets.vim'
 " Plug 'lervag/vimtex', { 'for': ['latex'] }
 "
 Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
-Plug 'chrisbra/csv.vim', { 'for': ['csv'] }
+" Plug 'chrisbra/csv.vim', { 'for': ['csv'] }
 Plug 'fatih/vim-go', { 'for': ['go'] }
 Plug 'derekwyatt/vim-scala', { 'for': ['scala'] }
 Plug 'ensime/ensime-vim', { 'do': ':UpdateRemotePlugins', 'for': ['scala'] }

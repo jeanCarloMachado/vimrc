@@ -3,9 +3,7 @@
 " ## Conventions
 " Comments about code should go above the code now below
 " Every non obvious change should be commited. I really forget after a while
-"
-" Userspace dependencies
-" - par
+" Userspace dependencies par
 " - rg
 " - ctags https://github.com/universal-ctags/ctags
 " - yaourt -S python-proselint write-good flake8
@@ -163,6 +161,7 @@ call plug#end()
 
 " {{{ generic
 set wildignore+=*\\dist\\**
+set relativenumber
 let mapleader = "\<space>"
 
 "Tue 19 Nov 2019 12:06:15 PM CET disable mosue due to it fucking up my clipboard selection

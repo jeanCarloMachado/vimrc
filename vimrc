@@ -80,11 +80,11 @@ if ! has('nvim')
     Plug 'roxma/vim-hug-neovim-rpc'
 endif
 
-Plug 'roxma/nvim-yarp'
 Plug 'ncm2/ncm2'
+Plug 'roxma/nvim-yarp'
 
 "enable ncm2 for all buffers
-" autocmd BufEnter * call ncm2#enable_for_buffer()
+autocmd BufEnter * call ncm2#enable_for_buffer()
 " Important: :help Ncm2PopupOpen for more information
 set completeopt=noinsert,menuone,noselect
 " NOTE: you need to install completion sources to get completions. Check

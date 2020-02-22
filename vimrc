@@ -21,7 +21,7 @@ call plug#begin()
 "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
 Plug 'altercation/vim-colors-solarized'
 "inline errors, linting
-Plug 'w0rp/ale', {'commit': 'b1230873b6c2044864b3ea2302b8521670fa4137'}
+Plug 'w0rp/ale'
 Plug 'pgr0ss/vim-github-url'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
@@ -32,7 +32,7 @@ Plug 'dyng/ctrlsf.vim'
 "quoting/parenthesizing
 Plug 'tpope/vim-surround'
 "shows a git diff in the gutter (sign column) and stages/undoes hunks.
-Plug 'airblade/vim-gitgutter', {'commit': 'c75c83df531881008f8cf903eab7cd68bc19ff7a'}
+Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-commentary'
 " this plugin is slow when the project is too big
 "most recently used files list
@@ -126,6 +126,7 @@ Plug 'ensime/ensime-vim', { 'do': ':UpdateRemotePlugins', 'for': ['scala'] }
 Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
+Plug 'davidhalter/jedi-vim', { 'for': ['python'] }
 "removed vdebug because of my reliance on python debugger and phpstorm
 " Plug 'vim-vdebug/vdebug', {'for': ['php'] }
 "filetype only * (for swift)
@@ -1012,10 +1013,6 @@ nnoremap <leader>on :only<cr>
 set splitright "split new windows to the right
 let g:resize_count = 19
 let g:vim_resize_disable_auto_mappings = 1
-nnoremap <leader>H :CmdResizeLeft<cr>
-nnoremap <leader>L :CmdResizeRight<cr>
-nnoremap <leader>K :CmdResizeUp<cr>
-nnoremap <leader>J :CmdResizeDown<cr>
 nnoremap <leader>= <C-w>=
 
 function! ToggleWindowHorizontalVerticalSplit()

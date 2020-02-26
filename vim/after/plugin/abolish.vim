@@ -134,3 +134,5 @@ Abolish ince nice
 Abolish trello Trello
 Abolish adp ADP
 Abolish autor author
+Abolish fi if
+Abolish rigth right

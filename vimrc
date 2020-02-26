@@ -37,14 +37,21 @@ Plug 'tpope/vim-commentary'
 " this plugin is slow when the project is too big
 "most recently used files list
 Plug 'git@github.com:skywind3000/asyncrun.vim.git'
+""" Tue 25 Feb 2020 10:18:46 PM CET add back startify because home screen also
+""" very useless
+Plug 'mhinz/vim-startify'
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
-Plug 'wakatime/vim-wakatime'
 Plug 'benmills/vimux'
 " removed because i do not use it enough
 " Plug 'easymotion/vim-easymotion'
 Plug 'janko-m/vim-test'
 "autocomplete pairs chars
 Plug 'raimondi/delimitmate'
+""" Tue 25 Feb 2020 10:17:59 PM CET added back airline because the real status
+""" line is pretty useless and I don't see when I will customize it
+
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 Plug 'yegappan/mru'
 Plug 'scrooloose/nerdtree'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
@@ -81,19 +88,20 @@ if ! has('nvim')
 endif
 
 Plug 'ncm2/ncm2'
+"Yet Another Remote Plugin Framework for Neovim
+
 Plug 'roxma/nvim-yarp'
 
 "enable ncm2 for all buffers
 autocmd BufEnter * call ncm2#enable_for_buffer()
 " Important: :help Ncm2PopupOpen for more information
-set completeopt=noinsert,menuone,noselect
+set completeopt=menu,menuone,preview,noselect,noinsert
 " NOTE: you need to install completion sources to get completions. Check
 " our wiki page for a list of sources: https://github.com/ncm2/ncm2/wiki
 Plug 'ncm2/ncm2-bufword'
 Plug 'ncm2/ncm2-tmux'
 Plug 'ncm2/ncm2-path'
 Plug 'wellle/tmux-complete.vim'
-Plug 'pandysong/ghost-text.vim'
 "}}}
 "get beautiful icons for nerdtree
 Plug 'ryanoasis/vim-devicons'
@@ -126,6 +134,17 @@ Plug 'ensime/ensime-vim', { 'do': ':UpdateRemotePlugins', 'for': ['scala'] }
 Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
 Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
+""" used to go to the defintion of vim files
+""" " jedi
+""" let g:jedi#use_tabs_not_buffers = 0  " use buffers instead of tabs
+""" let g:jedi#show_call_signatures = "1"
+""" let g:jedi#goto_command = "<localleader>gt"
+""" let g:jedi#goto_assignments_command = "<localleader>ga"
+""" let g:jedi#goto_definitions_command = "<localleader>gg"
+""" let g:jedi#documentation_command = "K"
+""" let g:jedi#usages_command = "<localleader>u"
+""" let g:jedi#completions_command = "<C-Space>"
+""" let g:jedi#rename_command = "<leader>r"
 Plug 'davidhalter/jedi-vim', { 'for': ['python'] }
 "removed vdebug because of my reliance on python debugger and phpstorm
 " Plug 'vim-vdebug/vdebug', {'for': ['php'] }
@@ -151,7 +170,8 @@ Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer ru
 " fishfarm sometimes
 Plug 'ludovicchabant/vim-gutentags'
 ""seeing git log and git diff - I kind of prefer to handle git stuff in the shell
-"Plug 'tpope/vim-fugitive'
+"gblame is necessary though
+Plug 'tpope/vim-fugitive'
 "marks search matching parts while typing - not really important
 " Plug 'markonm/traces.vim'
 "}}}
@@ -163,10 +183,17 @@ call plug#end()
 " {{{ generic
 set wildignore+=*\\dist\\**
 set relativenumber
+
+""" {{{ When you type the first tab hit, it will complete as much as possible. The second tab hit will provide a list. The third and subsequent tabs will cycle through completion options so you can complete the file without further keys.
+"""
+set wildmode=longest,list,full
+set wildmenu
+""" }}}
+
 let mapleader = "\<space>"
 
 "Tue 19 Nov 2019 12:06:15 PM CET disable mosue due to it fucking up my clipboard selection
-" set mouse=a "enable mouse on normal,visual,inter,command-line modes
+set mouse=a "enable mouse on normal,visual,inter,command-line modes
 set backspace=indent,eol,start "make the backspace work like in most other programs
 " set cot+=menuone "Use the popup menu also when there is only one match
 set number "show numbers
@@ -1577,8 +1604,6 @@ syntax sync fromstart
 syntax enable
 
 
-
-
 let g:solarized_termcolors= 16
 let g:solarized_termtrans = 0
 let g:solarized_degrade = 0
@@ -1707,6 +1732,7 @@ fun! PersonalHighlights()
 endfun
 
 
+let g:airline_theme='solarized'
 if g:theme == 'dark'
 	set background=dark
 else
@@ -1814,11 +1840,6 @@ let g:dispatch_compilers = {}
 let g:dispatch_compilers['phpunit'] = './vendor/bin/phpunit'
 
 
-" fun! RunQbq(str)
-"     :VimuxRunCommand('dbq ')
-"     :VimuxRunCommand('echo "' . a:str . '" | dbq ')
-" endfunction
-
 " call toop#mapFunction('RunQbq', '<leader>dq')
 let g:LanguageClient_useVirtualText = 0
 
@@ -1829,3 +1850,28 @@ fun! SwapEditors(path)
 endfun
 command! -nargs=* SwapEditors call SwapEditors(expand('%:p'))
 nnoremap <Leader>n :SwapEditors<cr>
+
+"Use TAB to complete when typing words, else inserts TABs as usual.
+"Uses dictionary and source files to find matching words to complete.
+
+"See help completion for source,
+"Note: usual completion is on <C-n> but more trouble to press all the time.
+"Never type the same word twice and maybe learn a new spellings!
+"Use the Linux dictionary when spelling is in doubt.
+"Window users can copy the file to their machine.
+function! Tab_Or_Complete()
+  if col('.')>1 && strpart( getline('.'), col('.')-2, 3 ) =~ '^\w'
+    return "\<C-N>"
+  else
+    return "\<Tab>"
+  endif
+endfunction
+:inoremap <Tab> <C-R>=Tab_Or_Complete()<CR>
+:set dictionary="/usr/dict/words"
+
+
+function! s:goyo_enter()
+  let w:airline_disabled = 1
+endfunction
+
+autocmd! User GoyoEnter call <SID>goyo_enter()

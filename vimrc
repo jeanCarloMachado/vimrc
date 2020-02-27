@@ -89,7 +89,6 @@ endif
 
 Plug 'ncm2/ncm2'
 "Yet Another Remote Plugin Framework for Neovim
-
 Plug 'roxma/nvim-yarp'
 
 "enable ncm2 for all buffers

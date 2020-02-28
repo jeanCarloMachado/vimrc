@@ -167,7 +167,7 @@ Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer ru
 " better tags management -  I do not use tags anymore, rely on language server instead
 " Thu 12 Sep 2019 10:31:46 AM CEST re-enabled that because is necessary for
 " fishfarm sometimes
-Plug 'ludovicchabant/vim-gutentags'
+Plug 'ludovicchabant/vim-gutentags', { 'for': ['c'] }
 ""seeing git log and git diff - I kind of prefer to handle git stuff in the shell
 "gblame is necessary though
 Plug 'tpope/vim-fugitive'
@@ -369,7 +369,7 @@ endfun
 nnoremap <leader>fs :call FixLastSpellingError()<cr>
 map <leader>spt :set spell spelllang=pt_br<cr>
 map <leader>sen :set spell spelllang=en_us<cr>
-autocmd filetype rst,txt,markdown set spelllang=en,de_de,pt_br
+set spelllang=en,de_de,pt_br
 "}}}
 
 " quick access {{{

@@ -253,7 +253,6 @@ nnoremap <leader><space> :w<cr>
 "use C-p and C-n to browser normal mode commands history
 cnoremap <C-p> <Up>
 noremap <leader>qq :q!<cr>
-cnoremap <C-n> <Down>
 " use %% to expand to the current buffer directory
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 nnoremap <leader>cf :!filefy-clippboard<cr>
@@ -1849,6 +1848,7 @@ fun! SwapEditors(path)
 endfun
 command! -nargs=* SwapEditors call SwapEditors(expand('%:p'))
 nnoremap <Leader>n :SwapEditors<cr>
+nnoremap <C-n> :SwapEditors<cr>
 
 "Use TAB to complete when typing words, else inserts TABs as usual.
 "Uses dictionary and source files to find matching words to complete.

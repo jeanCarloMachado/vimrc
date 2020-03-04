@@ -4,9 +4,6 @@
 " Comments about code should go above the code now below
 " Every non obvious change should be commited. I really forget after a while
 " Userspace dependencies par
-" - rg
-" - ctags https://github.com/universal-ctags/ctags
-" - yaourt -S python-proselint write-good flake8
 " Changelog
 "
 "
@@ -139,7 +136,7 @@ Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
 """ let g:jedi#show_call_signatures = "1"
 """ let g:jedi#goto_command = "<localleader>gt"
 """ let g:jedi#goto_assignments_command = "<localleader>ga"
-""" let g:jedi#goto_definitions_command = "<localleader>gg"
+let g:jedi#goto_definitions_command = "<C-]>"
 """ let g:jedi#documentation_command = "K"
 """ let g:jedi#usages_command = "<localleader>u"
 """ let g:jedi#completions_command = "<C-Space>"
@@ -318,7 +315,6 @@ let g:ale_fixers = {
 \   'swift': ['swiftformat'],
 \   'elm': ['elm-format']
 \}
-
 "}}}
 
 " autocomplete {{{
@@ -1663,12 +1659,13 @@ runtime! ftplugin/man.vim
 
 let g:NERDTreeMinimalUI = 1
 let g:nerdtree_tabs_open_on_console_startup = 1
+""" do I use this shit at all? {{{
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<c-b>"
 let g:UltiSnipsJumpBackwardTrigger="<c-z>"
-
 " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
+""" }}}
 let g:SuperTabDefaultCompletionType = "<c-n>"
 let g:highlightedyank_highlight_duration = 15000
 
@@ -1874,3 +1871,8 @@ function! s:goyo_enter()
 endfunction
 
 autocmd! User GoyoEnter call <SID>goyo_enter()
+
+
+
+let test#python#runner#options = ' --show-capture=all '
+let test#python#options = ' --show-capture=all '

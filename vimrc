@@ -1876,3 +1876,11 @@ autocmd! User GoyoEnter call <SID>goyo_enter()
 
 let test#python#runner#options = ' --show-capture=all '
 let test#python#options = ' --show-capture=all '
+
+let g:jupytext_enable = 1
+let g:jupytext_command = 'jupytext'
+let g:jupytext_print_debug_msgs = 1
+let g:jupytext_fmt = 'md'
+let g:jupytext_to_ipynb_opts = '--to=ipynb --update'
+let g:jupytext_filetype_map = {'md': 'pandoc'}
+au BufRead,BufNewFile *.ipynb set filetype=python

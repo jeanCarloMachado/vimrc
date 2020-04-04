@@ -36,7 +36,7 @@ Plug 'tpope/vim-commentary'
 Plug 'git@github.com:skywind3000/asyncrun.vim.git'
 """ Tue 25 Feb 2020 10:18:46 PM CET add back startify because home screen also
 """ very useless
-Plug 'mhinz/vim-startify'
+" Plug 'mhinz/vim-startify'
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 Plug 'benmills/vimux'
 " removed because i do not use it enough
@@ -79,19 +79,17 @@ Plug 'autozimu/LanguageClient-neovim', {
 			\ 'do': 'bash install.sh',
 			\ }
 " autocompletion {{{
+
 "ncm2 is better than  deoplete :)
-if ! has('nvim')
-    Plug 'roxma/vim-hug-neovim-rpc'
-endif
 
 Plug 'ncm2/ncm2'
 "Yet Another Remote Plugin Framework for Neovim
 Plug 'roxma/nvim-yarp'
-
 "enable ncm2 for all buffers
 autocmd BufEnter * call ncm2#enable_for_buffer()
 " Important: :help Ncm2PopupOpen for more information
 set completeopt=menu,menuone,preview,noselect,noinsert
+
 " NOTE: you need to install completion sources to get completions. Check
 " our wiki page for a list of sources: https://github.com/ncm2/ncm2/wiki
 Plug 'ncm2/ncm2-bufword'
@@ -151,7 +149,7 @@ Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'javascript.jsx'] }
 Plug 'mxw/vim-jsx', { 'for': ['javascript', 'javascript.jsx'] }
 "hides links paths, and other small niceties
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
-Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs'}
+Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs', 'for': ['php']}
 " Mon 16 Sep 2019 06:01:40 PM CEST
 " disabled because I do not like the colorscheme and it is a bit confusing
 " Plug 'bagrat/vim-buffet'
@@ -170,9 +168,8 @@ Plug 'ludovicchabant/vim-gutentags', { 'for': ['c'] }
 Plug 'tpope/vim-fugitive'
 "marks search matching parts while typing - not really important
 " Plug 'markonm/traces.vim'
-"}}}
-
 Plug 'sheerun/vim-polyglot'
+"}}}
 call plug#end()
 "}}}
 
@@ -317,11 +314,32 @@ let g:ale_fixers = {
 \}
 "}}}
 
-" autocomplete {{{
 let g:ale_completion_enabled = 1
-" set completeopt=longest,menuone
-set omnifunc=syntaxcomplete#Complete
+
 "}}}
+" autocomplete {{{
+" needs to be enabled if ncm2 is to autosuggest
+set omnifunc=syntaxcomplete#Complete
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+" wrap existing omnifunc
+" Note that omnifunc does not run in background and may probably block the
+" editor. If you don't want to be blocked by omnifunc too often, you could
+" add 180ms delay before the omni wrapper:
+"  'on_complete': ['ncm2#on_complete#delay', 180,
+"               \ 'ncm2#on_complete#omni', 'pythoncomplete#CompletePYTHON'],
+au User Ncm2Plugin call ncm2#register_source({
+        \ 'name' : 'python',
+        \ 'priority': 9,
+        \ 'subscope_enable': 1,
+        \ 'scope': ['python'],
+        \ 'mark': 'python',
+        \ 'word_pattern': '[\w\-]+',
+        \ 'complete_pattern': ':\s*',
+        \ 'on_complete': [ 'ncm2#on_complete#delay', 180, 'ncm2#on_complete#omni', 'pythoncomplete#Complete'],
+        \ })
+
+" }}}
 
 " concealing {{{
 autocmd FileType php call matchadd('Conceal', '"', 999, -1, {'conceal': ''}) |
@@ -425,6 +443,9 @@ set shortmess+=A "don't give the "ATTENTION" message when an existing swap file 
 " suppress the annoying 'match x of y', 'The only match' and 'Pattern not
 " found' messages
 set shortmess+=c
+" Use <TAB> to select the popup menu: ncm2
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 "}}}
 
 "indenting {{{
@@ -1847,23 +1868,6 @@ command! -nargs=* SwapEditors call SwapEditors(expand('%:p'))
 nnoremap <Leader>n :SwapEditors<cr>
 nnoremap <C-n> :SwapEditors<cr>
 
-"Use TAB to complete when typing words, else inserts TABs as usual.
-"Uses dictionary and source files to find matching words to complete.
-
-"See help completion for source,
-"Note: usual completion is on <C-n> but more trouble to press all the time.
-"Never type the same word twice and maybe learn a new spellings!
-"Use the Linux dictionary when spelling is in doubt.
-"Window users can copy the file to their machine.
-function! Tab_Or_Complete()
-  if col('.')>1 && strpart( getline('.'), col('.')-2, 3 ) =~ '^\w'
-    return "\<C-N>"
-  else
-    return "\<Tab>"
-  endif
-endfunction
-:inoremap <Tab> <C-R>=Tab_Or_Complete()<CR>
-:set dictionary="/usr/dict/words"
 
 
 function! s:goyo_enter()

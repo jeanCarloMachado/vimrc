@@ -10,7 +10,7 @@
 " - Tue 21 May 2019 09:28:46 AM CEST - drop gist support because they are dangerous security-wise
 " let g:theme = 'light'
 let g:theme = 'dark'
-let g:theme = 'light'
+" let g:theme = 'light'
 " plugins load {{{
 set nocompatible
 filetype on
@@ -176,7 +176,7 @@ call plug#end()
 
 " {{{ generic
 set wildignore+=*\\dist\\**
-set relativenumber
+" set relativenumber
 
 """ {{{ When you type the first tab hit, it will complete as much as possible. The second tab hit will provide a list. The third and subsequent tabs will cycle through completion options so you can complete the file without further keys.
 """
@@ -1722,11 +1722,11 @@ fun! PersonalHighlights()
         highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
         set hlsearch
         hi Folded ctermbg=white
-        " highlight LineNr ctermbg=white
+         highlight LineNr ctermbg=white
         hi VertSplit ctermbg=white
         hi illuminatedWord cterm=underline gui=underline
-        hi StatusLine ctermbg=darkgrey ctermfg=white
-        hi StatusLineNC ctermbg=darkgrey ctermfg=white
+        hi StatusLine ctermbg=white ctermfg=darkgrey
+        hi StatusLineNC ctermbg=white ctermfg=darkgrey
         highlight clear SignColumn
         highlight SignColumn ctermbg=white
         highlight FoldColumn ctermbg=white

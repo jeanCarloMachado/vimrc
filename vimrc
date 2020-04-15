@@ -879,7 +879,7 @@ autocmd filetype crontab setlocal nobackup nowritebackup
 "fzf {{{
 let g:fzf_buffers_jump = 1
 " map <c-p> :FZF<cr>
-nnoremap <silent> <c-p> :call fzf#run(fzf#wrap({
+nnoremap <silent> <c-n> :call fzf#run(fzf#wrap({
 \    'source': 'find .'
 \ }))<CR>
 
@@ -1866,8 +1866,8 @@ fun! SwapEditors(path)
     execute 'AsyncRun openOnVim "'.a:path.'" vim'
 endfun
 command! -nargs=* SwapEditors call SwapEditors(expand('%:p'))
-nnoremap <Leader>n :SwapEditors<cr>
-nnoremap <C-n> :SwapEditors<cr>
+nnoremap <Leader>i :SwapEditors<cr>
+"nnoremap <C-n> :SwapEditors<cr>
 
 
 

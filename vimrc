@@ -86,17 +86,11 @@ Plug 'autozimu/LanguageClient-neovim', {
 Plug 'ncm2/ncm2'
 "Yet Another Remote Plugin Framework for Neovim
 Plug 'roxma/nvim-yarp'
-"enable ncm2 for all buffers
-autocmd BufEnter * call ncm2#enable_for_buffer()
-" Important: :help Ncm2PopupOpen for more information
-set completeopt=menu,menuone,preview,noselect,noinsert
-
-" NOTE: you need to install completion sources to get completions. Check
 " our wiki page for a list of sources: https://github.com/ncm2/ncm2/wiki
 Plug 'ncm2/ncm2-bufword'
-Plug 'ncm2/ncm2-tmux'
+" Plug 'ncm2/ncm2-tmux'
 Plug 'ncm2/ncm2-path'
-Plug 'wellle/tmux-complete.vim'
+" Plug 'wellle/tmux-complete.vim'
 "}}}
 "get beautiful icons for nerdtree
 Plug 'ryanoasis/vim-devicons'
@@ -320,8 +314,8 @@ let g:ale_completion_enabled = 1
 "}}}
 " autocomplete {{{
 " needs to be enabled if ncm2 is to autosuggest
-set omnifunc=syntaxcomplete#Complete
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+" set omnifunc=syntaxcomplete#Complete
+" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 " wrap existing omnifunc
 " Note that omnifunc does not run in background and may probably block the
@@ -329,6 +323,9 @@ inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 " add 180ms delay before the omni wrapper:
 "  'on_complete': ['ncm2#on_complete#delay', 180,
 "               \ 'ncm2#on_complete#omni', 'pythoncomplete#CompletePYTHON'],
+
+
+
 au User Ncm2Plugin call ncm2#register_source({
         \ 'name' : 'python',
         \ 'priority': 9,
@@ -336,9 +333,21 @@ au User Ncm2Plugin call ncm2#register_source({
         \ 'scope': ['python'],
         \ 'mark': 'python',
         \ 'word_pattern': '[\w\-]+',
-        \ 'complete_pattern': ':\s*',
-        \ 'on_complete': [ 'ncm2#on_complete#delay', 180, 'ncm2#on_complete#omni', 'pythoncomplete#Complete'],
+        \ 'complete_pattern': '\.s*',
+        \ 'on_complete': ['ncm2#on_complete#delay', 2000,'ncm2#on_complete#omni', 'python3complete#Complete'],
         \ })
+
+autocmd BufEnter * call ncm2#enable_for_buffer()
+set completeopt=noinsert,menuone,noselect
+set shortmess+=c
+set noshowmode
+
+inoremap <c-c> <ESC>
+
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
+
 
 " }}}
 
@@ -440,10 +449,10 @@ set backupdir=~/.vim/backup
 set swapfile
 set directory=~/.vim/swap
 "don't show alert message when the swap already exists
-set shortmess+=A "don't give the "ATTENTION" message when an existing swap file is found
+" set shortmess+=A "don't give the "ATTENTION" message when an existing swap file is found
 " suppress the annoying 'match x of y', 'The only match' and 'Pattern not
 " found' messages
-set shortmess+=c
+" set shortmess+=c
 " Use <TAB> to select the popup menu: ncm2
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
@@ -1790,7 +1799,6 @@ set expandtab
 "  how to paste on multiple selections without messing up https://trello.com/c/WR8J9HAQ
 "
 
-
 " project specific settings {{{
 fun! TravelerFrontend()
     set tabstop=2 shiftwidth=2
@@ -1807,8 +1815,6 @@ autocmd BufNewFile,BufRead */fishfarm/* call Fishfarm()
 let g:LanguageClient_autoStart = 1
 let g:LanguageClient_hoverPreview="Always"
 "
-
-
 
 autocmd BufEnter *.py,*.php let g:timer = timer_start(4000, 'AnnotatheCurrentWord',{'repeat':-1})
 autocmd BufLeave *.py,*.php call timer_stop(g:timer)
@@ -1877,8 +1883,6 @@ endfunction
 
 autocmd! User GoyoEnter call <SID>goyo_enter()
 
-
-
 let test#python#runner#options = ' --show-capture=all '
 let test#python#options = ' --show-capture=all '
 
@@ -1889,3 +1893,4 @@ let g:jupytext_fmt = 'md'
 let g:jupytext_to_ipynb_opts = '--to=ipynb --update'
 let g:jupytext_filetype_map = {'md': 'pandoc'}
 au BufRead,BufNewFile *.ipynb set filetype=python
+

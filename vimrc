@@ -75,6 +75,7 @@ Plug 'ntpeters/vim-better-whitespace'
 " Plug 'blueyed/vim-diminactive'
 " Plug 'nathanaelkane/vim-indent-guides', { 'for': ['html', 'vue', 'yaml', 'yml', 'tpl'] }
 Plug 'nathanaelkane/vim-indent-guides'
+Plug 'Shougo/echodoc.vim'
 Plug 'autozimu/LanguageClient-neovim', {
 			\ 'branch': 'next',
 			\ 'do': 'bash install.sh',
@@ -167,7 +168,9 @@ Plug 'sheerun/vim-polyglot'
 "}}}
 call plug#end()
 "}}}
-
+" Or, you could use neovim's virtual virtual text feature.
+let g:echodoc#enable_at_startup = 1
+let g:echodoc#type = 'virtual'
 " {{{ generic
 set wildignore+=*\\dist\\**
 " set relativenumber
@@ -326,16 +329,16 @@ let g:ale_completion_enabled = 1
 
 
 
-au User Ncm2Plugin call ncm2#register_source({
-        \ 'name' : 'python',
-        \ 'priority': 9,
-        \ 'subscope_enable': 1,
-        \ 'scope': ['python'],
-        \ 'mark': 'python',
-        \ 'word_pattern': '[\w\-]+',
-        \ 'complete_pattern': '\.s*',
-        \ 'on_complete': ['ncm2#on_complete#delay', 2000,'ncm2#on_complete#omni', 'python3complete#Complete'],
-        \ })
+" au User Ncm2Plugin call ncm2#register_source({
+"         \ 'name' : 'python',
+"         \ 'priority': 9,
+"         \ 'subscope_enable': 1,
+"         \ 'scope': ['python'],
+"         \ 'mark': 'python',
+"         \ 'word_pattern': '[\w\-]+',
+"         \ 'complete_pattern': '\.s*',
+"         \ 'on_complete': ['ncm2#on_complete#delay', 2000,'ncm2#on_complete#omni', 'python3complete#Complete'],
+"         \ })
 
 autocmd BufEnter * call ncm2#enable_for_buffer()
 set completeopt=noinsert,menuone,noselect

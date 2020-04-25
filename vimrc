@@ -1881,6 +1881,8 @@ command! -nargs=* SwapEditors call SwapEditors(expand('%:p'))
 nnoremap <Leader>i :SwapEditors<cr>
 "nnoremap <C-n> :SwapEditors<cr>
 
+nnoremap <Leader>ga :Gwrite<cr>
+nnoremap <Leader>gc :Gcommit<cr>
 
 
 function! s:goyo_enter()

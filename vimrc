@@ -89,7 +89,7 @@ Plug 'ncm2/ncm2'
 Plug 'roxma/nvim-yarp'
 " our wiki page for a list of sources: https://github.com/ncm2/ncm2/wiki
 Plug 'ncm2/ncm2-bufword'
-" Plug 'ncm2/ncm2-tmux'
+Plug 'ncm2/ncm2-tmux'
 Plug 'ncm2/ncm2-path'
 " Plug 'wellle/tmux-complete.vim'
 "}}}
@@ -1524,7 +1524,6 @@ call toop#mapAround('`', '`', "<leader>`")
 call toop#mapAround("'", "'", "<leader>'")
 call toop#mapAround("'", "'", "<leader>qs")
 call toop#mapAround('"', '"', '<leader>qd')
-call toop#mapAround('"', '"', '<leader>"')
 call toop#mapAround('*', '*', '<leader>*')
 call toop#mapAround('(', ')', '<leader>(')
 call toop#mapAround('[', ']', '<leader>[')
@@ -1537,6 +1536,7 @@ call toop#mapAround('*', '*', '<leader>it')
 call toop#mapAround('**', '**', '<leader>bo')
 call toop#mapAround("***\n", '***', '<leader>hl')
 call toop#mapAround("```\n", "\n```", '<leader>cb')
+call toop#mapAround("\"\"\"\n", "\n\"\"\"", '<leader>"')
 call toop#mapAround("\n---\n", "\n---\n", '<leader>-')
 
 
@@ -1803,7 +1803,6 @@ set expandtab
 
 
 "  how to paste on multiple selections without messing up https://trello.com/c/WR8J9HAQ
-"
 
 " project specific settings {{{
 fun! TravelerFrontend()
@@ -1918,8 +1917,8 @@ endfunction
 let g:fzf_layout = { 'window': 'call FloatingFZF()' }
 let g:height = float2nr(&lines * 0.9)
 let g:width = float2nr(&columns * 0.95)
-let g:preview_width = float2nr(&columns * 0.7)
+let g:preview_width = float2nr(&columns * 0.4)
 let g:fzf_buffers_jump = 1
 let $FZF_DEFAULT_COMMAND =  "find * -path '*/\.*' -prune -o -path 'node_modules/**' -prune -o -path 'target/**' -prune -o -path 'dist/**' -prune -o  -type f -print -o -type l -print 2> /dev/null"
-let $FZF_DEFAULT_OPTS=" --color=dark --color=fg:15,bg:-1,hl:1,fg+:#ffffff,bg+:0,hl+:1 --color=info:0,prompt:0,pointer:12,marker:4,spinner:11,header:-1 --layout=reverse  --margin=1,4 --preview 'if file -i {}|grep -q binary; then file -b {}; else bat --style=changes --color always --line-range :40 {}; fi' --preview-window right:" . g:preview_width
+let $FZF_DEFAULT_OPTS=" --color=dark  --layout=reverse  --margin=3,6 --preview 'if file -i {}|grep -q binary; then file -b {}; else bat --style=changes --color always --line-range :40 {}; fi' --preview-window right:" . g:preview_width
 let g:fzf_layout = { 'window': 'call FloatingFZF()' }

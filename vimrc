@@ -345,6 +345,9 @@ set completeopt=noinsert,menuone,noselect
 set shortmess+=c
 set noshowmode
 
+"do not give errors when opening files with swap open
+set shortmess+=A
+
 inoremap <c-c> <ESC>
 
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
@@ -1897,3 +1900,24 @@ let g:jupytext_to_ipynb_opts = '--to=ipynb --update'
 let g:jupytext_filetype_map = {'md': 'pandoc'}
 au BufRead,BufNewFile *.ipynb set filetype=python
 
+function! FloatingFZF()
+    let width = float2nr(&columns * 0.85)
+    let height = float2nr(&lines * 0.70)
+    let opts = { 'relative': 'editor',
+                \ 'row': (&lines - height) / 2,
+                \ 'col': (&columns - width) / 2,
+                \ 'width': width,
+                \ 'height': height,
+                \ 'style': 'minimal'}
+
+    let win = nvim_open_win(nvim_create_buf(v:false, v:true), v:true, opts)
+endfunction
+
+let g:fzf_layout = { 'window': 'call FloatingFZF()' }
+let g:height = float2nr(&lines * 0.9)
+let g:width = float2nr(&columns * 0.95)
+let g:preview_width = float2nr(&columns * 0.7)
+let g:fzf_buffers_jump = 1
+let $FZF_DEFAULT_COMMAND =  "find * -path '*/\.*' -prune -o -path 'node_modules/**' -prune -o -path 'target/**' -prune -o -path 'dist/**' -prune -o  -type f -print -o -type l -print 2> /dev/null"
+let $FZF_DEFAULT_OPTS=" --color=dark --color=fg:15,bg:-1,hl:1,fg+:#ffffff,bg+:0,hl+:1 --color=info:0,prompt:0,pointer:12,marker:4,spinner:11,header:-1 --layout=reverse  --margin=1,4 --preview 'if file -i {}|grep -q binary; then file -b {}; else bat --style=changes --color always --line-range :40 {}; fi' --preview-window right:" . g:preview_width
+let g:fzf_layout = { 'window': 'call FloatingFZF()' }

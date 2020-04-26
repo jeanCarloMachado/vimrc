@@ -490,6 +490,7 @@ fun! FindIt(str)
 endfun
 
 nnoremap <leader>fi :CtrlSF
+nnoremap <leader><C-f> :CtrlSF
 
 function! FindStringWiki()
     let curline = getline('.')

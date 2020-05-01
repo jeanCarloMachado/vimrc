@@ -278,10 +278,15 @@ let g:ale_lint_on_save = 1
 let g:ale_lint_on_enter = 0
 let g:ale_lint_on_text_changed = 0
 let g:ale_writegood_options = ' --so --illusion --adverb --tooWordy --cliches'
-" let g:ale_sign_warning = '⚠'
-" let g:ale_sign_error = '✖'
+let g:ale_sign_warning = '⚠'
 let b:ale_warn_about_trailing_whitespace = 0
-let g:ale_fix_on_save = 0
+
+let g:ale_sign_error = '✖'
+let g:ale_sign_info = '-'
+let g:ale_sign_style_error = '✖'
+let g:ale_sign_style_warning = '-'
+let g:ale_sign_warning = '-'
+
 
 "change ruleset for fishfamr
 " autocmd BufRead,BufNewFile */fishfarm/* let g:ale_php_phpcs_standard = "/home/jean/projects/activity-classifier/ruleset.xml"

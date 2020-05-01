@@ -854,7 +854,7 @@ command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
 " {{{ search
 set hlsearch " match while typing the search
 set incsearch "show the next match while entering a search
-set ignorecase "the case of normal letters is ignored
+" set ignorecase "the case of normal letters is ignored
 set smartcase "Override the 'ignorecase' option if the search pattern contains upper case characters
 
 nnoremap <leader>wf :call FindStringWiki()<cr>

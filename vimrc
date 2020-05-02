@@ -76,10 +76,12 @@ Plug 'ntpeters/vim-better-whitespace'
 " Plug 'nathanaelkane/vim-indent-guides', { 'for': ['html', 'vue', 'yaml', 'yml', 'tpl'] }
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'Shougo/echodoc.vim'
-Plug 'autozimu/LanguageClient-neovim', {
-			\ 'branch': 'next',
-			\ 'do': 'bash install.sh',
-			\ }
+" Plug 'autozimu/LanguageClient-neovim', {
+" 			\ 'branch': 'next',
+" 			\ 'do': 'bash install.sh',
+" 	 		\ }
+Plug 'prabirshrestha/async.vim'
+Plug 'prabirshrestha/vim-lsp'
 " autocompletion {{{
 
 "ncm2 is better than  deoplete :)
@@ -130,14 +132,11 @@ Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
 """ let g:jedi#show_call_signatures = "1"
 """ let g:jedi#goto_command = "<localleader>gt"
 """ let g:jedi#goto_assignments_command = "<localleader>ga"
-let g:jedi#goto_definitions_command = "<C-]>"
 """ let g:jedi#documentation_command = "K"
 """ let g:jedi#usages_command = "<localleader>u"
 """ let g:jedi#completions_command = "<C-Space>"
 """ let g:jedi#rename_command = "<leader>r"
 Plug 'davidhalter/jedi-vim', { 'for': ['python'] }
-"removed vdebug because of my reliance on python debugger and phpstorm
-" Plug 'vim-vdebug/vdebug', {'for': ['php'] }
 "filetype only * (for swift)
 " Plug 'keith/swift.vim', {'for': ['swift']}
 Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
@@ -168,6 +167,32 @@ Plug 'sheerun/vim-polyglot'
 "}}}
 call plug#end()
 "}}}
+
+if executable('pyls')
+    " pip install python-language-server
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'pyls',
+        \ 'cmd': {server_info->['pyls']},
+        \ 'whitelist': ['python'],
+        \ })
+endif
+
+function! s:on_lsp_buffer_enabled() abort
+    setlocal omnifunc=lsp#complete
+    setlocal signcolumn=yes
+    nmap <buffer> gd <plug>(lsp-definition)
+    nmap <buffer> <f2> <plug>(lsp-rename)
+    " refer to doc to add more commands
+endfunction
+
+augroup lsp_install
+    au!
+    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
+set foldmethod=expr
+\ foldexpr=lsp#ui#vim#folding#foldexpr()
+\ foldtext=lsp#ui#vim#folding#foldtext()
 " Or, you could use neovim's virtual virtual text feature.
 let g:echodoc#enable_at_startup = 1
 let g:echodoc#type = 'virtual'
@@ -225,6 +250,13 @@ vnoremap . :normal .<CR>
 nnoremap + ddp
 nnoremap _ dd2kp
 nnoremap <Leader>le :noh<cr>
+
+" got to defitino {{{
+let g:jedi#goto_definitions_command = "<C-]>"
+
+"nnoremap <C-]>:LspDefinition<cr>
+" }}}
+
 "returns the current date
 nnoremap <Leader>dt :r ! date<cr>
 nnoremap <leader>pu :PlugUpdate<cr>
@@ -371,7 +403,7 @@ autocmd FileType php call matchadd('Conceal', '"', 999, -1, {'conceal': ''}) |
     \ call matchadd('Conceal', 'function ', 999, -1, {'conceal': ''}) |
     \ call matchadd('Conceal', 'public ', 999, -1, {'conceal': ''})
 
-set conceallevel=2 "show pretty latex formulas
+" set concealevel=2 "show pretty latex formulas
 let g:conceal_php_disable_ligature=1
 "}}}
 
@@ -508,7 +540,7 @@ endfunction
 
 " fold {{{
 "enter fold giving a list of options on conflicts
-nnoremap <C-]> g<C-]>
+" nnoremap <C-]> g<C-]>
 let g:markdown_folding = 1
 
 fun FoldFiletypeSpecific()
@@ -853,6 +885,7 @@ command! -nargs=* GithubRepo call OpenRepoOnGithub( '<args>' )
 
 " {{{ search
 set hlsearch " match while typing the search
+set ignorecase "the case of normal letters is ignored
 set incsearch "show the next match while entering a search
 " set ignorecase "the case of normal letters is ignored
 set smartcase "Override the 'ignorecase' option if the search pattern contains upper case characters
@@ -981,26 +1014,6 @@ nmap <leader>rr  :call Repl()<cr>
 "}}}
 
 " debug {{{
-let g:vdebug_keymap = {
-\    "run" : "<leader>dr",
-\    "run_to_cursor" : "<leader>du",
-\    "step_over" : "<leader>dd",
-\    "step_into" : "<leader>di",
-\    "step_out" : "<leader>do",
-\    "close" : "<leader>de",
-\    "detach" : "<F7>",
-\    "set_breakpoint" : "<leader>db",
-\    "get_context" : "dx",
-\    "eval_under_cursor" : "<F12>",
-\    "eval_visual" : "<Leader>dv",
-\}
-
-let g:vdebug_options = {
-\       'path_maps': {
-\               '/var/www/getyourguide.com/current': '/home/jean/projects/fishfarm',
-\    }
-\}
-
 fun! ShowStringOnNewWindow(content)
     split _output_
     normal! ggdG
@@ -1677,12 +1690,6 @@ inoremap <F12> <C-o>:syntax sync fromstart<CR>
 "}}}
 
 
-"VERY useful skill
-let g:LanguageClient_serverCommands = {
-			\'python' : ['pyls', '-v', '--log-file', '/tmp/pyls'],
-            \'php' : ['restartWhenFails', 'php', '/home/jean/.composer/vendor/bin/php-language-server.php', '--memory-limit=2G']
-			\ }
-
 "see all options of the langauge server
 nnoremap <leader>lo :call LanguageClient_contextMenu()<CR>
 " see the signature of a method[
@@ -1690,7 +1697,7 @@ nnoremap <silent> <leader>ss :call LanguageClient#textDocument_hover()<CR>
 " go to the definition
 nnoremap <silent> <leader>def :call LanguageClient#textDocument_definition()<CR>
 "rename all occurences of the given function
-nnoremap <silent> <leader>rn :call LanguageClient#textDocument_rename()<CR>
+nnoremap <silent> <leader>rn :LspRename<CR>
 
 
 " xnoremap p "_dP
@@ -1823,6 +1830,7 @@ autocmd BufNewFile,BufRead */gyg/* call Fishfarm()
 autocmd BufNewFile,BufRead */fishfarm/* call Fishfarm()
 
 "}}}
+"
 let g:LanguageClient_autoStart = 1
 let g:LanguageClient_hoverPreview="Always"
 "

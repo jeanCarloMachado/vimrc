@@ -1943,3 +1943,23 @@ let g:lsp_signs_error = {'text': '✗'}
 let g:lsp_signs_warning = {'text': '‼'} " icons require GUI
 let g:lsp_highlights_enabled = 0
 let g:lsp_diagnostics_enabled = 0 
+
+
+" Follow symlinks when opening a file
+" Sources:
+"  - https://github.com/tpope/vim-fugitive/issues/147#issuecomment-7572351
+"  - http://www.reddit.com/r/vim/comments/yhsn6/is_it_possible_to_work_around_the_symlink_bug/c5w91qw
+" Echoing a warning does not appear to work:
+"   echohl WarningMsg | echo "Resolving symlink." | echohl None |
+function! MyFollowSymlink(...)
+  let fname = a:0 ? a:1 : expand('%')
+  if getftype(fname) != 'link'
+    return
+  endif
+  let resolvedfile = fnameescape(resolve(fname))
+  exec 'file ' . resolvedfile
+  cd %:p:h
+endfunction
+command! FollowSymlink call MyFollowSymlink()
+
+autocmd BufReadPost * call MyFollowSymlink(expand('<afile>'))

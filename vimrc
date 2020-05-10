@@ -164,6 +164,8 @@ Plug 'tpope/vim-fugitive'
 "marks search matching parts while typing - not really important
 " Plug 'markonm/traces.vim'
 Plug 'sheerun/vim-polyglot'
+" go to github
+Plug 'ruanyl/vim-gh-line'
 "}}}
 call plug#end()
 "}}}

@@ -1557,7 +1557,8 @@ call toop#mapAround('*', '*', '<leader>it')
 call toop#mapAround('**', '**', '<leader>bo')
 call toop#mapAround("***\n", '***', '<leader>hl')
 call toop#mapAround("```\n", "\n```", '<leader>cb')
-call toop#mapAround("\"\"\"\n", "\n\"\"\"", '<leader>"')
+call toop#mapAround("\"\"\"\n", "\n\"\"\"", '<leader>3"')
+-call toop#mapAround('"', '"', '<leader>"')
 call toop#mapAround("\n---\n", "\n---\n", '<leader>-')
 
 

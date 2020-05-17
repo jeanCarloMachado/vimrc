@@ -21,7 +21,7 @@ let g:ale_sign_warning = '-'
 let g:ale_php_cs_fixer_executable = '/home/jean/Dropbox/projects/dotfiles/scripts/php-cs-fixer-fishfarm.sh'
 
 let g:ale_linters = {
-\   'python': ['mypy', 'flake8', 'pylint'],
+\   'python': [ 'mypy', 'flake8', 'pylint'],
 \   'javascript': ['eslint'],
 \   'sh': ['shell', 'shellcheck'],
 \   'markdown': ['write-good', 'proselint'],

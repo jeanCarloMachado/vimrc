@@ -75,6 +75,7 @@ Plug 'RRethy/vim-illuminate'
 Plug 'ntpeters/vim-better-whitespace'
 " Plug 'blueyed/vim-diminactive'
 " Plug 'nathanaelkane/vim-indent-guides', { 'for': ['html', 'vue', 'yaml', 'yml', 'tpl'] }
+Plug 'heavenshell/vim-pydocstring', { 'do': 'make install', 'for': 'python' }
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'Shougo/echodoc.vim'
 " Plug 'autozimu/LanguageClient-neovim', {
@@ -117,10 +118,7 @@ Plug 'wellle/targets.vim'
 
 
 " programming languages {{{
-" Plug 'lervag/vimtex', { 'for': ['latex'] }
-"
 Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
-" Plug 'chrisbra/csv.vim', { 'for': ['csv'] }
 Plug 'fatih/vim-go', { 'for': ['go'] }
 Plug 'derekwyatt/vim-scala', { 'for': ['scala'] }
 Plug 'ensime/ensime-vim', { 'do': ':UpdateRemotePlugins', 'for': ['scala'] }
@@ -472,7 +470,6 @@ noremap <silent> <leader>tg :TestVisit<CR>   " t Ctrl+g
 let test#strategy = "vimux"
 "}}}
 
-
 " windows management {{{
 nmap <leader>vn :vnew<cr>
 nnoremap <leader>on :only<cr>
@@ -504,9 +501,6 @@ fun! RepeatAndNext()
 endfun
 nnoremap <leader>. :call RepeatAndNext()<cr>
 "}}}
-
-
-
 
 "cursor{{{
 "save the previous cursor position
@@ -584,20 +578,6 @@ set expandtab
 
 "  how to paste on multiple selections without messing up https://trello.com/c/WR8J9HAQ
 
-" project specific settings {{{
-fun! TravelerFrontend()
-    set tabstop=2 shiftwidth=2
-endfun
-autocmd BufNewFile,BufRead */traveler-frontend/* call TravelerFrontend()
-
-fun! Fishfarm()
-    set tabstop=4 shiftwidth=4
-endfun
-autocmd BufNewFile,BufRead */gyg/* call Fishfarm()
-autocmd BufNewFile,BufRead */fishfarm/* call Fishfarm()
-
-"}}}
-"
 
 autocmd BufEnter *.py,*.php let g:timer = timer_start(4000, 'AnnotatheCurrentWord',{'repeat':-1})
 autocmd BufLeave *.py,*.php call timer_stop(g:timer)
@@ -643,7 +623,6 @@ fun! SwapEditors(path)
 endfun
 command! -nargs=* SwapEditors call SwapEditors(expand('%:p'))
 nnoremap <Leader>i :SwapEditors<cr>
-"nnoremap <C-n> :SwapEditors<cr>
 
 
 let test#python#runner#options = ' --show-capture=all '
@@ -656,3 +635,7 @@ let g:jupytext_fmt = 'md'
 let g:jupytext_to_ipynb_opts = '--to=ipynb --update'
 let g:jupytext_filetype_map = {'md': 'pandoc'}
 au BufRead,BufNewFile *.ipynb set filetype=python
+
+nnoremap <Leader>pdoc :Pydocstring<cr>
+
+"""<cr>

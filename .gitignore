@@ -3,5 +3,4 @@
 vim/undo/*
 .netrwhist
 vim/plugged
-vim/plugin
 tags

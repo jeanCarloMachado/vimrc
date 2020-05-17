@@ -5,7 +5,8 @@
 " Every non obvious change should be commited. I really forget after a while
 " Userspace dependencies par
 " Changelog
-"
+" Files that complete this setup
+" vim/plugin/highlight.vim
 "
 " - Tue 21 May 2019 09:28:46 AM CEST - drop gist support because they are dangerous security-wise
 " let g:theme = 'light'
@@ -18,7 +19,7 @@ filetype plugin on "loading the plugin files for specific file types
 call plug#begin()
 "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
 Plug 'altercation/vim-colors-solarized'
-"inline errors, linting
+"Check syntax in Vim asynchronously and fix files, with Language Server Protocol (LSP) support
 Plug 'w0rp/ale'
 Plug 'pgr0ss/vim-github-url'
 Plug 'christoomey/vim-tmux-navigator'
@@ -269,7 +270,6 @@ map <leader>x :w<','> !bash<cr>
 map <leader>me :!chmod +x %<cr>
 nnoremap <leader>nt :tabnew<cr>
 "open directory
-nmap <leader>sh :!cd %:h && zsh <cr>
 nmap <leader>pn :!echo %<cr>
 nmap <leader>pfn :!echo %:p<cr>
 nmap <silent> <leader>ve :e $MY_VIMRC<cr>:lcd %:h<cr>
@@ -303,55 +303,6 @@ let g:abolish_save_file = "/home/jean/.vim/after/plugin/abolish.vim"
 " command! -nargs=* ProjectRootCd call ProjectRootCd( '<args>' )
 
 "}}}
-
-"linting, fixing - ale config {{{
-nnoremap <leader>fmt :ALEFix<cr>
-let g:ale_set_highlights = 1
-let g:ale_lint_on_text_changed = 0
-let g:ale_lint_on_save = 1
-let g:ale_lint_on_enter = 0
-let g:ale_lint_on_text_changed = 0
-let g:ale_writegood_options = ' --so --illusion --adverb --tooWordy --cliches'
-let g:ale_sign_warning = '⚠'
-let b:ale_warn_about_trailing_whitespace = 0
-
-let g:ale_sign_error = '✖'
-let g:ale_sign_info = '-'
-let g:ale_sign_style_error = '✖'
-let g:ale_sign_style_warning = '-'
-let g:ale_sign_warning = '-'
-
-
-"change ruleset for fishfamr
-" autocmd BufRead,BufNewFile */fishfarm/* let g:ale_php_phpcs_standard = "/home/jean/projects/activity-classifier/ruleset.xml"
-
-" let g:ale_php_cs_fixer_options = " --config /home/jean/projects/personalscripts/fishfarmstyle.php "
-let g:ale_php_cs_fixer_executable = '/home/jean/Dropbox/projects/dotfiles/scripts/php-cs-fixer-fishfarm.sh'
-
-let g:ale_linters = {
-\   'python': ['mypy', 'flake8', 'pylint'],
-\   'javascript': ['eslint'],
-\   'sh': ['shell', 'shellcheck'],
-\   'markdown': ['write-good', 'proselint'],
-\   'scala': ['fsc', 'scalac'],
-\   'swift': ['swiftlint'],
-\   'php': ['php', 'phpcs'],
-\   'elm': ['elm-fomart', 'elm-make']
-\}
-
-" the python fixer that sets the correct indentation for files is  yapf
-" and we have a copy of it in personal scripts: /home/jean/Dropbox/projects/dotfiles/scripts/yapf
-let g:ale_fixers = {
-\   '*': ['remove_trailing_lines', 'trim_whitespace'],
-\   'python': ['autopep8', 'yapf'],
-\   'php': ['php_cs_fixer'],
-\   'scala': ['scalafmt'],
-\   'swift': ['swiftformat'],
-\   'elm': ['elm-format']
-\}
-"}}}
-
-let g:ale_completion_enabled = 1
 
 "}}}
 " autocomplete {{{
@@ -1253,37 +1204,6 @@ endfun
 " \ })
 
 
-" fun! AFunction()
-"     let funcKeyword = GetFiletypeFuncKeyword()
-"     execute "?".funcKeyword
-"     normal! 0w
-"     let head_pos = getpos('.')
-"     call SearchLineOrDocument("{")
-"     normal! %
-"     let tail_pos = getpos('.')
-"     return ['v', head_pos, tail_pos]
-" endfun
-
-" fun! IFunction()
-"     let backup_pos = getpos(".")
-
-"     let funcKeyword = GetFiletypeFuncKeyword()
-"     execute "?".funcKeyword
-
-"     call SearchLineOrDocument("{")
-"     let tmp_head = getpos('.')
-"     normal! %
-"     let tmp_tail = getpos('.')
-"     call setpos('.', tmp_head)
-"     normal! w
-"     let head_pos = getpos('.')
-"     call setpos('.', tmp_tail)
-"     normal! b
-"     let tail_pos = getpos('.')
-
-"     return ['v', head_pos, tail_pos]
-" endfun
-
 
 call textobj#user#plugin('fold', {
 \   'code': {
@@ -1945,24 +1865,5 @@ let g:lsp_highlight_references_enabled = 1
 let g:lsp_signs_error = {'text': '✗'}
 let g:lsp_signs_warning = {'text': '‼'} " icons require GUI
 let g:lsp_highlights_enabled = 0
-let g:lsp_diagnostics_enabled = 0 
+let g:lsp_diagnostics_enabled = 0
 
-
-" " Follow symlinks when opening a file
-" " Sources:
-" "  - https://github.com/tpope/vim-fugitive/issues/147#issuecomment-7572351
-" "  - http://www.reddit.com/r/vim/comments/yhsn6/is_it_possible_to_work_around_the_symlink_bug/c5w91qw
-" " Echoing a warning does not appear to work:
-" "   echohl WarningMsg | echo "Resolving symlink." | echohl None |
-" function! MyFollowSymlink(...)
-"   let fname = a:0 ? a:1 : expand('%')
-"   if getftype(fname) != 'link'
-"     return
-"   endif
-"   let resolvedfile = fnameescape(resolve(fname))
-"   exec 'file ' . resolvedfile
-"   cd %:p:h
-" endfunction
-" command! FollowSymlink call MyFollowSymlink()
-
-" autocmd BufReadPost * call MyFollowSymlink(expand('<afile>'))

@@ -1,4 +1,4 @@
-" file for ide capabilities in vim
+" configurations specific of syntax highlight and comments
 
 "linting, fixing - ale config {{{
 nnoremap <leader>fmt :ALEFix<cr>
@@ -16,12 +16,6 @@ let g:ale_sign_info = '-'
 let g:ale_sign_style_error = '✖'
 let g:ale_sign_style_warning = '-'
 let g:ale_sign_warning = '-'
-
-let g:lsp_highlight_references_enabled = 1
-let g:lsp_signs_error = {'text': '✗'}
-let g:lsp_signs_warning = {'text': '‼'} " icons require GUI
-let g:lsp_highlights_enabled = 0
-let g:lsp_diagnostics_enabled = 0
 
 
 let g:ale_php_cs_fixer_executable = '/home/jean/Dropbox/projects/dotfiles/scripts/php-cs-fixer-fishfarm.sh'
@@ -50,25 +44,20 @@ let g:ale_fixers = {
 "}}}
 
 let g:ale_completion_enabled = 1
-if executable('pyls')
-    " pip install python-language-server
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'pyls',
-        \ 'cmd': {server_info->['pyls']},
-        \ 'whitelist': ['python'],
-        \ })
-endif
+" call toop#mapFunction('RunQbq', '<leader>dq')
+let g:LanguageClient_useVirtualText = 0
+"
+let g:LanguageClient_autoStart = 1
+let g:LanguageClient_hoverPreview="Always"
+let g:jedi#goto_definitions_command = "<C-]>"
 
-function! s:on_lsp_buffer_enabled() abort
-    setlocal omnifunc=lsp#complete
-    setlocal signcolumn=yes
-    nmap <buffer> gd <plug>(lsp-definition)
-    nmap <buffer> <f2> <plug>(lsp-rename)
-    " refer to doc to add more commands
-endfunction
 
-augroup lsp_install
-    au!
-    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
-    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
-augroup END
+
+"see all options of the langauge server
+nnoremap <leader>lo :call LanguageClient_contextMenu()<CR>
+" see the signature of a method[
+nnoremap <silent> <leader>ss :call LanguageClient#textDocument_hover()<CR>
+" go to the definition
+nnoremap <silent> <leader>def :call LanguageClient#textDocument_definition()<CR>
+"rename all occurences of the given function
+nnoremap <silent> <leader>rn :LspRename<CR>

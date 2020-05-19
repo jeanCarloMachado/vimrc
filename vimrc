@@ -75,7 +75,7 @@ Plug 'RRethy/vim-illuminate'
 Plug 'ntpeters/vim-better-whitespace'
 " Plug 'blueyed/vim-diminactive'
 " Plug 'nathanaelkane/vim-indent-guides', { 'for': ['html', 'vue', 'yaml', 'yml', 'tpl'] }
-Plug 'heavenshell/vim-pydocstring', { 'do': 'make install', 'for': 'python' }
+" Plug 'heavenshell/vim-pydocstring', { 'do': 'make install', 'for': 'python' }
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'Shougo/echodoc.vim'
 " Plug 'autozimu/LanguageClient-neovim', {

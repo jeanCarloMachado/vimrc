@@ -1,6 +1,7 @@
 " configurations specific of syntax highlight and comments
 
 "linting, fixing - ale config {{{
+"
 nnoremap <leader>fmt :ALEFix<cr>
 let g:ale_set_highlights = 1
 let g:ale_lint_on_text_changed = 0
@@ -61,3 +62,7 @@ nnoremap <silent> <leader>ss :call LanguageClient#textDocument_hover()<CR>
 nnoremap <silent> <leader>def :call LanguageClient#textDocument_definition()<CR>
 "rename all occurences of the given function
 nnoremap <silent> <leader>rn :LspRename<CR>
+
+nnoremap <C-M-w> :!ide_swap open_ide %:p<CR>
+nnoremap <leader><C-M-l> :ALEFix<cr>
+

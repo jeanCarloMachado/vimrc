@@ -20,12 +20,12 @@ call toop#mapFunction('Eval', '<leader>ev')
 nmap <Leader>els :VimuxRunCommand("\n")<CR>
 nmap <Leader>el :VimuxRunLastCommand<CR>
 
-fun! Subs(str)
-    let my_filetype = &filetype
-    let out = ChompedSystemCall('subs -p '.my_filetype, a:str."\n")
-    return out
-endfunc
-call toop#mapFunction('Subs', '<leader>o')
+" fun! Subs(str)
+"     let my_filetype = &filetype
+"     let out = ChompedSystemCall('subs -p '.my_filetype, a:str."\n")
+"     return out
+" endfunc
+" call toop#mapFunction('Subs', '<leader>o')
 " toop -  custom text actions {{{
 "to single quote
 call toop#mapShell("tr '\"' \"'\"", '<leader>tsq')
@@ -75,6 +75,10 @@ call toop#mapShell('runFunction translateDuplicating en de', '<leader>ted')
 call toop#mapShell('runFunction translateDuplicating en fr', '<leader>tef')
 call toop#mapShell('runFunction translateDuplicating en la', '<leader>tel')
 call toop#mapShell('runFunction translateDuplicating la en', '<leader>tle')
+
+
+"tab to space
+call toop#mapShell("sed 's/\t/    /g'", '<leader>tts')
 "sum numbers of a text
 call toop#mapShell('run_function printInputAndOutput numbers_of_text.py "+"', '<leader>sn')
 

@@ -33,6 +33,9 @@ Plug 'tpope/vim-surround'
 "shows a git diff in the gutter (sign column) and stages/undoes hunks.
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-commentary'
+
+Plug 'camspiers/animate.vim'
+Plug 'camspiers/lens.vim'
 " this plugin is slow when the project is too big
 "most recently used files list
 Plug 'git@github.com:skywind3000/asyncrun.vim.git'
@@ -78,7 +81,7 @@ Plug 'ntpeters/vim-better-whitespace'
 " Plug 'heavenshell/vim-pydocstring', { 'do': 'make install', 'for': 'python' }
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'Shougo/echodoc.vim'
-Plug 'codota/tabnine-vim'
+Plug 'codota/tabnine-vim', {'for': ['python', 'php']}
 " Plug 'autozimu/LanguageClient-neovim', {
 " 			\ 'branch': 'next',
 " 			\ 'do': 'bash install.sh',
@@ -174,7 +177,11 @@ set wildmenu
 let mapleader = "\<space>"
 
 "Tue 19 Nov 2019 12:06:15 PM CET disable mosue due to it fucking up my clipboard selection
-set mouse=a "enable mouse on normal,visual,inter,command-line modes
+set mouse=n "enable mouse on normal,visual,inter,command-line modes
+"https://code.google.com/p/iterm2/issues/detail?can=2&start=0&num=100&q=&colspec=ID%20Type%20Status%20Priority%20Milestone%20Owner%20Summary&groupby=&sort=&id=1830
+if has('mouse_sgr')
+  set ttymouse=sgr
+endif
 set backspace=indent,eol,start "make the backspace work like in most other programs
 " set cot+=menuone "Use the popup menu also when there is only one match
 set number "show numbers

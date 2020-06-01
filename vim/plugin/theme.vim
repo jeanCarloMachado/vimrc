@@ -1,6 +1,6 @@
 
-let g:theme = 'dark'
-" let g:theme = 'light'
+" let g:theme = 'dark'
+let g:theme = 'light'
 "theme, colors, highlights {{{
 "the later syntax is applied the better
 "since something might override it

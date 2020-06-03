@@ -13,8 +13,8 @@ let g:solarized_degrade = 0
 let g:solarized_bold = 1
 let g:solarized_underline = 1
 let g:solarized_italic = 1
-let g:solarized_contrast = "high"
-let  g:solarized_visibility= "high"
+" let g:solarized_contrast = "high"
+let g:solarized_visibility= "high"
 set t_Co=256
 
 "base03    #002b36  8/4 brblack  234 #1c1c1c 15 -12 -12   0  43  54 193 100  21
@@ -83,6 +83,7 @@ endfun
 
 
 let g:airline_theme='solarized'
+let g:airline_solarized_bg='ligth'
 if g:theme == 'dark'
 	set background=dark
 else
@@ -90,8 +91,6 @@ else
 endif
 
 call PersonalHighlights()
-
-
 
 " concealing {{{
 autocmd FileType php call matchadd('Conceal', '"', 999, -1, {'conceal': ''}) |

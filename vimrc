@@ -117,7 +117,7 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'jeanCarloMachado/vim-toop'
 " swap text objects from location
 Plug 'tommcdo/vim-exchange'
-Plug 'bps/vim-textobj-python'
+Plug 'bps/vim-textobj-python', {'for': ['python']}
 Plug 'wellle/targets.vim'
 
 
@@ -159,6 +159,8 @@ Plug 'tpope/vim-fugitive'
 Plug 'sheerun/vim-polyglot'
 " go to github
 Plug 'ruanyl/vim-gh-line'
+Plug 'majutsushi/tagbar', {'for': ['python']}
+Plug 'codota/tabnine-vim', {'for': ['python', 'php']}
 "}}}
 call plug#end()
 "}}}
@@ -300,10 +302,7 @@ map <leader>spt :set spell spelllang=pt_br<cr>
 map <leader>sen :set spell spelllang=en_us<cr>
 set spelllang=en,de_de,pt_br
 "}}}
-
-
-"undo {{{
-set undofile "enable undoing
+"undo {{{ set undofile "enable undoing
 set undodir=~/.vim/undo/
 set undolevels=100
 set undoreload=100
@@ -647,3 +646,5 @@ au BufRead,BufNewFile *.ipynb set filetype=python
 nnoremap <Leader>pdoc :Pydocstring<cr>
 
 """<cr>
+
+nnoremap <Leader>tt :TagbarToggle<CR>

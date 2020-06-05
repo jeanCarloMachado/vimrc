@@ -7,15 +7,6 @@ let g:theme = 'light'
 syntax enable
 
 
-let g:solarized_termcolors= 16
-let g:solarized_termtrans = 0
-let g:solarized_degrade = 0
-let g:solarized_bold = 1
-let g:solarized_underline = 1
-let g:solarized_italic = 1
-" let g:solarized_contrast = "high"
-let g:solarized_visibility= "high"
-set t_Co=256
 
 "base03    #002b36  8/4 brblack  234 #1c1c1c 15 -12 -12   0  43  54 193 100  21
 "base02    #073642  0/4 black    235 #262626 20 -12 -12   7  54  66 192  90  26
@@ -55,7 +46,7 @@ fun! PersonalHighlights()
         highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
         set hlsearch
         hi Folded ctermbg=white
-         highlight LineNr ctermbg=white
+        highlight LineNr ctermbg=white
         hi VertSplit ctermbg=white
         hi illuminatedWord cterm=underline gui=underline
         hi StatusLine ctermbg=white ctermfg=darkgrey
@@ -65,7 +56,8 @@ fun! PersonalHighlights()
         highlight FoldColumn ctermbg=white
         highlight ColorColumn ctermbg=white
 
-        highlight Pmenu ctermfg=white
+        " popup menu color
+        " highlight Pmenu ctermfg=white
         highlight PmenuSel ctermfg=white
         highlight PmenuSbar ctermfg=white
         highlight QuickFixLine ctermfg=white
@@ -83,7 +75,20 @@ endfun
 
 
 let g:airline_theme='solarized'
-let g:airline_solarized_bg='ligth'
+" let g:airline_solarized_bg='light'
+let g:airline_powerline_fonts = 1
+" let g:solarized_termcolors= 256
+let g:solarized_termcolors=256
+let g:solarized_termtrans=1
+" let g:solarized_degrade = 0
+let g:solarized_bold = 1
+let g:solarized_underline = 1
+let g:solarized_italic = 1
+let g:solarized_contrast = "high"
+let g:solarized_visibility= "high"
+set t_Co=256
+
+
 if g:theme == 'dark'
 	set background=dark
 else

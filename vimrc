@@ -81,7 +81,6 @@ Plug 'ntpeters/vim-better-whitespace'
 " Plug 'heavenshell/vim-pydocstring', { 'do': 'make install', 'for': 'python' }
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'Shougo/echodoc.vim'
-" Plug 'codota/tabnine-vim', {'for': ['python', 'php']}
 " Plug 'autozimu/LanguageClient-neovim', {
 " 			\ 'branch': 'next',
 " 			\ 'do': 'bash install.sh',
@@ -160,7 +159,7 @@ Plug 'sheerun/vim-polyglot'
 " go to github
 Plug 'ruanyl/vim-gh-line'
 Plug 'majutsushi/tagbar', {'for': ['python']}
-Plug 'codota/tabnine-vim', {'for': ['python', 'php']}
+Plug 'codota/tabnine-vim', {'for': ['python']}
 "}}}
 call plug#end()
 "}}}

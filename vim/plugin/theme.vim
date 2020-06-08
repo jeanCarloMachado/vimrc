@@ -1,6 +1,12 @@
 
+set termguicolors
+set background=light
+
+let g:gitgutter_override_sign_column_highlight = 0
+" set termguicolors
+" let g:solarized_termcolors=256
 " let g:theme = 'dark'
-let g:theme = 'light'
+" let g:theme = 'light'
 "theme, colors, highlights {{{
 "the later syntax is applied the better
 "since something might override it
@@ -26,7 +32,7 @@ syntax enable
 "green     #859900  2/2 green     64 #5f8700 60 -20  65 133 153   0  68 100  60
 
 
-colorscheme solarized
+colorscheme NeoSolarized
 
 "reapplies the sytanx when it's broken
 noremap <F12> <Esc>:syntax sync fromstart<CR>
@@ -34,66 +40,56 @@ inoremap <F12> <C-o>:syntax sync fromstart<CR>
 "}}}
 " settings for light color solarized
 fun! PersonalHighlights()
-	""" this changes where mainly made to make the solarized light them
-	""" better for use for getting a better sense of the options do a
-	""" :h ColorColumn
+	" """ this changes where mainly made to make the solarized light them
+	" """ better for use for getting a better sense of the options do a
+	" """ :h ColorColumn
 
-    if g:theme == "light"
-        highlight Cursor ctermbg=NONE cterm=bold
-        highlight CursorColumn ctermbg=Yellow cterm=bold
-        highlight CursorLine ctermbg=white
-        highlight ALEErrorSign ctermbg=NONE ctermfg=red
-        highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
-        set hlsearch
-        hi Folded ctermbg=white
-        highlight LineNr ctermbg=white
-        hi VertSplit ctermbg=white
-        hi illuminatedWord cterm=underline gui=underline
-        hi StatusLine ctermbg=white ctermfg=darkgrey
-        hi StatusLineNC ctermbg=white ctermfg=darkgrey
-        highlight clear SignColumn
-        highlight SignColumn ctermbg=white
-        highlight FoldColumn ctermbg=white
-        highlight ColorColumn ctermbg=white
+    " if g:theme == "light"
+        " highlight Cursor ctermbg=NONE cterm=bold
+        " highlight CursorColumn ctermbg=Yellow cterm=bold
+        " highlight CursorLine ctermbg=white
+        " highlight ALEErrorSign ctermbg=NONE ctermfg=red
+        " highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
+        " set hlsearch
+        " hi Folded ctermbg=white
+        " highlight LineNr ctermbg=white
+        " hi VertSplit ctermbg=white
+        " hi illuminatedWord cterm=underline gui=underline
+        " hi StatusLine ctermfg=white
+        " hi StatusLineNC ctermfg=white
+        " highlight clear SignColumn
+        highlight SignColumn guibg=#fdf6e3
+        highlight FoldColumn guibg=#fdf6e3
+        " highlight ColorColumn ctermbg=white
 
-        " popup menu color
-        " highlight Pmenu ctermfg=white
-        highlight PmenuSel ctermfg=white
-        highlight PmenuSbar ctermfg=white
-        highlight QuickFixLine ctermfg=white
-        highlight TabLine ctermbg=white
-        highlight TabLineFill ctermbg=white
-        highlight TabLineSel ctermbg=white
-    else
-        highlight SignColumn ctermbg=black
-        highlight FoldColumn ctermbg=black
-        highlight ColorColumn ctermbg=black
+        " " popup menu color
+        " " highlight Pmenu ctermfg=white
+        " highlight PmenuSel ctermfg=white
+        " highlight PmenuSbar ctermfg=white
+        " highlight QuickFixLine ctermfg=white
+        " highlight TabLine ctermbg=white
+        " highlight TabLineFill ctermbg=white
+        " highlight TabLineSel ctermbg=white
+    " else
+        " highlight SignColumn ctermbg=black
+        " highlight FoldColumn ctermbg=black
+        " highlight ColorColumn ctermbg=black
 
-    endif
+    " endif
 
 endfun
 
 
-let g:airline_theme='solarized'
-" let g:airline_solarized_bg='light'
+" let g:airline_theme='solarized'
+let g:airline_solarized_bg='light'
 let g:airline_powerline_fonts = 1
-" let g:solarized_termcolors= 256
-let g:solarized_termcolors=256
-let g:solarized_termtrans=1
-" let g:solarized_degrade = 0
-let g:solarized_bold = 1
-let g:solarized_underline = 1
-let g:solarized_italic = 1
-let g:solarized_contrast = "high"
-let g:solarized_visibility= "high"
-set t_Co=256
 
 
-if g:theme == 'dark'
-	set background=dark
-else
-	set background=light
-endif
+" if g:theme == 'dark'
+" 	set background=dark
+" else
+" 	set background=light
+" endif
 
 call PersonalHighlights()
 
@@ -112,3 +108,9 @@ let g:conceal_php_disable_ligature=1
 function! g:BuffetSetCustomColors()
     hi! BuffetCurrentBuffer cterm=NONE ctermbg=5 ctermfg=8 guibg=#00FF00 guifg=#000000
 endfunction
+
+
+
+let g:neosolarized_bold = 1
+let g:neosolarized_underline = 1
+let g:neosolarized_italic = 0

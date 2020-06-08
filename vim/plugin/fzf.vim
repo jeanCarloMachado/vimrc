@@ -18,7 +18,7 @@ let g:width = float2nr(&columns * 0.95)
 let g:preview_width = float2nr(&columns * 0.4)
 let g:fzf_buffers_jump = 1
 let $FZF_DEFAULT_COMMAND =  'rg --files  --hidden --follow --glob "!.git/*" '
-let $FZF_DEFAULT_OPTS=" --color=dark  --layout=reverse  --margin=3,6 --preview 'if file -i {}|grep -q binary; then file -b {}; else bat --style=changes --color never --line-range :40 {}; fi' --preview-window right:" . g:preview_width
+let $FZF_DEFAULT_OPTS=" --color=light  --layout=reverse  --margin=3,6 --preview 'if file -i {}|grep -q binary; then file -b {}; else bat --style=changes --line-range :40 {}; fi' --preview-window right:" . g:preview_width
 let g:fzf_layout = { 'window': 'call FloatingFZF()' }
 
 

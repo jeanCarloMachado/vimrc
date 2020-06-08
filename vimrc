@@ -18,7 +18,7 @@ filetype on
 filetype plugin on "loading the plugin files for specific file types
 call plug#begin()
 "document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
-Plug 'altercation/vim-colors-solarized'
+" Plug 'altercation/vim-colors-solarized'
 "Check syntax in Vim asynchronously and fix files, with Language Server Protocol (LSP) support
 Plug 'w0rp/ale'
 Plug 'pgr0ss/vim-github-url'
@@ -54,6 +54,7 @@ Plug 'raimondi/delimitmate'
 
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'iCyMind/NeoSolarized'
 Plug 'yegappan/mru'
 Plug 'scrooloose/nerdtree'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
@@ -144,8 +145,7 @@ Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer ru
 
 " ==== discarded plugins and why ====
 " Plug 'vim-scripts/argtextobj.vim'
-" visualizing marks - not essential, better to have a high performant vim
-" Plug 'kshenoy/vim-signature'
+Plug 'kshenoy/vim-signature'
 " better tags management -  I do not use tags anymore, rely on language server instead
 " Thu 12 Sep 2019 10:31:46 AM CEST re-enabled that because is necessary for
 " fishfarm sometimes
@@ -621,8 +621,6 @@ au! BufNewFile,BufReadPost *.{yaml,yml} set filetype=yaml foldmethod=indent
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 "}}}
 
-
-
 fun! SwapEditors(path)
     :echo "Opening file on editor: ".a:path
     execute 'AsyncRun openOnVim "'.a:path.'" vim'
@@ -647,3 +645,6 @@ nnoremap <Leader>pdoc :Pydocstring<cr>
 """<cr>
 
 nnoremap <Leader>tt :TagbarToggle<CR>
+
+
+

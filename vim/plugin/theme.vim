@@ -1,15 +1,9 @@
 
 set termguicolors
-set background=light
+set background=dark
+let g:theme = 'dark'
 
 let g:gitgutter_override_sign_column_highlight = 0
-" set termguicolors
-" let g:solarized_termcolors=256
-" let g:theme = 'dark'
-" let g:theme = 'light'
-"theme, colors, highlights {{{
-"the later syntax is applied the better
-"since something might override it
 syntax enable
 
 
@@ -44,7 +38,7 @@ fun! PersonalHighlights()
 	" """ better for use for getting a better sense of the options do a
 	" """ :h ColorColumn
 
-    " if g:theme == "light"
+    if g:theme == "light"
         " highlight Cursor ctermbg=NONE cterm=bold
         " highlight CursorColumn ctermbg=Yellow cterm=bold
         " highlight CursorLine ctermbg=white
@@ -70,18 +64,18 @@ fun! PersonalHighlights()
         " highlight TabLine ctermbg=white
         " highlight TabLineFill ctermbg=white
         " highlight TabLineSel ctermbg=white
-    " else
-        " highlight SignColumn ctermbg=black
-        " highlight FoldColumn ctermbg=black
-        " highlight ColorColumn ctermbg=black
+    else
+        highlight SignColumn ctermbg=black
+        highlight FoldColumn ctermbg=black
+        highlight ColorColumn ctermbg=black
 
-    " endif
+    endif
 
 endfun
 
 
 " let g:airline_theme='solarized'
-let g:airline_solarized_bg='light'
+let g:airline_solarized_bg='dark'
 let g:airline_powerline_fonts = 1
 
 

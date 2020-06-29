@@ -46,10 +46,10 @@ let g:ale_fixers = {
 
 let g:ale_completion_enabled = 1
 " call toop#mapFunction('RunQbq', '<leader>dq')
-let g:LanguageClient_useVirtualText = 0
+" let g:LanguageClient_useVirtualText = 0
 "
 let g:LanguageClient_autoStart = 1
-let g:LanguageClient_hoverPreview="Always"
+" let g:LanguageClient_hoverPreview="Always"
 let g:jedi#goto_definitions_command = "<C-]>"
 
 

@@ -87,18 +87,18 @@ Plug 'Shougo/echodoc.vim'
 " 			\ 'do': 'bash install.sh',
 " 	 		\ }
 Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/vim-lsp'
+" Plug 'prabirshrestha/vim-lsp'
 " autocompletion {{{
 
+" automcoplete
 "ncm2 is better than  deoplete :)
 
-Plug 'ncm2/ncm2'
-"Yet Another Remote Plugin Framework for Neovim
-Plug 'roxma/nvim-yarp'
+" Plug 'ncm2/ncm2'
+" Plug 'roxma/nvim-yarp'
 " our wiki page for a list of sources: https://github.com/ncm2/ncm2/wiki
-Plug 'ncm2/ncm2-bufword'
-Plug 'ncm2/ncm2-tmux'
-Plug 'ncm2/ncm2-path'
+" Plug 'ncm2/ncm2-bufword'
+" Plug 'ncm2/ncm2-tmux'
+" Plug 'ncm2/ncm2-path'
 " Plug 'wellle/tmux-complete.vim'
 "}}}
 "get beautiful icons for nerdtree
@@ -253,7 +253,6 @@ nnoremap <leader>, :normal!mtA,<esc>`t
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
 let g:abolish_save_file = "/home/jean/.vim/after/plugin/abolish.vim"
 
-autocmd BufEnter * call ncm2#enable_for_buffer()
 set completeopt=noinsert,menuone,noselect
 set shortmess+=c
 set noshowmode
@@ -269,6 +268,7 @@ inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
 
 
 " }}}
+
 
 
 "{{{ grep

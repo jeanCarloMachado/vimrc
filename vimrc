@@ -354,8 +354,8 @@ nnoremap <leader><C-f> :CtrlSF
 
 
 " templates for filetypes {{{
-autocmd BufNewFile *[^test]_.*.py 0r $TEMPLATES_DIR/py.py
-autocmd BufNewFile *.py 0r $TEMPLATES_DIR/test.py
+autocmd BufNewFile *.py 0r $TEMPLATES_DIR/py.py
+" autocmd BufNewFile *.py 0r $TEMPLATES_DIR/test.py
 autocmd BufNewFile *.sh 0r $TEMPLATES_DIR/shell.sh
 autocmd BufNewFile *.hs 0r $TEMPLATES_DIR/haskell.hs
 autocmd BufNewFile *.html 0r $TEMPLATES_DIR/html.html

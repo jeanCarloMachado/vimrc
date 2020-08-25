@@ -38,7 +38,7 @@ Plug 'camspiers/animate.vim'
 Plug 'camspiers/lens.vim'
 " this plugin is slow when the project is too big
 "most recently used files list
-Plug 'git@github.com:skywind3000/asyncrun.vim.git'
+Plug 'skywind3000/asyncrun.vim'
 """ Tue 25 Feb 2020 10:18:46 PM CET add back startify because home screen also
 """ very useless
 " Plug 'mhinz/vim-startify'

@@ -1,7 +1,7 @@
 
 set termguicolors
-set background=dark
-let g:theme = 'dark'
+set background=light
+let g:theme = 'light'
 
 let g:gitgutter_override_sign_column_highlight = 0
 syntax enable
@@ -74,7 +74,7 @@ fun! PersonalHighlights()
 endfun
 
 
-let g:airline_solarized_bg='dark'
+let g:airline_solarized_bg='light'
 let g:airline_powerline_fonts = 1
 
 call PersonalHighlights()

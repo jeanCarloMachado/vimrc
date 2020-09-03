@@ -159,7 +159,7 @@ Plug 'sheerun/vim-polyglot'
 " go to github
 Plug 'ruanyl/vim-gh-line'
 Plug 'majutsushi/tagbar', {'for': ['python']}
-Plug 'codota/tabnine-vim', {'for': ['python']}
+" Plug 'codota/tabnine-vim', {'for': ['python']}
 "}}}
 call plug#end()
 "}}}

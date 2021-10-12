@@ -17,153 +17,47 @@ set nocompatible
 filetype on
 filetype plugin on "loading the plugin files for specific file types
 call plug#begin()
-"document completion, text objectsic ac Commands id ad Delimiters ie ae LaTeX environments i$ a$ Inline math structures
-" Plug 'altercation/vim-colors-solarized'
-"Check syntax in Vim asynchronously and fix files, with Language Server Protocol (LSP) support
+
+Plug 'altercation/vim-colors-solarized'
 Plug 'w0rp/ale'
-Plug 'pgr0ss/vim-github-url'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'kana/vim-textobj-user' "enable the creation of custom text objects
-"same indentation text object
 Plug 'michaeljsmith/vim-indent-object'
-"grep like sublime one
-Plug 'dyng/ctrlsf.vim'
-"quoting/parenthesizing
 Plug 'tpope/vim-surround'
-"shows a git diff in the gutter (sign column) and stages/undoes hunks.
-Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-commentary'
-
-Plug 'camspiers/animate.vim'
-Plug 'camspiers/lens.vim'
-" this plugin is slow when the project is too big
-"most recently used files list
 Plug 'skywind3000/asyncrun.vim'
-""" Tue 25 Feb 2020 10:18:46 PM CET add back startify because home screen also
-""" very useless
-" Plug 'mhinz/vim-startify'
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 Plug 'benmills/vimux'
-" removed because i do not use it enough
-" Plug 'easymotion/vim-easymotion'
 Plug 'janko-m/vim-test'
-"autocomplete pairs chars
 Plug 'raimondi/delimitmate'
-""" Tue 25 Feb 2020 10:17:59 PM CET added back airline because the real status
-""" line is pretty useless and I don't see when I will customize it
-
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'iCyMind/NeoSolarized'
-Plug 'yegappan/mru'
 Plug 'scrooloose/nerdtree'
-Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-" removed because I do no use it enough
-Plug 'Xuyuanp/nerdtree-git-plugin'
-""to get the recent opened files
-"Plug 'mhinz/vim-startify'
-" removed because sometimes I do not want to go to the root
-" Plug 'airblade/vim-rooter'
-" Plug 'vim-syntastic/syntastic', { 'for': ['swift'] }
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-
 Plug 'christoomey/vim-tmux-runner'
 Plug 'junegunn/goyo.vim'
 Plug 'tpope/vim-abolish'
-" removed because i do not use it enough
-"git commit browser in vim
-" Plug 'junegunn/gv.vim'
 Plug 'tpope/vim-repeat'
-Plug 'RRethy/vim-illuminate'
-"add highlights to misused spaces
 Plug 'ntpeters/vim-better-whitespace'
-" Plug 'blueyed/vim-diminactive'
-" Plug 'nathanaelkane/vim-indent-guides', { 'for': ['html', 'vue', 'yaml', 'yml', 'tpl'] }
-" Plug 'heavenshell/vim-pydocstring', { 'do': 'make install', 'for': 'python' }
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'Shougo/echodoc.vim'
-" Plug 'autozimu/LanguageClient-neovim', {
-" 			\ 'branch': 'next',
-" 			\ 'do': 'bash install.sh',
-" 	 		\ }
 Plug 'prabirshrestha/async.vim'
-" Plug 'prabirshrestha/vim-lsp'
-" autocompletion {{{
-
-" automcoplete
-"ncm2 is better than  deoplete :)
-
-" Plug 'ncm2/ncm2'
-" Plug 'roxma/nvim-yarp'
-" our wiki page for a list of sources: https://github.com/ncm2/ncm2/wiki
-" Plug 'ncm2/ncm2-bufword'
-" Plug 'ncm2/ncm2-tmux'
-" Plug 'ncm2/ncm2-path'
-" Plug 'wellle/tmux-complete.vim'
-"}}}
-"get beautiful icons for nerdtree
-Plug 'ryanoasis/vim-devicons'
-" snippets {{{
-" Plug 'SirVer/ultisnips'
-" Plug 'honza/vim-snippets'
-" Plug 'ervandew/supertab'
-"}}}
-"make the yanked region appartent
-"replaces the yanked text with a text object gr{textobject} to paste  and can
-"be repeatable!
-"exchange text objects super useful!
-" cx {textobject}  move to a new place, cx{textobject} will swap them
-" text object stuff {{{
 Plug 'jeanCarloMachado/vim-toop'
-" swap text objects from location
 Plug 'tommcdo/vim-exchange'
-Plug 'bps/vim-textobj-python', {'for': ['python']}
+" Plug 'davidhalter/jedi-vim', { 'for': ['python'] }
+"  how to paste on multiple selections without messing up https://trello.com/c/WR8J9HAQ
 Plug 'wellle/targets.vim'
-
-
-" programming languages {{{
-Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
-Plug 'fatih/vim-go', { 'for': ['go'] }
-Plug 'derekwyatt/vim-scala', { 'for': ['scala'] }
-Plug 'ensime/ensime-vim', { 'do': ':UpdateRemotePlugins', 'for': ['scala'] }
-Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
-Plug 'Rican7/php-doc-modded', { 'for': ['php'] }
-Plug 'adoy/vim-php-refactoring-toolbox', { 'for': ['php'] }
-Plug 'davidhalter/jedi-vim', { 'for': ['python'] }
-"filetype only * (for swift)
-" Plug 'keith/swift.vim', {'for': ['swift']}
-Plug 'guns/vim-clojure-static', { 'for': ['clojure'] }
-Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'javascript.jsx'] }
-Plug 'mxw/vim-jsx', { 'for': ['javascript', 'javascript.jsx'] }
-"hides links paths, and other small niceties
 Plug 'plasticboy/vim-markdown', { 'for': ['markdown'] }
-Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs', 'for': ['php']}
-" Mon 16 Sep 2019 06:01:40 PM CEST
-" disabled because I do not like the colorscheme and it is a bit confusing
-" Plug 'bagrat/vim-buffet'
-"}}}
-
-" ==== discarded plugins and why ====
-" Plug 'vim-scripts/argtextobj.vim'
 Plug 'kshenoy/vim-signature'
-" better tags management -  I do not use tags anymore, rely on language server instead
-" Thu 12 Sep 2019 10:31:46 AM CEST re-enabled that because is necessary for
-" fishfarm sometimes
-Plug 'ludovicchabant/vim-gutentags', { 'for': ['c'] }
-""seeing git log and git diff - I kind of prefer to handle git stuff in the shell
-"gblame is necessary though
 Plug 'tpope/vim-fugitive'
-"marks search matching parts while typing - not really important
-" Plug 'markonm/traces.vim'
 Plug 'sheerun/vim-polyglot'
-" go to github
 Plug 'ruanyl/vim-gh-line'
-Plug 'majutsushi/tagbar', {'for': ['python']}
-" Plug 'codota/tabnine-vim', {'for': ['python']}
+Plug 'prabirshrestha/vim-lsp'
+" Plug 'mattn/vim-lsp-settings'
 "}}}
 call plug#end()
 "}}}
 
+
+let g:deoplete#enable_at_startup = 1
 " Or, you could use neovim's virtual virtual text feature.
 let g:echodoc#enable_at_startup = 1
 let g:echodoc#type = 'virtual'
@@ -305,6 +199,7 @@ set spelllang=en,de_de,pt_br
 set undodir=~/.vim/undo/
 set undolevels=100
 set undoreload=100
+set undofile
 "}}}
 
 " backup options {{{
@@ -330,7 +225,6 @@ set copyindent
 set autoindent
 
 map <Leader>id :IndentGuidesToggle<cr>
-autocmd filetype html,tpl :IndentGuidesEnable
 "}}}
 
 " ctrlsf {{{
@@ -353,21 +247,6 @@ nnoremap <leader>fi :CtrlSF
 nnoremap <leader><C-f> :CtrlSF
 
 
-" templates for filetypes {{{
-autocmd BufNewFile *.py 0r $TEMPLATES_DIR/py.py
-" autocmd BufNewFile *.py 0r $TEMPLATES_DIR/test.py
-autocmd BufNewFile *.sh 0r $TEMPLATES_DIR/shell.sh
-autocmd BufNewFile *.hs 0r $TEMPLATES_DIR/haskell.hs
-autocmd BufNewFile *.html 0r $TEMPLATES_DIR/html.html
-autocmd BufNewFile *.elm 0r $TEMPLATES_DIR/elm.elm
-autocmd BufNewFile *.c 0r $TEMPLATES_DIR/c.c
-autocmd BufNewFile **/papers/*.md 0r $TEMPLATES_DIR/science-review.md
-autocmd BufNewFile **/*_paper.md 0r $TEMPLATES_DIR/science-review.md
-autocmd BufNewFile **/*review*.md 0r $TEMPLATES_DIR/science-review.md
-autocmd BufNewFile */diary/*.md 0r $TEMPLATES_DIR/diary.md
-autocmd BufNewFile */posts/*.md 0r $TEMPLATES_DIR/post.md
-autocmd BufNewFile */composer.json 0r $TEMPLATES_DIR/composer.json
-"}}}
 
 
 
@@ -440,9 +319,6 @@ vnoremap <silent> # :<C-U>
 " simple filetype configs {{{
 au BufRead,BufNewFile *.jar,*.war,*.ear,*.sar,*.rar set filetype=zip
 au BufRead,BufNewFile *.vue set syntax=javascript
-autocmd BufNewFile,BufRead *.es6,*.ts set filetype=javascript
-autocmd BufNewFile,BufRead *.thrift set syntax=c
-autocmd filetype crontab setlocal nobackup nowritebackup
 
 "}}}
 
@@ -508,12 +384,6 @@ endfun
 nnoremap <leader>. :call RepeatAndNext()<cr>
 "}}}
 
-"cursor{{{
-"save the previous cursor position
-augroup resCur
-  autocmd!
-  autocmd BufReadPost * call setpos(".", getpos("'\""))
-augroup END
 
 set cursorline
 
@@ -531,8 +401,6 @@ set lazyredraw "don't redraw screend when running macros
 " so I'll disable this thing for now
 " syntax sync minlines=256
 "increase redraw time, performance tweak for for big files
-set redrawtime=10000
-syntax sync fromstart
 
 
 
@@ -552,7 +420,7 @@ let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 let g:UltiSnipsEditSplit="vertical"
 """ }}}
 let g:SuperTabDefaultCompletionType = "<c-n>"
-let g:highlightedyank_highlight_duration = 15000
+"let g:highlightedyank_highlight_duration = 15000
 
 nnoremap <leader>p "0p
 nnoremap <leader>P "0P
@@ -582,14 +450,12 @@ set shiftwidth  =4
 set expandtab
 
 
-"  how to paste on multiple selections without messing up https://trello.com/c/WR8J9HAQ
 
 
-autocmd BufEnter *.py,*.php let g:timer = timer_start(4000, 'AnnotatheCurrentWord',{'repeat':-1})
-autocmd BufLeave *.py,*.php call timer_stop(g:timer)
 
 let g:old_pos = getpos(".")
 func! AnnotatheCurrentWord(timer)
+"  how to paste on multiple selections without messing up https://trello.com/c/WR8J9HAQ
   let new_pos =  getpos(".")
 
 
@@ -616,11 +482,6 @@ endfunc
 :set path+=/home/jean/projects/personalscripts
 
 
-"yaml specific {{{
-au! BufNewFile,BufReadPost *.{yaml,yml} set filetype=yaml foldmethod=indent
-autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
-"}}}
-
 fun! SwapEditors(path)
     :echo "Opening file on editor: ".a:path
     execute 'AsyncRun openOnVim "'.a:path.'" vim'
@@ -629,22 +490,46 @@ command! -nargs=* SwapEditors call SwapEditors(expand('%:p'))
 nnoremap <Leader>i :SwapEditors<cr>
 
 
-let test#python#runner#options = ' --show-capture=all '
-let test#python#options = ' --show-capture=all '
-
 let g:jupytext_enable = 1
 let g:jupytext_command = 'jupytext'
 "let g:jupytext_print_debug_msgs = 1
 let g:jupytext_fmt = 'md'
 let g:jupytext_to_ipynb_opts = '--to=ipynb --update'
 let g:jupytext_filetype_map = {'md': 'pandoc'}
-au BufRead,BufNewFile *.ipynb set filetype=python
 
-nnoremap <Leader>pdoc :Pydocstring<cr>
+autocmd BufNewFile *.py 0r $TEMPLATES_DIR/py.py
+autocmd BufNewFile *.sh 0r $TEMPLATES_DIR/shell.sh
 
-"""<cr>
+autocmd BufWritePost,BufEnter * set nofoldenable foldmethod=manual foldlevelstart=99
+let g:jedi#show_function_definition = 0
+let g:jedi#popup_on_dot = 0
 
-nnoremap <Leader>tt :TagbarToggle<CR>
+if executable('pyls')
+    " pip install python-language-server
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'pyls',
+        \ 'cmd': {server_info->['pyls']},
+        \ 'allowlist': ['python'],
+        \ })
+endif
 
+nmap <C-]> <plug>(lsp-definition)
+setlocal omnifunc=lsp#complete
+setlocal signcolumn=yes
+if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+nmap <buffer> gs <plug>(lsp-document-symbol-search)
+nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
+nmap <buffer> gr <plug>(lsp-references)
+nmap <buffer> gi <plug>(lsp-implementation)
+nmap <buffer> gt <plug>(lsp-type-definition)
+nmap <buffer> <leader>rn <plug>(lsp-rename)
+nmap <buffer> [g <plug>(lsp-previous-diagnostic)
+nmap <buffer> ]g <plug>(lsp-next-diagnostic)
+nmap <buffer> K <plug>(lsp-hover)
+inoremap <buffer> <expr><c-f> lsp#scroll(+4)
+inoremap <buffer> <expr><c-d> lsp#scroll(-4)
 
+let g:lsp_format_sync_timeout = 1000
+autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
+" refer to doc to add more commands
 

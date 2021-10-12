@@ -63,6 +63,6 @@ nnoremap <silent> <leader>def :call LanguageClient#textDocument_definition()<CR>
 "rename all occurences of the given function
 nnoremap <silent> <leader>rn :LspRename<CR>
 
-nnoremap <C-M-w> :!ide_swap open_ide %:p<CR>
+nnoremap <M-v> :!file_handler.py open_ide %:p<CR>
 nnoremap <leader><C-M-l> :ALEFix<cr>
 

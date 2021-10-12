@@ -1,13 +1,4 @@
 
-fun! FoldSomething(str)
-    let comment=split(&commentstring, '%s')
-    if len(l:comment)==1
-        call add(comment, l:comment[0])
-    endif
-    return l:comment[0]." {{{\n".a:str."\n".l:comment[1]."}}}"
-endfun
-
-call toop#mapFunction('FoldSomething', '<leader>fo')
 
 "eval {{{
 " send the content to a tmux pane, running whatever,
@@ -131,6 +122,7 @@ call toop#mapAround("\"\"\"\n", "\n\"\"\"", '<leader>3"')
 call toop#mapAround("\n---\n", "\n---\n", '<leader>-')
 
 
+call toop#mapAround("{{c1::", "}}", "<leader>}")
 
 nnoremap <leader>- i---<esc>
 
@@ -144,15 +136,6 @@ function! Duplicate(string)
 endfun
 call toop#mapFunction('Duplicate', "<leader>2x")
 
-fun! FoldSomething(str)
-    let comment=split(&commentstring, '%s')
-    if len(l:comment) == 1
-        call add(comment, l:comment[0])
-    endif
-    return l:comment[0]." {{{\n".a:str."\n".l:comment[1]."}}}"
-endfun
-
-call toop#mapFunction('FoldSomething', ',fo')
 
 fun! OnlyTextSelection(str)
     normal! ggVGx
@@ -209,14 +192,6 @@ fun! GetFiletypeFuncKeyword()
 endfun
 
 
-
-call textobj#user#plugin('fold', {
-\   'code': {
-\     'pattern': ['{{{', '}}}'],
-\     'select-a': 'aF',
-\     'select-i': 'iF',
-\   },
-\ })
 
 call textobj#user#plugin('star', {
 \   'code': {

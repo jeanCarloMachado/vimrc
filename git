@@ -1,0 +1,12 @@
+diff --git a/tmux.conf b/tmux.conf
+        index 0be6a3a..b582ad7 100644
+        --- a/tmux.conf
+        +++ b/tmux.conf
+        @@ -126,7 +126,6 @@ set-option -g status-style "fg=#657b83,bg=#073642"
+         set-window-option -g window-status-style "fg=#657b83,bg=#073642"
+         set-window-option -g window-status-current-style bg=colour5,fg=#073642
+
+        -set-window-option -g window-status-style bg=colour15,fg=colour10
+        -set-window-option -g status-style bg=colour15
+        +# set-window-option -g window-status-style bg=colour15,fg=colour10
+         apply
